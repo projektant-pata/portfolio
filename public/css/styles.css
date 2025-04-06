@@ -1,0 +1,109 @@
+:root{
+    --primary-color: #FACC15;
+    --primary-color-dark: #9B870C;
+    --primary-color-light: #FED7AAFF;
+    --primary-color-light-fade: rgba(254, 215, 170, 0.3);
+    --white: #FFFFFF;
+    --black: #1C1B17;
+}
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+
+    font-family: "Inter", sans-serif;
+    font-optical-sizing: auto;
+    font-style: normal;
+
+    text-decoration: none;
+    list-style: none;
+
+    color: var(--white);
+
+    position: relative;
+}
+
+body{
+    background: var(--black);
+}
+
+h1{
+    font-weight: 600;
+    /*font-size: 3.75rem;*/
+    font-size: 5rem;
+    color: var(--white);
+}
+
+h1 span{
+    font-family: sans-serif;
+    color: transparent;
+    -webkit-text-stroke: 2px var(--primary-color);
+}
+#underh1{
+    font-weight: 500;
+    font-size: 3.5rem;
+}
+#underh1 span{
+    color: var(--primary-color);
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: -50px;
+    font-weight: 300;
+    font-size: 7.5rem;
+    font-family: sans-serif;
+    color: transparent;
+    -webkit-text-stroke: 1px var(--primary-color-light);
+    /*text-shadow:*/
+    /*    -1px -1px 0 #000,*/
+    /*    1px -1px 0 #000,*/
+    /*    -1px 1px 0 #000,*/
+    /*    1px 1px 0 #000;*/
+}
+h3{
+    font-weight: 400;
+    font-size: 3rem;
+
+}
+h3 span, p span{
+    color: var(--primary-color);
+}
+
+h4{
+    font-weight: 400;
+    font-size: 1.5rem;
+}
+
+p{
+    font-weight: 200;
+    font-size: 1rem;
+}
+
+.mini{
+    font-size: 0.75rem;
+    font-weight: 200;
+}
+
+
+.container{
+    display: flex;
+    justify-content: space-between;
+    width: 95%;
+    max-width: 1700px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+main{
+    margin-left: 450px;
+    width: calc(100% - 450px);
+}
+
+section{
+    margin-bottom: 100px;
+
+    &:first-child, &:last-child{
+        margin-bottom: 0;
+    }
+}

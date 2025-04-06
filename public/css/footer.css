@@ -1,0 +1,10 @@
+footer{
+    margin: 0 auto;
+
+    max-width: 1700px;
+
+    & #footer-container{
+        margin-left: 450px;
+        width: calc(100% - 450px);
+    }
+}
