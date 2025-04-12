@@ -1,0 +1,114 @@
+#experience {
+    position: relative;
+    width: 100%;
+    margin: 100px 0;
+
+
+    & {
+        #experience-timeline {
+            position: absolute;
+            left: 5px;
+            height: calc(100% - 100px);
+            width: 1px;
+            background-color: var(--primary-color-light);
+        }
+
+        #experience-content {
+            & .experience-content-row {
+                display: flex;
+                align-items: center;
+                margin-bottom: 100px;
+
+                & .experience-content-row-circle {
+                    width: 11px;
+                    height: 11px;
+                    border-radius: 50%;
+                    background-color: var(--primary-color-light);
+                }
+
+                & .experience-content-row-line {
+                    width: calc(100% - 710px);
+                    height: 1px;
+                    background-color: var(--primary-color-light);
+                }
+
+                & .experience-content-row-card {
+                    width: 600px;
+                    border-radius: 35px;
+                    border: 1px solid transparent;
+                    background: linear-gradient(var(--black-not-that-black), var(--black-not-that-black)) padding-box,
+                    linear-gradient(to right, var(--primary-color-light), transparent) border-box;
+
+                    padding: 40px;
+
+                    & h3 {
+                    }
+
+                    & h4 {
+                        color: var(--primary-color-light);
+                    }
+
+                    & .mini {
+                        margin-bottom: 20px;
+                    }
+
+                    & p {
+                        font-weight: 300;
+                    }
+
+                    & ul li {
+                        list-style: circle !important;
+                        margin-left: 20px;
+                        margin-bottom: 5px;
+                    }
+
+                    & .experience-content-row-card-buttons {
+                        margin-top: 20px;
+                        display: flex;
+                        gap: 20px;
+
+                        & .experience-content-row-card-buttons-button {
+                            border-radius: 20px;
+                            background-color: var(--primary-color-light-fade);
+                            padding: 10px 20px;
+                        }
+                    }
+                }
+
+                & .experience-content-row-specialcard {
+                    background: linear-gradient(to right, var(--primary-color-light-fade), var(--black-not-that-black)) padding-box,
+                    linear-gradient(to right, var(--primary-color-light), transparent) border-box;
+                }
+            }
+        }
+    }
+}
+
+@media (max-width: 992px) {
+    #experience {
+
+        & {
+            #experience-timeline {
+
+            }
+
+            #experience-content {
+                & .experience-content-row {
+
+
+                    & .experience-content-row-circle {
+
+                    }
+
+                    & .experience-content-row-line {
+                        width: 20%;
+                    }
+
+                    & .experience-content-row-card {
+                        width: 80%;
+                    }
+                }
+            }
+        }
+    }
+}

@@ -5,19 +5,19 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('home');
-});
+})->name('home');
 
 Route::get('about-me', function () {
     return view('about-me');
-});
+})->name('about-me');
 
 Route::get('experience', function () {
    return view('experience');
-});
+})->name('experience');
 
 Route::get('projects', function () {
     return view('projects');
-});
+})->name('projects');
 
 
 

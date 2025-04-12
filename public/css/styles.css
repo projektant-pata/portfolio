@@ -2,9 +2,23 @@
     --primary-color: #FACC15;
     --primary-color-dark: #9B870C;
     --primary-color-light: #FED7AAFF;
-    --primary-color-light-fade: rgba(254, 215, 170, 0.3);
+    --primary-color-light-fade: #605443;
     --white: #FFFFFF;
+    --black-not-that-black: #1C1B17;
     --black: #1C1B17;
+}
+.light-theme {
+    --primary-color: #ffbf00;
+    --primary-color-dark: #b38f00;
+    --primary-color-light: #fff5cc;
+    --primary-color-light-fade: #fffcf0;
+    --white: #1C1B17;
+    --black: #FFFFFF;
+    --black-not-that-black: #fffcf0;
+
+    h2{
+        color: var(--primary-color-light);
+    }
 }
 
 *{
@@ -22,15 +36,19 @@
     color: var(--white);
 
     position: relative;
+
+    transition: 0.5s ease-out;
 }
 
 body{
     background: var(--black);
 }
-
+::selection {
+    background-color: #ffb347; /* barva pozadí */
+    color: #000000;            /* barva textu */
+}
 h1{
     font-weight: 600;
-    /*font-size: 3.75rem;*/
     font-size: 5rem;
     color: var(--white);
 }
@@ -74,6 +92,10 @@ h3 span, p span{
 h4{
     font-weight: 400;
     font-size: 1.5rem;
+
+    & span{
+        color: var(--primary-color);
+    }
 }
 
 p{
@@ -83,7 +105,7 @@ p{
 
 .mini{
     font-size: 0.75rem;
-    font-weight: 200;
+    font-weight: 200 !important;
 }
 
 
@@ -103,7 +125,56 @@ main{
 section{
     margin-bottom: 100px;
 
-    &:first-child, &:last-child{
+    &:first-child{
         margin-bottom: 0;
+    }
+}
+
+
+@media (max-width: 1440px) {
+    h1{
+        font-size: 4rem;
+    }
+    #underh1{
+        font-size: 2.5rem;
+    }
+
+    h3{
+        font-size: 2.5rem;
+    }
+}
+@media (max-width: 992px) {
+    .container{
+        flex-direction: column;
+        align-items: center;
+        margin-left: 0;
+        width: 100%;
+        padding: 0 50px;
+    }
+    main{
+        margin-left: 0;
+        width: 100%;
+    }
+}
+@media (max-width: 768px) {
+
+}
+@media (max-width: 576px) {
+    .container{
+        padding: 0 20px;
+    }
+    h1{
+        font-size: 2.7rem;
+    }
+    #underh1{
+        margin-top: 20px;
+        font-size: 2.2rem;
+    }
+    h3{
+        font-size: 2rem;
+        margin-bottom: 15px;
+    }
+    h2{
+        font-size: 6rem;
     }
 }

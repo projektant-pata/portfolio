@@ -16,31 +16,33 @@
 }
 
 #stats {
-    display: flex;
-    flex-direction: column;
+
 }
 
 #stats #stats-cards {
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px;
 }
 
 #stats #stats-cards .stats-cards-card {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    width: 30%;
     padding: 0 2rem;
     border-radius: 30px;
     border: 1px solid var(--primary-color-light);
-    background-color: var(--black);
-    width: 280px;
+    background-color: var(--black-not-that-black);
     height: 160px;
+    width: 270px;
+    margin: auto;
+
 }
 
 #work {
     width: 100%;
     margin-top: 100px;
+    overflow: hidden;
 }
 
 #work #work-top {
@@ -94,6 +96,7 @@
     margin-top: 20px;
     border-radius: 30px;
     border: 3px solid var(--primary-color-light-fade);
+    background-color: var(--black-not-that-black);
 }
 
 #work #work-bot-line {
@@ -104,49 +107,59 @@
     background-color: var(--primary-color-light-fade);
 }
 
+/*#work #work-bot svg{*/
+/*    position: absolute;*/
+/*    right: 0;*/
+/*    top: 50%;*/
+/*    transform: translateY(-50%);*/
+
+/*}*/
+
 #work #work-bot #work-bot-content {
     width: 100%;
 
     padding: 50px 80px;
 }
 
-#work #work-bot #work-bot-content .work-bot-content-row{
+#work #work-bot #work-bot-content .work-bot-content-row {
     display: flex;
     margin-bottom: 50px;
 
-    &:last-child{
+    &:last-child {
         margin-bottom: 0;
     }
-    & .work-bot-content-row-text h4{
+
+    & .work-bot-content-row-text h4 {
         transition: 0.3s ease-out;
     }
 
-    &:hover .work-bot-content-row-text h4{
+    &:hover .work-bot-content-row-text h4 {
         color: var(--primary-color);
     }
 
 }
 
-#work #work-bot #work-bot-content .work-bot-content-row img{
+#work #work-bot #work-bot-content .work-bot-content-row img {
     width: 70px;
     height: 70px;
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
 }
-#work #work-bot #work-bot-content .work-bot-content-row .work-bot-content-row-text{
+
+#work #work-bot #work-bot-content .work-bot-content-row .work-bot-content-row-text {
     margin-left: 10px;
     max-width: 600px;
 }
 
-#work #work-bot #work-bot-content .work-bot-content-row .work-bot-content-row-text .mini{
+#work #work-bot #work-bot-content .work-bot-content-row .work-bot-content-row-text .mini {
     margin-bottom: 7px;
 }
 
-#projects{
+#projects {
 
 
-    & .projects-row{
+    & .projects-row {
         width: 100%;
         height: 360px;
 
@@ -155,27 +168,28 @@
         align-items: center;
 
         margin-bottom: 50px;
-        & img{
+
+        & img {
             height: 100%;
             border-radius: 30px;
         }
 
-        & .projects-row-space{
+        & .projects-row-space {
             margin: 0 25px;
         }
 
-        & .projects-row-text{
+        & .projects-row-text {
 
-            & h3{
+            & h3 {
                 margin-bottom: 15px;
             }
 
-            & p{
+            & p {
                 margin-bottom: 10px;
             }
 
-            & .projects-row-text-links{
-                & img{
+            & .projects-row-text-links {
+                & img {
                     height: 40px;
                     border-radius: 50%;
                 }
@@ -184,26 +198,30 @@
     }
 }
 
-#tools{
+#tools {
 
     width: 100%;
-    & .tools-row{
-        width: 100%;
-        margin: auto;
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 50px;
 
-        & .tools-row-card{
+    & .tools-row {
+        max-width: 1000px;
+        margin: auto;
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+
+        & .tools-row-card {
             width: 150px;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            & img{
-                height: 150px;
+            margin-bottom: 50px;
 
-                object-fit: contain; /* Zajistí, že celý obrázek bude vidět */            }
-            & h4{
+            & img {
+                height: 100px;
+
+                object-fit: contain; /* Zajistí, že celý obrázek bude vidět */
+            }
+
+            & h4 {
                 text-align: center;
                 margin-top: 25px;
                 font-size: 30px;
@@ -212,15 +230,15 @@
     }
 }
 
-#reviews{
+#reviews {
 
 
-    & .reviews-row{
+    & .reviews-row {
         display: flex;
         justify-content: space-between;
 
 
-        & .reviews-row-card{
+        & .reviews-row-card {
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -229,26 +247,138 @@
             border-radius: 20px;
             border: 1px solid var(--primary-color-light);
             background-color: var(--black);
-            & p{
+
+            & p {
                 font-weight: 400;
                 text-align: justify;
             }
-            & .reviews-row-card-text{
+
+            & .reviews-row-card-text {
                 margin-top: 20px;
                 font-weight: 400;
                 display: flex;
                 align-items: center;
 
-                & span p{
+                & span p {
                     color: var(--primary-color);
                     font-weight: 400;
+                    margin-right: 5px;
                 }
 
-                & .mini{
+                & .mini {
                     font-weight: 200;
                 }
             }
         }
     }
 
+}
+
+@media (max-width: 1440px) {
+    #stats #stats-cards .stats-cards-card {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+    #projects {
+        & .projects-row {
+            height: 270px;
+        }
+    }
+
+    #reviews .reviews-row {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    #reviews .reviews-row .reviews-row-card {
+        max-width: 450px;
+        width: auto;
+        margin-bottom: 20px;
+    }
+}
+
+@media (max-width: 992px) {
+    #hero-page {
+        flex-direction: column;
+        height: auto;
+        margin-top: 10vh;
+        margin-bottom: 100px;
+
+        & img {
+            margin-top: 50px;
+        }
+    }
+
+    #stats {
+        & #stats-cards {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    #projects {
+        & .projects-row {
+            & img {
+                height: 220px;
+            }
+        }
+    }
+
+    #tools {
+        & .tools-row {
+            grid-template-columns: repeat(4, 1fr);
+
+            & .tools-row-card {
+
+            }
+        }
+    }
+}
+
+@media (max-width: 576px) {
+
+    #stats {
+        & #stats-cards {
+            grid-template-columns: repeat(1, 1fr);
+        }
+    }
+
+    #work {
+        & #work-bot-line {
+            position: absolute;
+            width: 3px;
+            height: 100%;
+            left: 55px;
+            background-color: var(--primary-color-light-fade);
+        }
+
+        & #work-bot-content{
+            padding: 50px 20px !important;
+        }
+    }
+
+    #projects{
+        & .projects-row{
+            flex-direction: column;
+            height: auto;
+
+            & img{
+                order: 1;
+                margin-bottom: 20px;
+            }
+            & .projects-row-text{
+                order: 2;
+            }
+        }
+    }
+
+    #tools {
+        & .tools-row {
+            grid-template-columns: repeat(2, 1fr);
+
+            & .tools-row-card {
+                width: auto;
+            }
+        }
+    }
 }
