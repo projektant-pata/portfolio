@@ -7,7 +7,7 @@ return [
     'title_work' => 'Práce',
     'title_edu' => 'Vzdělání',
 
-    'card1_year' => '2021',
+    'card1_year' => '2021 - nyní',
     'card1_title' => 'ECDL',
     'card1_subtitle' => 'Certifikát',
     'card1_text' => '',
@@ -44,7 +44,7 @@ return [
     'card3_but3' => '<a href="https://www.spse.cz/" target="_blank"><p><span>Odkaz</span></p></a>',
     'card3_link' => 'https://www.spse.cz/',
 
-    'card4_year' => '2023 - nyní',
+    'card4_year' => '2023',
     'card4_title' => 'Cisco IT Essentials',
     'card4_subtitle' => 'Certifikát',
     'card4_text' => '',
@@ -100,4 +100,13 @@ return [
     'card7_but2' => 'Python',
     'card7_but3' => '<a href="https://www.spse.cz/clanek.php?id=1103" target="_blank"><p><span>Odkaz</span></p></a>',
     'card7_link' => 'https://www.spse.cz/clanek.php?id=1103',
+
+    'card8_year' => '2024',
+    'card8_title' => 'Erasmus',
+    'card8_subtitle' => 'Pracovní cesta do Španělska umožněná Evropskou unií',
+    'card8_text' => '',
+    'card8_but1' => 'Erasmus',
+    'card8_but2' => '',
+    'card8_but3' => '<a href="https://erasmus-plus.ec.europa.eu/" target="_blank"><p><span>Link</span></p></a>',
+    'card8_link' => 'https://erasmus-plus.ec.europa.eu/',
 ];

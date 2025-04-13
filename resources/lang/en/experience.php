@@ -7,7 +7,7 @@ return [
     'title_work' => 'Work',
     'title_edu' => 'Education',
 
-    'card1_year' => '2021',
+    'card1_year' => '2021 - now',
     'card1_title' => 'ECDL',
     'card1_subtitle' => 'Certificate',
     'card1_text' => '',
@@ -45,7 +45,7 @@ return [
     'card3_but3' => '<a href="https://www.spse.cz/" target="_blank"><p><span>Link</span></p></a>',
     'card3_link' => 'https://www.spse.cz/',
 
-    'card4_year' => '2023 - now',
+    'card4_year' => '2023',
     'card4_title' => 'Cisco IT Essentials',
     'card4_subtitle' => 'Certificate',
     'card4_text' => '',
