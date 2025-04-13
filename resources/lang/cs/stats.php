@@ -1,0 +1,27 @@
+<?php
+
+return [
+    'title' => 'Moje staty',
+    'card1_title' => 'Junior',
+    'card1_text' => 'Profesionální úroveň',
+    'card2_title' => '5+',
+    'card2_text' => 'Projektů dokončeno',
+    'card3_title' => '2',
+    'card3_text' => 'Roky zkušeností',
+    'card4_title' => '2',
+    'card4_text' => 'Země dosaženy',
+    'card5_title' => '18',
+    'card5_text' => 'Let věku',
+    'card6_title' => 'Načítání..',
+    'card6_text' => 'Nejvyšší šachové elo',
+    'card7_title' => '♞',
+    'card7_text' => 'Nejoblíbenější figura',
+    'card8_title' => '∞',
+    'card8_text' => 'Vypitých šálků kávy',
+    'card9_title' => '1',
+    'card9_text' => 'Vyhraný hackathon',
+    'card10_title' => '9',
+    'card10_text' => 'GitHub repozitářů',
+    'card11_title' => '404',
+    'card11_text' => 'Hodin spánku',
+];

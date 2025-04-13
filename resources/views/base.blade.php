@@ -17,6 +17,9 @@
         rel="stylesheet">
 
     @yield('scripts')
+    <script defer>
+        const locale = "{{ App::getLocale() }}";
+    </script>
     <script defer src="{{asset('js/mobile.js')}}"></script>
 </head>
 <body>

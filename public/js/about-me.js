@@ -23,13 +23,12 @@ function organizeCards() {
         const row2 = document.createElement('article');
         row2.className = 'about-me-row';
 
-        for (let i = 0; i < 3 && i < cards.length; i++) {
-            row1.appendChild(cards[i]);
-        }
+        row1.appendChild(cards[0]);
+        row1.appendChild(cards[1]);
+        row1.appendChild(cards[2]);
 
-        for (let i = 3; i < cards.length; i++) {
-            row2.appendChild(cards[i]);
-        }
+        row2.appendChild(cards[3]);
+        row2.appendChild(cards[4]);
 
         content.appendChild(row1);
         content.appendChild(row2);
@@ -37,9 +36,11 @@ function organizeCards() {
         const row = document.createElement('article');
         row.className = 'about-me-row';
 
-        cards.forEach(card => {
-            row.appendChild(card);
-        });
+        row.append(cards[0])
+        row.append(cards[1]);
+        row.append(cards[2]);
+        row.append(cards[3]);
+        row.append(cards[4]);
 
         content.appendChild(row);
     }

@@ -20,68 +20,85 @@
                 <a href="{{route('home')}}">
                     <img src="{{asset('images/mobile/icons/home.png')}}" alt="home">
                 </a>
-                <p class="mini">Home</p>
+                <p class="mini">{{__('mobile.nav1')}}</p>
             </div>
             <div class="mobile-mid-app">
                 <a href="{{route('about-me')}}">
                     <img src="{{asset('images/mobile/icons/contacts.png')}}" alt="home">
                 </a>
-                <p class="mini">About me</p>
+                <p class="mini">{{__('mobile.nav2')}}</p>
             </div>
             <div class="mobile-mid-app">
                 <a href="{{route('experience')}}">
                     <img src="{{asset('images/mobile/icons/todo.png')}}" alt="home">
                 </a>
-                <p class="mini">Experience</p>
+                <p class="mini">{{__('mobile.nav3')}}</p>
             </div>
             <div class="mobile-mid-app">
                 <a href="{{route('projects')}}">
                     <img src="{{asset('images/mobile/icons/notes.png')}}" alt="home">
                 </a>
-                <p class="mini">Projects</p>
+                <p class="mini">{{__('mobile.nav4')}}</p>
             </div>
         </div>
         <div class="mobile-mid-row">
             <div class="mobile-mid-app">
-                <a href="https://x.com/projektantPata" target="_blank">
-                    <img src="{{asset('images/mobile/icons/x.webp')}}" alt="x">
+                <a href="mailto:richard.hyvl@gmail.com" target="_blank">
+                    <img src="{{asset('images/mobile/icons/email.png')}}" alt="instagram">
                 </a>
-                <p class="mini">X</p>
+                <p class="mini">{{__('mobile.soc1')}}</p>
+
             </div>
             <div class="mobile-mid-app">
                 <a href="https://www.instagram.com/richardhyvl/" target="_blank">
                     <img src="{{asset('images/mobile/icons/instagram.webp')}}" alt="instagram">
                 </a>
-                <p class="mini">Instagram</p>
+                <p class="mini">{{__('mobile.soc2')}}</p>
 
             </div>
+            <div class="mobile-mid-app">
+                <a href="https://x.com/projektantPata" target="_blank">
+                    <img src="{{asset('images/mobile/icons/x.webp')}}" alt="x">
+                </a>
+                <p class="mini">{{__('mobile.soc3')}}</p>
+            </div>
+
             <div class="mobile-mid-app">
                 <a href="https://www.linkedin.com/in/richardhyvl/" target="_blank">
                     <img src="{{asset('images/mobile/icons/linkedin.webp')}}" alt="linkedin">
                 </a>
-                <p class="mini">LinkedIn</p>
+                <p class="mini">{{__('mobile.soc4')}}</p>
 
             </div>
-            <div class="mobile-mid-app">
-                <a href="https://github.com/projektant-pata" target="_blank">
-                    <img src="{{asset('images/mobile/icons/github.webp')}}" alt="github">
-                </a>
-                <p class="mini">GitHub</p>
-            </div>
+
 
         </div>
         <div class="mobile-mid-row">
             <div class="mobile-mid-app">
-                <a href="">
+                <a href="https://github.com/projektant-pata" target="_blank">
+                    <img src="{{asset('images/mobile/icons/github.webp')}}" alt="github">
+                </a>
+                <p class="mini">{{__('mobile.soc5')}}</p>
+            </div>
+            <div class="mobile-mid-app">
+                <a href="https://www.chess.com/member/obviouscommander" target="_blank">
+                    <img src="{{asset('images/mobile/icons/chess.png')}}" alt="github">
+                </a>
+                <p class="mini">{{__('mobile.soc6')}}</p>
+            </div>
+            <div class="mobile-mid-app">
+                <a href="https://hyvlri22.llmp.spse-net.cz/" target="_blank">
                     <img src="{{asset('images/mobile/icons/web.png')}}" alt="SPSE-WP">
                 </a>
-                <p class="mini">SPŠE-WP</p>
+                <p class="mini">{{__('mobile.proj1')}}</p>
             </div>
+            <div class="mobile-mid-app"></div>
+
         </div>
         <div id="mobile-mid-row-bottom" class="mobile-mid-row">
             <div class="mobile-mid-app">
                 <a href="#">
-                    <img src="{{asset('images/mobile/icons/messages.png')}}" alt="home">
+                    <img src="{{asset('images/mobile/icons/messages.webp')}}" alt="home">
                 </a>
             </div>
             <div id="mobile-weather" class="mobile-mid-app">
@@ -90,7 +107,7 @@
                 </a>
             </div>
             <div class="mobile-mid-app">
-                <a href="#">
+                <a href="{{ route('language.toggle')}}">
                     <img src="{{asset('images/mobile/icons/translator.png')}}" alt="home">
                 </a>
             </div>

@@ -10,32 +10,27 @@
 
 @section('content')
     <section id="experience">
-        <h2>Experience</h2>
+        <h2>{{ __('experience.title') }}</h2>
         <div id="experience-timeline"></div>
         <div id="experience-content">
             <article class="experience-content-row">
                 <div class="experience-content-row-circle"></div>
                 <div class="experience-content-row-line"></div>
                 <div class="experience-content-row-card">
-                    <h4>2024</h4>
-                    <h3><span>Hackathon AstroPi</span></h3>
-                    <p class="mini">1st team place in hackathon</p>
-                    <p>Space themed hackathon made possible by ESA, with 2 goals - Mission Zero and Mission Space Lab,
-                        in team with Petr Machovec and Ondřej Kučera <br> <br>
-
-                        <span>Mission Zero </span>- program in Python animation on 8x8 display on AstroPi, which is
-                        reactive to the environment (change of heat or pressure)
-                        <br> <br>
-
-                        <span>Mission Space Lab</span> - program in Python, that calculates speed of ISS by taking 2
-                        pictures of earth from there and then matching anchor points
+                    <h4>{!! __('experience.card7_year') !!}</h4>
+                    <h3><span>{!! __('experience.card7_title') !!}</span></h3>
+                    <p class="mini">{!! __('experience.card7_subtitle') !!}</p>
+                    <p>{!! __('experience.card7_text') !!}
                     </p>
                     <div class="experience-content-row-card-buttons">
                         <div class="experience-content-row-card-buttons-button">
-                            Competition
+                            {!! __('experience.card7_but1') !!}
                         </div>
                         <div class="experience-content-row-card-buttons-button">
-                            Python
+                            {!! __('experience.card7_but2') !!}
+                        </div>
+                        <div class="experience-content-row-card-buttons-button">
+                            {!! __('experience.card7_but3') !!}
                         </div>
                     </div>
 
@@ -45,26 +40,39 @@
                 <div class="experience-content-row-circle"></div>
                 <div class="experience-content-row-line"></div>
                 <div class="experience-content-row-card">
-                    <h4>2024</h4>
-                    <h3><span>ByEvolution</span></h3>
-                    <p class="mini">Work experience in Erasmus CIT+</p>
-                    <p>I was selected for Erasmus trip in Spain. Here i worked 14 days in ByEvolution Creative Factory,
-                        firm that specialize in blockchain and crypto technology.
-                    </p><br>
-                    <ul>
-                        <li><p>Automatization of application in Selenium</p></li>
-                        <li><p>Front-end with HTML, Tailwind, Alpine.js</p></li>
-
-                    </ul>
+                    <h4>{!! __('experience.card6_year') !!}</h4>
+                    <h3><span>{!! __('experience.card6_title') !!}</span></h3>
+                    <p class="mini">{!! __('experience.card6_subtitle') !!}</p>
+                    <p>{!! __('experience.card6_text') !!}</p>
                     <div class="experience-content-row-card-buttons">
                         <div class="experience-content-row-card-buttons-button">
-                            Work
+                            {!! __('experience.card6_but1') !!}
                         </div>
                         <div class="experience-content-row-card-buttons-button">
-                            Block-chain
+                            {!! __('experience.card6_but2') !!}
                         </div>
                         <div class="experience-content-row-card-buttons-button">
-                            Full-stack
+                            {!! __('experience.card6_but3') !!}
+                        </div>
+                    </div>
+
+                </div>
+            </article>
+            <article class="experience-content-row">
+                <div class="experience-content-row-circle"></div>
+                <div class="experience-content-row-line"></div>
+                <div class="experience-content-row-card">
+                    <h4>{!! __('experience.card8_year') !!}</h4>
+                    <h3><span>{!! __('experience.card8_title') !!}</span></h3>
+                    <p class="mini">{!! __('experience.card8_subtitle') !!}</p>
+                    <p>{!! __('experience.card8_text') !!}</p>
+                    <div class="experience-content-row-card-buttons">
+                        <div class="experience-content-row-card-buttons-button">
+                            {!! __('experience.card8_but1') !!}
+                        </div>
+
+                        <div class="experience-content-row-card-buttons-button">
+                            {!! __('experience.card8_but3') !!}
                         </div>
                     </div>
 
@@ -74,22 +82,19 @@
                 <div class="experience-content-row-circle"></div>
                 <div class="experience-content-row-line"></div>
                 <div class="experience-content-row-card experience-content-row-specialcard">
-                    <h4>2024</h4>
-                    <h3><span>PěknéWeby</span></h3>
-                    <p class="mini">Part-time job</p>
-                    <p>Took part in complete rebranding of restaurant U Sladovny in Chrudim.
-                    </p><br>
-                    <ul>
-                        <li><p>Took part in Front-end + Back-end of website made in Symfony</p></li>
-                        <li><p><a href="https://www.usladovnychrudim.cz/" target="_blank"><span>Link here</span></a></p>
-                        </li>
-                    </ul>
+                    <h4>{!! __('experience.card5_year') !!}</h4>
+                    <h3><span>{!! __('experience.card5_title') !!}</span></h3>
+                    <p class="mini">{!! __('experience.card5_subtitle') !!}</p>
+                    <p>{!! __('experience.card5_text') !!}</p>
                     <div class="experience-content-row-card-buttons">
                         <div class="experience-content-row-card-buttons-button">
-                            Work
+                            {!! __('experience.card5_but1') !!}
                         </div>
                         <div class="experience-content-row-card-buttons-button">
-                            Symfony
+                            {!! __('experience.card5_but2') !!}
+                        </div>
+                        <div class="experience-content-row-card-buttons-button">
+                            {!! __('experience.card5_but3') !!}
                         </div>
                     </div>
 
@@ -99,15 +104,18 @@
                 <div class="experience-content-row-circle"></div>
                 <div class="experience-content-row-line"></div>
                 <div class="experience-content-row-card">
-                    <h4>2023 - now</h4>
-                    <h3><span>Cisco IT Essentials</span></h3>
-                    <p class="mini">Certificate</p>
+                    <h4>{!! __('experience.card4_year') !!}</h4>
+                    <h3><span>{!! __('experience.card4_title') !!}</span></h3>
+                    <p class="mini">{!! __('experience.card4_subtitle') !!}</p>
                     <div class="experience-content-row-card-buttons">
                         <div class="experience-content-row-card-buttons-button">
-                            Certificate
+                            {!! __('experience.card4_but1') !!}
                         </div>
                         <div class="experience-content-row-card-buttons-button">
-                            Hardware
+                            {!! __('experience.card4_but2') !!}
+                        </div>
+                        <div class="experience-content-row-card-buttons-button">
+                            {!! __('experience.card4_but3') !!}
                         </div>
                     </div>
 
@@ -117,30 +125,19 @@
                 <div class="experience-content-row-circle"></div>
                 <div class="experience-content-row-line"></div>
                 <div class="experience-content-row-card">
-                    <h4>2022 - now</h4>
-                    <h3><span>Student</span></h3>
-                    <p class="mini">SPŠE a VOŠ Pardubice</p>
-                    <p>School education with focus on full-stack web development and app development.
-                    </p><br>
-                    <ul>
-                        <li><p>HTML + CSS + JS in front-end </p></li>
-                        <li><p>PHP + Laravel in back-end</p></li>
-                        <li><p>MySQL in databases</p></li>
-                        <li><p>Java in app development</p></li>
-                        <li><p>Basics in Photoshop and Illustrator</p></li>
-                        <li><p>Basics in web design</p></li>
-                        <li><p>Developed interest in cybersecurity</p></li>
-
-                    </ul>
+                    <h4>{!! __('experience.card3_year') !!}</h4>
+                    <h3><span>{!! __('experience.card3_title') !!}</span></h3>
+                    <p class="mini">{!! __('experience.card3_subtitle') !!}</p>
+                    <p>{!! __('experience.card3_text') !!}</p>
                     <div class="experience-content-row-card-buttons">
                         <div class="experience-content-row-card-buttons-button">
-                            Education
+                            {!! __('experience.card3_but1') !!}
                         </div>
                         <div class="experience-content-row-card-buttons-button">
-                            Full-stack
+                            {!! __('experience.card3_but2') !!}
                         </div>
                         <div class="experience-content-row-card-buttons-button">
-                            Java
+                            {!! __('experience.card3_but3') !!}
                         </div>
                     </div>
 
@@ -150,15 +147,18 @@
                 <div class="experience-content-row-circle"></div>
                 <div class="experience-content-row-line"></div>
                 <div class="experience-content-row-card experience-content-row-specialcard">
-                    <h4>2022</h4>
-                    <h3><span>IT-Slot</span></h3>
-                    <p class="mini">11th place out of 8320 students</p>
+                    <h4>{!! __('experience.card2_year') !!}</h4>
+                    <h3><span>{!! __('experience.card2_title') !!}</span></h3>
+                    <p class="mini">{!! __('experience.card2_subtitle') !!}</p>
                     <div class="experience-content-row-card-buttons">
                         <div class="experience-content-row-card-buttons-button">
-                            Competition
+                            {!! __('experience.card2_but1') !!}
                         </div>
                         <div class="experience-content-row-card-buttons-button">
-                            IT
+                            {!! __('experience.card2_but2') !!}
+                        </div>
+                        <div class="experience-content-row-card-buttons-button">
+                            {!! __('experience.card2_but3') !!}
                         </div>
                     </div>
 
@@ -168,15 +168,18 @@
                 <div class="experience-content-row-circle"></div>
                 <div class="experience-content-row-line"></div>
                 <div class="experience-content-row-card">
-                    <h4>2022</h4>
-                    <h3><span>Cisco</span></h3>
-                    <p class="mini">Certificate</p>
+                    <h4>{!! __('experience.card1_year') !!}</h4>
+                    <h3><span>{!! __('experience.card1_title') !!}</span></h3>
+                    <p class="mini">{!! __('experience.card1_subtitle') !!}</p>
                     <div class="experience-content-row-card-buttons">
                         <div class="experience-content-row-card-buttons-button">
-                            Certificate
+                            {!! __('experience.card1_but1') !!}
                         </div>
                         <div class="experience-content-row-card-buttons-button">
-                            MS Office
+                            {!! __('experience.card1_but2') !!}
+                        </div>
+                        <div class="experience-content-row-card-buttons-button">
+                            {!! __('experience.card1_but3') !!}
                         </div>
                     </div>
                 </div>

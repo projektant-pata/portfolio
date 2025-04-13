@@ -12,14 +12,15 @@ Route::get('about-me', function () {
 })->name('about-me');
 
 Route::get('experience', function () {
-   return view('experience');
+    return view('experience');
 })->name('experience');
 
 Route::get('projects', function () {
     return view('projects');
 })->name('projects');
 
-
+Route::get('language/toggle', [App\Http\Controllers\LanguageController::class, 'toggle'])
+    ->name('language.toggle');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -31,4 +32,4 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

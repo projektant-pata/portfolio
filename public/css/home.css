@@ -171,6 +171,8 @@
 
         & img {
             height: 100%;
+            width: 600px;
+            object-fit: cover;
             border-radius: 30px;
         }
 
@@ -191,6 +193,7 @@
             & .projects-row-text-links {
                 & img {
                     height: 40px;
+                    width: 40px;
                     border-radius: 50%;
                 }
             }
@@ -217,7 +220,6 @@
 
             & img {
                 height: 100px;
-
                 object-fit: contain; /* Zajistí, že celý obrázek bude vidět */
             }
 
@@ -283,6 +285,10 @@
     #projects {
         & .projects-row {
             height: 270px;
+
+            & img {
+                width: 500px;
+            }
         }
     }
 
@@ -320,6 +326,8 @@
         & .projects-row {
             & img {
                 height: 220px;
+                max-width: 300px;
+                object-fit: cover;
             }
         }
     }
@@ -362,12 +370,19 @@
             flex-direction: column;
             height: auto;
 
-            & img{
-                order: 1;
-                margin-bottom: 20px;
-            }
-            & .projects-row-text{
-                order: 2;
+            & .projects-row {
+                & img {
+                    order: 1;
+                    margin-bottom: 20px;
+                    height: auto;
+                    max-height: 300px;
+                    width: 100%;
+                }
+                & .projects-row-text{
+                    order: 2;
+
+                }
+
             }
         }
     }

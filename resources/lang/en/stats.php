@@ -1,0 +1,27 @@
+<?php
+
+return [
+    'title' => 'My Stats',
+    'card1_title' => 'Junior',
+    'card1_text' => 'Professional Level',
+    'card2_title' => '5+',
+    'card2_text' => 'Projects Completed',
+    'card3_title' => '2',
+    'card3_text' => 'Years of experience',
+    'card4_title' => '2',
+    'card4_text' => 'Countries Reached',
+    'card5_title' => '18',
+    'card5_text' => 'Years old',
+    'card6_title' => 'Loading..',
+    'card6_text' => 'Highest chess elo',
+    'card7_title' => '♞',
+    'card7_text' => 'Favorite piece',
+    'card8_title' => '∞',
+    'card8_text' => 'Coffee consumed',
+    'card9_title' => '1',
+    'card9_text' => 'Hackathons won',
+    'card10_title' => '9',
+    'card10_text' => 'GitHub repositories',
+    'card11_title' => '404',
+    'card11_text' => 'Hours slept',
+];

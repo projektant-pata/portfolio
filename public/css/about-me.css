@@ -30,6 +30,11 @@
                     line-height: 1.5;
 
                 }
+
+                & ul li{
+                    list-style: circle !important;
+                    margin-left: 20px;
+                }
             }
         }
 
