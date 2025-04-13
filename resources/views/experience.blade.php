@@ -11,7 +11,9 @@
 @section('content')
     <section id="experience">
         <h2>{{ __('experience.title') }}</h2>
-        <div id="experience-timeline"></div>
+        <div id="experience-timeline">        <div id="experience-timelineender"></div>
+        </div>
+        <div id="experience-triangle"></div>
         <div id="experience-content">
             <article class="experience-content-row">
                 <div class="experience-content-row-circle"></div>

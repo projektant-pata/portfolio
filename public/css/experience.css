@@ -12,6 +12,24 @@
             width: 1px;
             background-color: var(--primary-color-light);
         }
+        #experience-triangle{
+            position: absolute;
+            left: -4px;
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-bottom: 10px solid var(--primary-color-light);
+        }
+        #experience-timelineender{
+            position: absolute;
+            bottom: 0;
+            margin-left: -9px;
+            width: 19px;
+            height: 5px;
+
+            background-color: var(--primary-color-light);
+        }
 
         #experience-content {
             & .experience-content-row {
