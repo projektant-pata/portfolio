@@ -13,8 +13,6 @@ function timeLineTrimmer() {
 function coolerTimeLine(){
     let timeLine = document.getElementById('experience-timeline');
     let triangle = document.getElementById('experience-triangle')
-    let ender document.getElementById('experience-timelineender')
-
     let top = timeLine.style.top;
     triangle.style.top = top;
 
