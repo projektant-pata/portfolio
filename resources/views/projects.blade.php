@@ -1,6 +1,7 @@
 @extends('base')
 
 @section('title', 'Projects')
+@section('description', "Browse a collection of Richard Hývl’s web and software development projects.")
 
 @section('styles')
     <link rel="stylesheet" href="{{ asset('css/projects.css') }}">

@@ -1,6 +1,7 @@
 @extends('base')
 
 @section('title', 'projektant-pata')
+@section('description', "Richard Hývl's (also known as projektant-pata) portfolio.  Web developer, student of SPŠE Pardubice. Explore web projects, coding experiments and contact info.")
 
 @section('styles')
     <link rel="stylesheet" href="{{ asset('css/home.css') }}">
