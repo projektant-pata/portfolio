@@ -34,9 +34,11 @@
                 }
 
                 & .projects-row-text-links {
+                    margin-bottom: 20px;
                     & img {
-                        height: 40px;
-                        width: 40px;
+                        height: 30px;
+                        width: 30px;
+                        margin-right: 10px;
                         border-radius: 50%;
                         border: none;
                     }

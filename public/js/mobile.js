@@ -28,6 +28,9 @@ function updateTime() {
 
     if(locale === 'en') {
         hours %= 12;
+        if (hours === 0) {
+            hours = 12;
+        }
     }
     const timeString = `${hours}:${minutes}`;
 
@@ -46,12 +49,12 @@ addDarkModeListener();
 const theme = getCookie('theme');
 if (theme === 'light') {
     document.documentElement.classList.add('light-theme');
-    mobile.style.backgroundImage = "url('../images/mobile/wallpapers/wallpaper_light.png')";
-    darkModeImg.src = '../images/mobile/icons/weather_light.png';
+    mobile.style.backgroundImage = "url('../images/mobile/wallpapers/wallpaper_light.webp')";
+    darkModeImg.src = '../images/mobile/icons/weather_light.webp';
 
 } else {
     document.documentElement.classList.remove('light-theme');
-    mobile.style.backgroundImage = "url('../images/mobile/wallpapers/wallpaper_dark.png')";
+    mobile.style.backgroundImage = "url('../images/mobile/wallpapers/wallpaper_dark.webp')";
     darkModeImg.src = '../images/mobile/icons/weather_dark.png';
 
 }
@@ -86,12 +89,12 @@ function toggleDarkMode() {
 
     // Nastavení tapety podle aktuálního tématu
     if (!document.documentElement.classList.contains('light-theme')) {
-        mobile.style.backgroundImage = "url('../images/mobile/wallpapers/wallpaper_dark.png')";
+        mobile.style.backgroundImage = "url('../images/mobile/wallpapers/wallpaper_dark.webp')";
         darkModeImg.src = '../images/mobile/icons/weather_dark.png';
         setCookie('theme', 'dark', 7);
     } else {
-        mobile.style.backgroundImage = "url('../images/mobile/wallpapers/wallpaper_light.png')";
-        darkModeImg.src = '../images/mobile/icons/weather_light.png';
+        mobile.style.backgroundImage = "url('../images/mobile/wallpapers/wallpaper_light.webp')";
+        darkModeImg.src = '../images/mobile/icons/weather_light.webp';
 
         setCookie('theme', 'light', 7);
     }

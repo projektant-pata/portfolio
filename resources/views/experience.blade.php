@@ -1,7 +1,7 @@
 @extends('base')
 
-@section('title', 'Experience')
-@section('description', "Discover Richard Hývl’s development experience – from real-world internships to personal and school projects.")
+@section('title', __('header.experience_title'))
+@section('description', __('header.experience_desc'))
 @section('styles')
     <link rel="stylesheet" href="{{ asset('css/experience.css') }}">
 @endsection

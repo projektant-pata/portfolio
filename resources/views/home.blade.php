@@ -1,7 +1,7 @@
 @extends('base')
 
-@section('title', 'projektant-pata')
-@section('description', "Richard Hývl's (also known as projektant-pata) portfolio.  Web developer, student of SPŠE Pardubice. Explore web projects, coding experiments and contact info.")
+@section('title', __('header.home_title'))
+@section('description', __('header.home_desc'))
 
 @section('styles')
     <link rel="stylesheet" href="{{ asset('css/home.css') }}">
@@ -136,10 +136,10 @@
                 <p>{{ __('projects.spsehub_text') }}</p>
                 <div class="projects-row-text-links">
                     <a target="_blank" href="{{ __('projects.spsehub_web') }}">
-                        <img src="{{asset("images/mobile/icons/github.webp")}}" alt="">
+                        <img src="{{asset("images/projects/icons/web.webp")}}" alt="">
                     </a>
                     <a target="_blank" href="{{ __('projects.spsehub_github') }}">
-                        <img src="{{asset("images/mobile/icons/github.webp")}}" alt="">
+                        <img src="{{asset("images/projects/icons/github.webp")}}" alt="">
                     </a>
                 </div>
             </div>
@@ -150,7 +150,7 @@
                 <p>{{ __('projects.usladovny_text') }}</p>
                 <div class="projects-row-text-links">
                     <a target="_blank" href="{{ __('projects.usladovny_web')}}">
-                        <img src="{{asset("images/mobile/icons/github.webp")}}" alt="">
+                        <img src="{{asset("images/projects/icons/web.webp")}}" alt="">
                     </a>
                 </div>
             </div>

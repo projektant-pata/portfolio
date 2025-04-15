@@ -30,13 +30,13 @@
             </div>
             <div class="mobile-mid-app">
                 <a href="{{route('experience')}}">
-                    <img src="{{asset('images/mobile/icons/todo.png')}}" alt="home">
+                    <img src="{{asset('images/mobile/icons/experience.webp')}}" alt="home">
                 </a>
                 <p class="mini">{{__('mobile.nav3')}}</p>
             </div>
             <div class="mobile-mid-app">
                 <a href="{{route('projects')}}">
-                    <img src="{{asset('images/mobile/icons/notes.png')}}" alt="home">
+                    <img src="{{asset('images/mobile/icons/notes.webp')}}" alt="home">
                 </a>
                 <p class="mini">{{__('mobile.nav4')}}</p>
             </div>
@@ -88,7 +88,7 @@
             </div>
             <div class="mobile-mid-app">
                 <a href="https://hyvlri22.llmp.spse-net.cz/" target="_blank">
-                    <img src="{{asset('images/mobile/icons/web.png')}}" alt="SPSE-WP">
+                    <img src="{{asset('images/mobile/icons/safari.webp')}}" alt="SPSE-WP">
                 </a>
                 <p class="mini">{{__('mobile.proj1')}}</p>
             </div>
@@ -113,7 +113,7 @@
             </div>
             <div class="mobile-mid-app">
                 <a href="#">
-                    <img src="{{asset('images/mobile/icons/music.png')}}" alt="home">
+                    <img src="{{asset('images/mobile/icons/music.webp')}}" alt="home">
                 </a>
             </div>
         </div>

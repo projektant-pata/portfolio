@@ -1,3 +1,61 @@
+# Portfolio
+Mine personal portfolio website.
+
+## 🗂️ Content
+- [About project](#-about-project)
+- [What i learned](#-what-i-learned)
+- [Technologies](#-technologies)
+- [How to access the project](#-how-to-access-the-project)
+- [My comment](#-my-comment)
+- [Laravel](#about-laravel)
+
+## 📖 About project
+This project is my personal portfolio website. It is a simple website that contains information about me, my skills, and my projects. The website is built using Laravel framework.
+The idea behind is that every web developer should have a portfolio website. It is a great way to showcase your skills and projects to potential employers or clients.
+
+## ✨ What i learned
+- make website with multiple languages
+- work with laravel cloud
+
+## 🛠️ Technologies
+- Laravel
+- Blade
+- CSS
+- JS
+
+## 📂 How to access the project
+### 🌐 Through web
+1. Go to [https://portfolio-main-88poku.laravel.cloud/](https://portfolio-main-88poku.laravel.cloud/)
+2. Enjoy 🍿
+### 🐙 Through GitHub
+1. Clone the repository
+```bash 
+git clone https://github.com/projektant-pata/portfolio.git
+```
+2. Go to the project directory
+```bash
+cd portfolio
+```
+3. Install the dependencies
+```bash
+composer install
+```
+4. Create a `.env` file
+```bash
+cp .env.example .env
+```
+5. Generate the application key
+```bash
+php artisan key:generate
+```
+6. Start the server
+```bash
+php artisan serve
+```
+7. Go to [http://localhost:8000](http://localhost:8000)
+8. Enjoy 🍿
+## 📝 My comment
+I am very happy with the result. I think it is a great way to showcase my skills and projects. I am also happy that I was able to use Laravel framework, which is a great framework for web development. I learned a lot while working on this project and I am looking forward to working on more projects in the future.
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
 <p align="center">

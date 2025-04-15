@@ -1,7 +1,7 @@
 @extends('base')
 
-@section('title', 'Projects')
-@section('description', "Browse a collection of Richard Hývl’s web and software development projects.")
+@section('title', __('header.projects_title'))
+@section('description', __('header.projects_desc'))
 
 @section('styles')
     <link rel="stylesheet" href="{{ asset('css/projects.css') }}">
@@ -22,10 +22,10 @@
                     <p>{{ __('projects.portfolio_text') }}</p>
                     <div class="projects-row-text-links">
                         <a target="_blank" href="{{ __('projects.portfolio_web') }}">
-                            <img src="{{asset("images/mobile/icons/github.webp")}}" alt="">
+                            <img src="{{asset("images/projects/icons/web.webp")}}" alt="">
                         </a>
                         <a target="_blank" href="{{ __('projects.portfolio_github') }}">
-                            <img src="{{asset("images/mobile/icons/github.webp")}}" alt="">
+                            <img src="{{asset("images/projects/icons/github.webp")}}" alt="">
                         </a>
                     </div>
                 </div>
@@ -40,8 +40,8 @@
                     <h3>{{__('projects.usladovny_title')}}</h3>
                     <p>{{__('projects.usladovny_text')}}</p>
                     <div class="projects-row-text-links">
-                        <a target="_blank" href="https://github.com/projektant-pata/SPSE-WP">
-                            <img src="{{asset("images/mobile/icons/github.webp")}}" alt="">
+                        <a target="_blank" href="{{ __('projects.usladovny_web') }}">
+                            <img src="{{asset("images/projects/icons/github.webp")}}" alt="">
                         </a>
                     </div>
                 </div>
@@ -57,10 +57,10 @@
                     <p>{{ __('projects.spsehub_text') }}</p>
                     <div class="projects-row-text-links">
                         <a target="_blank" href="{{ __('projects.spsehub_web') }}">
-                            <img src="{{asset("images/mobile/icons/github.webp")}}" alt="">
+                            <img src="{{asset("images/projects/icons/web.webp")}}" alt="">
                         </a>
                         <a target="_blank" href="{{ __('projects.spsehub_github') }}">
-                            <img src="{{asset("images/mobile/icons/github.webp")}}" alt="">
+                            <img src="{{asset("images/projects/icons/github.webp")}}" alt="">
                         </a>
                     </div>
                 </div>

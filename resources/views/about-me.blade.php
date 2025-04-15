@@ -1,7 +1,7 @@
 @extends('base')
 
-@section('title', 'About Me')
-@section('description', "Portfolio of Richard Hývl (aka projektant-pata), a passionate software developer blending frontend and backend projects with a personal touch.")
+@section('title', __('header.about_title'))
+@section('description', __('header.about_desc'))
 
 @section('styles')
     <link rel="stylesheet" href="{{ asset('css/about-me.css') }}">
