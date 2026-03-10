@@ -54,6 +54,8 @@ php artisan serve
 ```
 7. Go to [http://localhost:8000](http://localhost:8000)
 8. Enjoy 🍿
+## View figma
+Or you can just visit figma page https://www.figma.com/design/Q3UTrtC72IRwgAFijBAXhg/Portfolio?node-id=0-1&p=f&t=zSDgz66GrSDnDtGZ-0
 ## 📝 My comment
 I am very happy with the result. I think it is a great way to showcase my skills and projects. I am also happy that I was able to use Laravel framework, which is a great framework for web development. I learned a lot while working on this project and I am looking forward to working on more projects in the future.
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
