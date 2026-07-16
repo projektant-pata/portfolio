@@ -41,3 +41,63 @@
     color: var(--c-fg) !important;
     transform: scale(1.15);
 }
+
+
+/* ── Page scaffolding (shared across manage pages) ── */
+
+.manage-page {
+    font-family: var(--font-sans);
+    color: var(--c-fg);
+}
+
+.manage-title {
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--c-fg);
+}
+
+.manage-subtitle {
+    margin-top: 0.2rem;
+    font-size: 0.875rem;
+    color: var(--c-muted);
+}
+
+.manage-empty {
+    padding: 2rem 0;
+    text-align: center;
+    color: var(--c-muted);
+}
+
+.manage-note {
+    color: var(--c-muted);
+}
+
+.manage-section-label {
+    color: var(--c-fg);
+}
+
+.manage-drag-handle {
+    width: 1rem;
+    cursor: grab;
+    color: var(--c-muted);
+}
+
+.manage-link-box {
+    border: 1px solid var(--c-primary-fade);
+    background-color: color-mix(in srgb, var(--c-primary-fade) 15%, transparent);
+}
+
+
+/* ── Locale tabs (EN / CS switch) ── */
+
+.locale-tabs {
+    background: var(--c-surface-sunken);
+}
+
+.locale-tab {
+    background: transparent;
+}
+
+.locale-tab--active {
+    background: var(--c-surface);
+}

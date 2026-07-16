@@ -4,7 +4,7 @@
 
 
 /* ── Hero ── */
-#hero-page {
+.hero-page {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -12,7 +12,7 @@
     width: 100%;
 }
 
-#hero-page-text .hero-suptitle {
+.hero-page-text .hero-suptitle {
     font-size: var(--fs-base);
     font-weight: var(--fw-regular);
     color: var(--c-muted);
@@ -22,7 +22,7 @@
 }
 
 /* Hero subtitle below h1 — small, muted, with gold accent on span */
-#underh1 {
+.underh1 {
     font-size: var(--fs-h4);
     font-weight: var(--fw-light);
     color: var(--c-muted);
@@ -31,27 +31,27 @@
     margin-top: 1.2rem;
 }
 
-#underh1 span {
+.underh1 span {
     color: var(--c-primary);
     font-weight: var(--fw-semibold);
 }
 
-#hero-page-image img { width: 400px; }
+.hero-page-image img { width: 400px; }
 
 /* ── Stats ── */
-#stats-cards {
+.stats-cards {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 1.875rem;
 }
 
 /* ── Work & Education ── */
-#work {
+.work {
     width: 100%;
     overflow: hidden;
 }
 
-#work-top {
+.work-top {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -79,7 +79,7 @@
 .work-top-btn:hover h4,
 .work-top-btn.active h4 { color: var(--c-primary); }
 
-#work-bot {
+.work-bot {
     position: relative;
     width: 100%;
     margin-top: 20px;
@@ -88,7 +88,7 @@
     background-color: var(--c-surface);
 }
 
-#work-bot-line {
+.work-bot-line {
     position: absolute;
     width: 1px;
     height: 100%;
@@ -240,15 +240,15 @@ html:not(.dark) .tool-github-light { display: block; }
 }
 
 @media (max-width: 992px) {
-    #hero-page {
+    .hero-page {
         flex-direction: column;
         height: auto;
         margin-top: 10vh;
         margin-bottom: var(--sp-section);
     }
-    #hero-page img { margin-top: 50px; }
+    .hero-page img { margin-top: 50px; }
 
-    #stats-cards { grid-template-columns: repeat(2, 1fr); }
+    .stats-cards { grid-template-columns: repeat(2, 1fr); }
 
     .projects-row > img { height: 220px; max-width: 300px; }
 
@@ -256,9 +256,9 @@ html:not(.dark) .tool-github-light { display: block; }
 }
 
 @media (max-width: 576px) {
-    #stats-cards { grid-template-columns: 1fr; }
+    .stats-cards { grid-template-columns: 1fr; }
 
-    #work-bot-line { left: 55px; }
+    .work-bot-line { left: 55px; }
     .work-bot-content { padding: 3.125rem 1.25rem !important; }
 
     .projects-row       { flex-direction: column; height: auto; }

@@ -1,9 +1,9 @@
 <x-layouts::app :title="__('Dashboard')">
-    <div style="font-family: var(--font-sans); color: var(--c-fg);" class="p-6">
-        <h1 style="font-size: 2rem; font-weight: 600; margin-bottom: 0.25rem; color: var(--c-fg);">
+    <div class="manage-page p-6">
+        <h1 class="manage-title mb-1">
             Dashboard
         </h1>
-        <p style="color: var(--c-muted); font-size: 0.875rem;">
+        <p class="manage-subtitle">
             Welcome back, {{ auth()->user()->name }}.
         </p>
     </div>

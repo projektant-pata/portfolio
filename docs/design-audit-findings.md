@@ -28,7 +28,11 @@ Původní nálezy:
 6. **`--c-bg` == `--c-surface`** (#1C1B17) v dark módu — karty se od pozadí liší jen borderem; light theme má hierarchii (parchment/white). Pokud záměr, zdokumentovat; jinak surface v dark mírně zesvětlit.
    Opraveno: dark `--color-portfolio-surface` = #232219.
 
-## B. Architektura CSS
+## B. Architektura CSS — ✅ OPRAVENO 2026-07-17
+
+Stav: page CSS se načítá jednotně přes `:styles` prop (welcome/about-me/projects/experience), `@import`y z konce `app.css` jsou pryč → `projects.css` už neuniká na homepage, takže runtime kolize `.projects-row` (B7) neexistuje (zůstává jen duplicitní název třídy ve dvou page-scoped souborech — kosmetika, řeší se s D24). `dashboard.css` zůstává napevno v admin `head.blade.php` (admin nepoužívá `portfolio-layout`, `:styles` tam neplatí — OK). B8 hardcoded `rgba(96,84,67,0.15)` nahrazeno `color-mix(in srgb, var(--c-primary-fade) 15%, transparent)` v nové třídě `.manage-link-box` (`dashboard.css`).
+
+Původní nálezy:
 
 7. **Tři různé způsoby načítání page CSS**:
    a) `index.css`, `experience.css` — přes `:styles` prop layoutu → `@vite` (+ zápis ve `vite.config.js`);
@@ -39,12 +43,25 @@ Původní nálezy:
 
 8. **Duplicitní hardcoded rgba** — `rgba(96,84,67,0.15)` v 5 manage stránkách = ručně rozepsaná `--c-primary-fade` (#605443). Při změně tokenu se nezmění. → `color-mix(in srgb, var(--c-primary-fade) 15%, transparent)`.
 
-## C. Inline styly v manage stránkách
+## C. Inline styly v manage stránkách — ✅ OPRAVENO 2026-07-17
+
+Stav: všechny opakované statické inline styly v 5 `manage/⚡*.blade.php` + `dashboard.blade.php` převedeny na sdílené třídy v `dashboard.css` (`.manage-page`, `.manage-title`, `.manage-subtitle`, `.manage-empty`, `.manage-note`, `.manage-section-label`, `.manage-drag-handle`, `.manage-link-box`, `.locale-tabs`, `.locale-tab`, `.locale-tab--active`). Locale-tab aktivní stav se přepíná přes `:class="… 'locale-tab--active' …"` místo Alpine `:style`. Jediný zbylý inline `style=""` je dynamický badge swatch (`background: {{ $badge->color }}`) — správně zůstává inline. Komponentní extrakce (E/F) je stále TODO; třídy jsou mezikrok, který duplicitu markupu neruší, jen ji odstyluje.
+
+Původní nálezy:
 
 9. **Masivní `style=""` místo utilit** — všech 5 `pages/manage/⚡*.blade.php` + `dashboard.blade.php`: root div (`style="font-family...; color..."`), h1 (`font-size:2rem;font-weight:600`), podtitulek, empty-state `<p>`, drag-handle cell (`cursor:grab...`), link-box. Tentýž inline blok zkopírovaný 5–6×. Tailwind je přitom k dispozici.
    Návrh: převést na utility (`text-3xl font-semibold`, `text-[var(--c-muted)]`…) nebo pár tříd v `dashboard.css` vedle existujících `.btn-gold*`. Většina zmizí extrakcí komponent (sekce F).
 
-## D. Konzistence pojmenování
+## D. Konzistence pojmenování — 🟡 ČÁSTEČNĚ 2026-07-17
+
+Stav D10 (id→třída pro styling): hotovo pro **home** (`index.css` + `welcome.blade.php`) a **about-me** (`about-me.css` + `about-me.blade.php`) — `#hero-page`, `#underh1`, `#stats-cards`, `#work`, `#work-top`, `#work-bot`, `#work-bot-line`, `#about-me-content`, `#about-me-stats-cards` převedeny na třídy (1:1 přejmenování). Ověřeno staticky: žádné z těchto id není JS hook ani anchor target a nekoliduje s třídou → bez dopadu na specificitu. JS-hook id (`work-top-btn-*`, `work-bot-content-*`) ponechána.
+
+**ODLOŽENO (nejde ověřit bez běžící appky — Docker v tomto prostředí nefunguje, host PHP nemá pdo_sqlite):**
+- D10 pro `experience.css`/`experience.blade.php` — `#exp-grid`, `#exp-col-left/right`, `#exp-search*` jsou **JS hooky** (`getElementById` v inline `<script>`) + `.open` compound selektory; přepis vyžaduje i úpravu JS → nutná browser verifikace.
+- D10 stavové přepínače `style="display:none"` → `.hidden` (`welcome.blade.php:71`, `experience.blade.php:42`) — `app.js` nastavuje `.style.display` napřímo, konverze vyžaduje i změnu toggle logiky → browser verifikace.
+- D11 (přejmenování sloupců `header`/`title`, `img_url`/`image_path`/`thumbnail_url`) a D12 (sjednocení `alt` na překládaný tvar) — **DB migrace** dotýkající se modelů, seederů, testů, veřejných views → nutný běh test suite.
+
+Původní nálezy:
 
 10. **CSS selektory bez systému** — mix idček pro styling (`#hero-page`, `#work-bot-content-life`, `#exp-grid`) a tříd; prefixy per-page nejednotné (`.exp-*`, `.projects-row`, `.work-*`, `.stats-cards-card`, `.about-me-card`). `#work-bot-content-life/work` + `style="display:none"` inline přepínané z JS.
     Návrh: třídy místo idček pro styling, jednotný block-prefix per page (`.home-*`, `.exp-*`, `.proj-*`), stav přes `.hidden`/`.active` třídy místo inline `display`.

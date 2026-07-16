@@ -1,13 +1,13 @@
 <x-portfolio-layout :title="__('layout/header.home_title')" :description="__('layout/header.home_desc')" :styles="['resources/css/pages/index.css']">
 
     {{-- Hero --}}
-    <section id="hero-page" class="portfolio-section">
-        <article id="hero-page-text">
+    <section class="hero-page portfolio-section">
+        <article class="hero-page-text">
             <p class="hero-suptitle">{{ __('home/hero.hero_suptitle') }}</p>
             <h1>{!! __('home/hero.hero_title') !!}</h1>
-            <h4 id="underh1">{!! __('home/hero.hero_subtitle') !!}</h4>
+            <h4 class="underh1">{!! __('home/hero.hero_subtitle') !!}</h4>
         </article>
-        <article id="hero-page-image">
+        <article class="hero-page-image">
             <img src="{{ asset('images/id-photo-portrait-businessman-suit-260nw-1505360618 1.png') }}" alt="hero">
         </article>
     </section>
@@ -15,31 +15,19 @@
     {{-- Stats --}}
     <section id="stats" class="portfolio-section">
         <h2>{{ __('home/stats.title') }}</h2>
-        <article id="stats-cards">
-            <div class="stats-cards-card">
-                <h3><span>{{ __('home/stats.card1_title') }}</span></h3>
-                <p>{{ __('home/stats.card1_text') }}</p>
-            </div>
-            <div class="stats-cards-card">
-                <h3><span>{{ __('home/stats.card2_title') }}</span></h3>
-                <p>{{ __('home/stats.card2_text') }}</p>
-            </div>
-            <div class="stats-cards-card">
-                <h3><span>{{ now()->year - 2022 }}+</span></h3>
-                <p>{{ __('home/stats.card3_text') }}</p>
-            </div>
-            <div class="stats-cards-card">
-                <h3><span>{{ __('home/stats.card4_title') }}</span></h3>
-                <p>{{ __('home/stats.card4_text') }}</p>
-            </div>
+        <article class="stats-cards">
+            <x-portfolio.stats-card :value="__('home/stats.card1_title')" :text="__('home/stats.card1_text')" />
+            <x-portfolio.stats-card :value="__('home/stats.card2_title')" :text="__('home/stats.card2_text')" />
+            <x-portfolio.stats-card :value="(now()->year - 2022).'+'" :text="__('home/stats.card3_text')" />
+            <x-portfolio.stats-card :value="__('home/stats.card4_title')" :text="__('home/stats.card4_text')" />
         </article>
     </section>
 
     @php $locale = app()->getLocale(); @endphp
     {{-- Work & Life --}}
-    <section id="work" class="portfolio-section">
+    <section class="work portfolio-section">
         <h2>{{ __('home/experience.title_home') }}</h2>
-        <article id="work-top">
+        <article class="work-top">
             <div id="work-top-btn-work" class="work-top-btn">
                 <h4>{{ __('home/experience.title_work') }}</h4>
             </div>
@@ -47,42 +35,18 @@
                 <h4>{{ __('home/experience.title_life') }}</h4>
             </div>
         </article>
-        <article id="work-bot">
-            <div id="work-bot-line"></div>
+        <article class="work-bot">
+            <div class="work-bot-line"></div>
 
             <div id="work-bot-content-life" class="work-bot-content">
                 @foreach ($lifeExperiences as $experience)
-                    @php
-                        $link = is_array($experience->links) ? ($experience->links[0]['url'] ?? null) : null;
-                    @endphp
-                    <a @if($link) href="{{ $link }}" target="_blank" rel="noopener noreferrer" @endif class="work-bot-content-row">
-                        @if ($experience->image_path)
-                            <img src="{{ asset($experience->image_path) }}" alt="{{ $experience->getTranslation('title', $locale) }}">
-                        @endif
-                        <div class="work-bot-content-row-text">
-                            <p class="mini">{{ $experience->getTranslation('year', $locale) }}</p>
-                            <h4>{{ $experience->getTranslation('title', $locale) }}</h4>
-                            <p>{{ $experience->getTranslation('subtitle', $locale) }}</p>
-                        </div>
-                    </a>
+                    <x-portfolio.experience-row :experience="$experience" :locale="$locale" />
                 @endforeach
             </div>
 
             <div id="work-bot-content-work" class="work-bot-content" style="display: none">
                 @foreach ($workExperiences as $experience)
-                    @php
-                        $link = is_array($experience->links) ? ($experience->links[0]['url'] ?? null) : null;
-                    @endphp
-                    <a @if($link) href="{{ $link }}" target="_blank" rel="noopener noreferrer" @endif class="work-bot-content-row">
-                        @if ($experience->image_path)
-                            <img src="{{ asset($experience->image_path) }}" alt="{{ $experience->getTranslation('title', $locale) }}">
-                        @endif
-                        <div class="work-bot-content-row-text">
-                            <p class="mini">{{ $experience->getTranslation('year', $locale) }}</p>
-                            <h4>{{ $experience->getTranslation('title', $locale) }}</h4>
-                            <p>{{ $experience->getTranslation('subtitle', $locale) }}</p>
-                        </div>
-                    </a>
+                    <x-portfolio.experience-row :experience="$experience" :locale="$locale" />
                 @endforeach
             </div>
         </article>

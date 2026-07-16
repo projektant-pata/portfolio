@@ -35,27 +35,27 @@
         <div class="portfolio-footer-social">
             <h4><span>{{ __('layout/footer.soc_title') }}</span></h4>
             <div class="portfolio-footer-social-links">
-                <a href="mailto:richard.hyvl@gmail.com" class="portfolio-footer-social-link" target="_blank">
+                <a href="{{ config('portfolio.social.email') }}" class="portfolio-footer-social-link" target="_blank" rel="noopener noreferrer">
                     <img src="{{ asset('images/mobile/icons/email.png') }}" alt="">
                     <p>{{ __('layout/footer.soc1') }}</p>
                 </a>
-                <a href="https://www.instagram.com/richardhyvl/" class="portfolio-footer-social-link" target="_blank">
+                <a href="{{ config('portfolio.social.instagram') }}" class="portfolio-footer-social-link" target="_blank" rel="noopener noreferrer">
                     <img src="{{ asset('images/mobile/icons/instagram.webp') }}" alt="">
                     <p>{{ __('layout/footer.soc2') }}</p>
                 </a>
-                <a href="https://x.com/projektantPata" class="portfolio-footer-social-link" target="_blank">
+                <a href="{{ config('portfolio.social.x') }}" class="portfolio-footer-social-link" target="_blank" rel="noopener noreferrer">
                     <img src="{{ asset('images/mobile/icons/x.webp') }}" alt="">
                     <p>{{ __('layout/footer.soc3') }}</p>
                 </a>
-                <a href="https://www.linkedin.com/in/richardhyvl/" class="portfolio-footer-social-link" target="_blank">
+                <a href="{{ config('portfolio.social.linkedin') }}" class="portfolio-footer-social-link" target="_blank" rel="noopener noreferrer">
                     <img src="{{ asset('images/mobile/icons/linkedin.webp') }}" alt="">
                     <p>{{ __('layout/footer.soc4') }}</p>
                 </a>
-                <a href="https://github.com/projektant-pata" class="portfolio-footer-social-link" target="_blank">
+                <a href="{{ config('portfolio.social.github') }}" class="portfolio-footer-social-link" target="_blank" rel="noopener noreferrer">
                     <img src="{{ asset('images/mobile/icons/github.webp') }}" alt="">
                     <p>{{ __('layout/footer.soc5') }}</p>
                 </a>
-                <a href="https://www.chess.com/member/obviouscommander" class="portfolio-footer-social-link" target="_blank">
+                <a href="{{ config('portfolio.social.chess') }}" class="portfolio-footer-social-link" target="_blank" rel="noopener noreferrer">
                     <img src="{{ asset('images/mobile/icons/chess.png') }}" alt="">
                     <p>{{ __('layout/footer.soc6') }}</p>
                 </a>

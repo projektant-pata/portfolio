@@ -230,22 +230,15 @@ new #[Title('Manage Experiences')] class extends Component {
     }
 }; ?>
 
-<div style="font-family: var(--font-sans); color: var(--c-fg);" class="p-6 space-y-6">
+<div class="manage-page p-6 space-y-6">
 
-    {{-- Header --}}
-    <div class="flex items-center justify-between">
-        <div>
-            <h1 style="font-size: 2rem; font-weight: 600; color: var(--c-fg);">Experiences</h1>
-            <p style="color: var(--c-muted); font-size: 0.875rem; margin-top: 0.2rem;">Work and life entries</p>
-        </div>
-        <flux:button wire:click="openCreate" icon="plus" class="btn-gold">
-            Add experience
-        </flux:button>
-    </div>
+    <x-manage.page-header title="Experiences" subtitle="Work and life entries">
+        <flux:button wire:click="openCreate" icon="plus" class="btn-gold">Add experience</flux:button>
+    </x-manage.page-header>
 
     {{-- Filters --}}
     <div class="flex gap-3 flex-wrap">
-        <flux:input wire:model.live.debounce="search" placeholder="Search by title…" icon="magnifying-glass" class="max-w-xs" />
+        <x-manage.search-input placeholder="Search by title…" />
 
         <flux:select wire:model.live="typeFilter" class="max-w-[160px]">
             <flux:select.option value="">All types</flux:select.option>
@@ -270,8 +263,8 @@ new #[Title('Manage Experiences')] class extends Component {
         <flux:table.rows wire:sort="reorder">
             @forelse ($this->experiences as $experience)
                 <flux:table.row wire:key="{{ $experience->id }}" wire:sort:item="{{ $experience->id }}">
-                    <flux:table.cell wire:sort:handle style="cursor: grab; color: var(--c-muted); width: 1rem;">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="5" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="19" r="1"/></svg>
+                    <flux:table.cell wire:sort:handle class="manage-drag-handle">
+                        <x-manage.drag-handle />
                     </flux:table.cell>
                     <flux:table.cell>{{ $experience->sort_order }}</flux:table.cell>
                     <flux:table.cell variant="strong">{{ $experience->title['en'] ?? '—' }}</flux:table.cell>
@@ -294,17 +287,13 @@ new #[Title('Manage Experiences')] class extends Component {
 
                     <flux:table.cell wire:sort:ignore>
                         <div class="flex gap-2 justify-end">
-                            <flux:button size="sm" variant="subtle" icon="pencil" wire:click="openEdit({{ $experience->id }})" />
-                            <flux:button size="sm" variant="subtle" icon="trash" wire:click="confirmDelete({{ $experience->id }})" />
+                            <flux:button size="sm" variant="subtle" icon="pencil" aria-label="Edit experience" wire:click="openEdit({{ $experience->id }})" />
+                            <flux:button size="sm" variant="subtle" icon="trash" aria-label="Delete experience" wire:click="confirmDelete({{ $experience->id }})" />
                         </div>
                     </flux:table.cell>
                 </flux:table.row>
             @empty
-                <flux:table.row>
-                    <flux:table.cell colspan="8">
-                        <p style="color: var(--c-muted); text-align: center; padding: 2rem 0;">No experiences found.</p>
-                    </flux:table.cell>
-                </flux:table.row>
+                <x-manage.empty-row colspan="8" message="No experiences found." />
             @endforelse
         </flux:table.rows>
     </flux:table>
@@ -318,28 +307,8 @@ new #[Title('Manage Experiences')] class extends Component {
 
         <form wire:submit="save" class="space-y-4">
             {{-- Language tabs --}}
-            <div x-data="{ locale: 'en' }">
-                <div class="flex gap-1 mb-4 p-1 rounded-lg" style="background: var(--c-surface-sunken);">
-                    <button
-                        type="button"
-                        x-on:click="locale = 'en'"
-                        :class="locale === 'en' ? 'shadow-sm font-semibold' : 'opacity-60 hover:opacity-80'"
-                        class="flex-1 px-3 py-1.5 rounded-md text-sm transition-all"
-                        style="background: transparent;"
-                        :style="locale === 'en' ? 'background: var(--c-surface)' : ''"
-                    >🇬🇧 English</button>
-                    <button
-                        type="button"
-                        x-on:click="locale = 'cs'"
-                        :class="locale === 'cs' ? 'shadow-sm font-semibold' : 'opacity-60 hover:opacity-80'"
-                        class="flex-1 px-3 py-1.5 rounded-md text-sm transition-all"
-                        style="background: transparent;"
-                        :style="locale === 'cs' ? 'background: var(--c-surface)' : ''"
-                    >🇨🇿 Czech</button>
-                </div>
-
-                {{-- English fields --}}
-                <div x-show="locale === 'en'" class="space-y-4">
+            <x-manage.locale-tabs>
+                <x-slot:en>
                     <flux:field>
                         <flux:label>Title <flux:badge size="sm" color="yellow" inset="top bottom">Required</flux:badge></flux:label>
                         <flux:input wire:model="title.en" placeholder="e.g. Software Developer" />
@@ -363,10 +332,8 @@ new #[Title('Manage Experiences')] class extends Component {
                         <flux:input wire:model="year.en" placeholder="e.g. 2022 – present" />
                         <flux:error name="year.en" />
                     </flux:field>
-                </div>
-
-                {{-- Czech fields --}}
-                <div x-show="locale === 'cs'" class="space-y-4">
+                </x-slot:en>
+                <x-slot:cs>
                     <flux:field>
                         <flux:label>Title</flux:label>
                         <flux:input wire:model="title.cs" placeholder="např. Softwarový vývojář" />
@@ -390,11 +357,11 @@ new #[Title('Manage Experiences')] class extends Component {
                         <flux:input wire:model="year.cs" placeholder="např. 2022 – nyní" />
                         <flux:error name="year.cs" />
                     </flux:field>
-                </div>
-            </div>
+                </x-slot:cs>
+            </x-manage.locale-tabs>
 
             {{-- Non-translatable fields --}}
-            <div class="grid grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <flux:field>
                     <flux:label>Type</flux:label>
                     <flux:select wire:model="type">
@@ -422,72 +389,22 @@ new #[Title('Manage Experiences')] class extends Component {
                     <flux:input wire:model="imageFile" type="file" accept="image/*" />
                     <flux:error name="imageFile" />
                     @if ($image_path && ! $imageFile)
-                        <p class="text-xs mt-1" style="color: var(--c-muted);">Current: {{ $image_path }}</p>
+                        <p class="manage-note text-xs mt-1">Current: {{ $image_path }}</p>
                     @endif
                     @if ($imageFile)
                         <img src="{{ $imageFile->temporaryUrl() }}" class="mt-2 h-16 rounded object-cover" />
                     @endif
                 </flux:field>
 
-                {{-- Links --}}
-                <div class="col-span-2 space-y-3">
-                    <div class="flex items-center justify-between">
-                        <span class="text-sm font-medium" style="color: var(--c-fg);">Links</span>
-                        <flux:button size="sm" icon="plus" wire:click.prevent="addLink" class="btn-gold-subtle">Add link</flux:button>
-                    </div>
-                    @foreach ($links as $i => $link)
-                        <div class="space-y-3 rounded-lg p-4" style="border: 1px solid var(--c-primary-fade); background-color: rgba(96,84,67,0.15);" wire:key="link-{{ $i }}">
-                            <div class="flex gap-2 items-center">
-                                <flux:input wire:model="links.{{ $i }}.url" type="url" placeholder="URL — https://…" class="flex-1" />
-                                <flux:button size="sm" variant="subtle" icon="x-mark" wire:click.prevent="removeLink({{ $i }})" class="btn-muted-icon" />
-                            </div>
-                            <flux:error name="links.{{ $i }}.url" />
-                            <flux:input wire:model="links.{{ $i }}.alt" placeholder="Alt text (optional)" />
-                            <div>
-                                <flux:input wire:model="links.{{ $i }}.img_url" type="url" placeholder="Icon URL (optional)" />
-                                <flux:error name="links.{{ $i }}.img_url" />
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
+                <x-manage.link-repeater :links="$links" />
 
-                {{-- Badges --}}
-                <div class="col-span-2 space-y-3">
-                    <div class="flex items-center justify-between">
-                        <span class="text-sm font-medium" style="color: var(--c-fg);">Badges</span>
-                        <flux:button size="sm" icon="plus" wire:click.prevent="addBadge" class="btn-gold-subtle">Add badge</flux:button>
-                    </div>
-                    @foreach ($selectedBadgeIds as $i => $badgeId)
-                        <div class="flex gap-2 items-center" wire:key="badge-{{ $i }}">
-                            <flux:select wire:model="selectedBadgeIds.{{ $i }}" class="flex-1">
-                                <flux:select.option value="">— select badge —</flux:select.option>
-                                @foreach ($this->allBadges as $badge)
-                                    <flux:select.option value="{{ $badge->id }}">{{ $badge->name['en'] ?? $badge->slug }}</flux:select.option>
-                                @endforeach
-                            </flux:select>
-                            <flux:button size="sm" variant="subtle" icon="x-mark" wire:click.prevent="removeBadge({{ $i }})" class="btn-muted-icon" />
-                        </div>
-                    @endforeach
-                </div>
+                <x-manage.badge-picker :selected="$selectedBadgeIds" :badges="$this->allBadges" />
             </div>
 
-            <div class="flex justify-end gap-2 pt-2">
-                <flux:button x-on:click="$flux.modal('form').close()">Cancel</flux:button>
-                <flux:button type="submit" class="btn-gold">
-                    {{ $editingId ? 'Save changes' : 'Create' }}
-                </flux:button>
-            </div>
+            <x-manage.modal-footer :editing="(bool) $editingId" />
         </form>
     </flux:modal>
 
-    {{-- Delete confirmation modal --}}
-    <flux:modal name="delete" class="md:w-[400px]">
-        <flux:heading>Delete experience?</flux:heading>
-        <flux:text class="mt-2 mb-6">This action cannot be undone.</flux:text>
-        <div class="flex justify-end gap-2">
-            <flux:button x-on:click="$flux.modal('delete').close()">Cancel</flux:button>
-            <flux:button wire:click="delete" variant="danger">Delete</flux:button>
-        </div>
-    </flux:modal>
+    <x-manage.delete-modal entity="experience" />
 
 </div>

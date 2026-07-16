@@ -49,25 +49,25 @@
         {{-- Row 2 — social links --}}
         <div class="mobile-nav-row">
             <div class="mobile-nav-app">
-                <a href="mailto:richard.hyvl@gmail.com" target="_blank">
+                <a href="{{ config('portfolio.social.email') }}" target="_blank" rel="noopener noreferrer">
                     <img src="{{ asset('images/mobile/icons/email.png') }}" alt="email">
                 </a>
                 <p class="mini">{{ __('layout/mobile.soc1') }}</p>
             </div>
             <div class="mobile-nav-app">
-                <a href="https://www.instagram.com/richardhyvl/" target="_blank">
+                <a href="{{ config('portfolio.social.instagram') }}" target="_blank" rel="noopener noreferrer">
                     <img src="{{ asset('images/mobile/icons/instagram.webp') }}" alt="instagram">
                 </a>
                 <p class="mini">{{ __('layout/mobile.soc2') }}</p>
             </div>
             <div class="mobile-nav-app">
-                <a href="https://x.com/projektantPata" target="_blank">
+                <a href="{{ config('portfolio.social.x') }}" target="_blank" rel="noopener noreferrer">
                     <img src="{{ asset('images/mobile/icons/x.webp') }}" alt="x">
                 </a>
                 <p class="mini">{{ __('layout/mobile.soc3') }}</p>
             </div>
             <div class="mobile-nav-app">
-                <a href="https://www.linkedin.com/in/richardhyvl/" target="_blank">
+                <a href="{{ config('portfolio.social.linkedin') }}" target="_blank" rel="noopener noreferrer">
                     <img src="{{ asset('images/mobile/icons/linkedin.webp') }}" alt="linkedin">
                 </a>
                 <p class="mini">{{ __('layout/mobile.soc4') }}</p>
@@ -77,19 +77,19 @@
         {{-- Row 3 — misc links --}}
         <div class="mobile-nav-row">
             <div class="mobile-nav-app">
-                <a href="https://github.com/projektant-pata" target="_blank">
+                <a href="{{ config('portfolio.social.github') }}" target="_blank" rel="noopener noreferrer">
                     <img src="{{ asset('images/mobile/icons/github.webp') }}" alt="github">
                 </a>
                 <p class="mini">{{ __('layout/mobile.soc5') }}</p>
             </div>
             <div class="mobile-nav-app">
-                <a href="https://www.chess.com/member/obviouscommander" target="_blank">
+                <a href="{{ config('portfolio.social.chess') }}" target="_blank" rel="noopener noreferrer">
                     <img src="{{ asset('images/mobile/icons/chess.png') }}" alt="chess">
                 </a>
                 <p class="mini">{{ __('layout/mobile.soc6') }}</p>
             </div>
             <div class="mobile-nav-app">
-                <a href="https://hyvlri22.llmp.spse-net.cz/" target="_blank">
+                <a href="https://hyvlri22.llmp.spse-net.cz/" target="_blank" rel="noopener noreferrer">
                     <img src="{{ asset('images/mobile/icons/safari.webp') }}" alt="SPSE-WP">
                 </a>
                 <p class="mini">{{ __('layout/mobile.proj1') }}</p>

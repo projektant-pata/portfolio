@@ -105,21 +105,13 @@ new #[Title('Manage Links')] class extends Component {
     }
 }; ?>
 
-<div style="font-family: var(--font-sans); color: var(--c-fg);" class="p-6 space-y-6">
+<div class="manage-page p-6 space-y-6">
 
-    {{-- Header --}}
-    <div class="flex items-center justify-between">
-        <div>
-            <h1 style="font-size: 2rem; font-weight: 600; color: var(--c-fg);">Links</h1>
-            <p style="color: var(--c-muted); font-size: 0.875rem; margin-top: 0.2rem;">Project external links</p>
-        </div>
-        <flux:button wire:click="openCreate" icon="plus" class="btn-gold">
-            Add link
-        </flux:button>
-    </div>
+    <x-manage.page-header title="Links" subtitle="Project external links">
+        <flux:button wire:click="openCreate" icon="plus" class="btn-gold">Add link</flux:button>
+    </x-manage.page-header>
 
-    {{-- Search --}}
-    <flux:input wire:model.live.debounce="search" placeholder="Search by URL…" icon="magnifying-glass" class="max-w-xs" />
+    <x-manage.search-input placeholder="Search by URL…" />
 
     {{-- Table --}}
     <flux:table>
@@ -142,17 +134,13 @@ new #[Title('Manage Links')] class extends Component {
                     <flux:table.cell>{{ $link->updated_at->format('d.m.Y') }}</flux:table.cell>
                     <flux:table.cell>
                         <div class="flex gap-2 justify-end">
-                            <flux:button size="sm" variant="subtle" icon="pencil" wire:click="openEdit('{{ $link->id }}')" />
-                            <flux:button size="sm" variant="subtle" icon="trash" wire:click="confirmDelete('{{ $link->id }}')" />
+                            <flux:button size="sm" variant="subtle" icon="pencil" aria-label="Edit link" wire:click="openEdit('{{ $link->id }}')" />
+                            <flux:button size="sm" variant="subtle" icon="trash" aria-label="Delete link" wire:click="confirmDelete('{{ $link->id }}')" />
                         </div>
                     </flux:table.cell>
                 </flux:table.row>
             @empty
-                <flux:table.row>
-                    <flux:table.cell colspan="6">
-                        <p style="color: var(--c-muted); text-align: center; padding: 2rem 0;">No links found.</p>
-                    </flux:table.cell>
-                </flux:table.row>
+                <x-manage.empty-row colspan="6" message="No links found." />
             @endforelse
         </flux:table.rows>
     </flux:table>
@@ -181,38 +169,22 @@ new #[Title('Manage Links')] class extends Component {
             </flux:field>
 
             {{-- Language tabs for alt --}}
-            <div x-data="{ locale: 'en' }">
-                <div class="flex gap-1 mb-4 p-1 rounded-lg" style="background: var(--c-surface-sunken);">
-                    <button type="button" x-on:click="locale = 'en'"
-                        :class="locale === 'en' ? 'shadow-sm font-semibold' : 'opacity-60 hover:opacity-80'"
-                        class="flex-1 px-3 py-1.5 rounded-md text-sm transition-all"
-                        style="background: transparent;" :style="locale === 'en' ? 'background: var(--c-surface)' : ''">
-                        🇬🇧 English
-                    </button>
-                    <button type="button" x-on:click="locale = 'cs'"
-                        :class="locale === 'cs' ? 'shadow-sm font-semibold' : 'opacity-60 hover:opacity-80'"
-                        class="flex-1 px-3 py-1.5 rounded-md text-sm transition-all"
-                        style="background: transparent;" :style="locale === 'cs' ? 'background: var(--c-surface)' : ''">
-                        🇨🇿 Czech
-                    </button>
-                </div>
-
-                <div x-show="locale === 'en'" class="space-y-4">
+            <x-manage.locale-tabs>
+                <x-slot:en>
                     <flux:field>
                         <flux:label>Alt text</flux:label>
                         <flux:input wire:model="alt.en" placeholder="e.g. Visit on GitHub" />
                         <flux:error name="alt.en" />
                     </flux:field>
-                </div>
-
-                <div x-show="locale === 'cs'" class="space-y-4">
+                </x-slot:en>
+                <x-slot:cs>
                     <flux:field>
                         <flux:label>Alt text</flux:label>
                         <flux:input wire:model="alt.cs" placeholder="např. Zobrazit na GitHubu" />
                         <flux:error name="alt.cs" />
                     </flux:field>
-                </div>
-            </div>
+                </x-slot:cs>
+            </x-manage.locale-tabs>
 
             <flux:field>
                 <flux:label>Icon URL</flux:label>
@@ -220,21 +192,10 @@ new #[Title('Manage Links')] class extends Component {
                 <flux:error name="img_url" />
             </flux:field>
 
-            <div class="flex justify-end gap-2 pt-2">
-                <flux:button x-on:click="$flux.modal('form').close()">Cancel</flux:button>
-                <flux:button type="submit" class="btn-gold">{{ $editingId ? 'Save changes' : 'Create' }}</flux:button>
-            </div>
+            <x-manage.modal-footer :editing="(bool) $editingId" />
         </form>
     </flux:modal>
 
-    {{-- Delete modal --}}
-    <flux:modal name="delete" class="md:w-[400px]">
-        <flux:heading>Delete link?</flux:heading>
-        <flux:text class="mt-2 mb-6">This action cannot be undone.</flux:text>
-        <div class="flex justify-end gap-2">
-            <flux:button x-on:click="$flux.modal('delete').close()">Cancel</flux:button>
-            <flux:button wire:click="delete" variant="danger">Delete</flux:button>
-        </div>
-    </flux:modal>
+    <x-manage.delete-modal entity="link" />
 
 </div>
