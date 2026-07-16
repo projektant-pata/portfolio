@@ -185,8 +185,8 @@
 
 /* GitHub logo swaps with theme */
 .tool-github-light { display: none; }
-.light-theme .tool-github-dark { display: none; }
-.light-theme .tool-github-light { display: block; }
+html:not(.dark) .tool-github-dark { display: none; }
+html:not(.dark) .tool-github-light { display: block; }
 
 .tools-row-card h4 {
     text-align: center;

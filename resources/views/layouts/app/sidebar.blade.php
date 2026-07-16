@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
+{{-- The theme class is set by partials/theme.blade.php from the `theme` cookie. --}}
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
         @include('partials.head')
     </head>
-    <body class="min-h-screen" style="background-color: var(--c-bg); font-family: var(--font-body);">
+    <body class="min-h-screen" style="background-color: var(--c-bg); font-family: var(--font-sans);">
         <flux:sidebar sticky collapsible="mobile" class="border-e" style="background-color: var(--c-bg); border-color: var(--c-primary-fade);">
             <flux:sidebar.header>
                 <x-app-logo :sidebar="true" href="{{ route('dashboard') }}" wire:navigate />

@@ -177,15 +177,76 @@ This project has domain-specific skills available. You MUST activate the relevan
 
 ## Docker
 
-This application runs inside Docker. Always prefix Artisan and other PHP commands with `docker exec portfolio-2-app-1`:
+This application runs inside Docker. Always prefix Artisan and other PHP commands with `docker exec portfolio-app-1`:
 
 ```bash
-docker exec portfolio-2-app-1 php artisan migrate --no-interaction
-docker exec portfolio-2-app-1 php artisan tinker --execute '...'
-docker exec portfolio-2-app-1 vendor/bin/pint --dirty --format agent
+docker exec portfolio-app-1 php artisan migrate --no-interaction
+docker exec portfolio-app-1 php artisan tinker --execute '...'
+docker exec portfolio-app-1 vendor/bin/pint --dirty --format agent
 ```
 
 Running containers:
-- `portfolio-2-app-1` — PHP/Laravel app
-- `portfolio-2-db-1` — PostgreSQL 17 database
-- `portfolio-2-nginx-1` — Nginx web server
+- `portfolio-app-1` — PHP/Laravel app (PHP 8.5, no Node — run `npm` on the host)
+- `portfolio-db-1` — PostgreSQL 17 database
+- `portfolio-nginx-1` — Nginx web server, serves the app at http://localhost:8008
+
+## Environment Setup (fresh clone)
+
+The repo is missing pieces a fresh clone needs:
+
+- There is **no `.env.example`** — create `.env` manually (`DB_CONNECTION=pgsql`, `DB_HOST=db`, `APP_URL=http://localhost:8008`, session/queue/cache = `database`), then `php artisan key:generate`.
+- `bootstrap/cache/` and `storage/framework/*` directories are not in the repo; create them before the Docker build or it fails.
+- Frontend assets must be built on the host (`npm install && npm run build`) — without a Vite manifest every page 500s.
+- `.claude/skills/` (Boost skills) is untracked; restore with `docker exec portfolio-app-1 php artisan boost:update --no-interaction`.
+
+## Testing
+
+- Run the suite with:
+
+  ```bash
+  docker exec portfolio-app-1 php artisan test --compact
+  ```
+
+  (The old `APP_ENV=testing` override is no longer needed: `docker-compose.yml` no longer forces `APP_ENV=local` into `$_SERVER`, and `phpunit.xml` sets `APP_ENV=testing` with `force="true"`. Runtime env now comes from `.env`.)
+
+- Tests use SQLite `:memory:` while the app runs on PostgreSQL — PG-only SQL (`ILIKE`, JSON `->>` operators) cannot be covered by tests.
+
+# Architecture
+
+Bilingual (en/cs) portfolio site: public pages + authenticated admin CRUD.
+
+## Public pages
+
+Single-action controllers `app/Http/Controllers/{Home,AboutMe,Experience,Projects}Controller.php` render `resources/views/{welcome,about-me,experience,projects}.blade.php` inside the shared `<x-portfolio-layout>` (`resources/views/components/portfolio-layout.blade.php`).
+
+## Admin (dashboard)
+
+Livewire 4 single-file components in `resources/views/pages/manage/⚡{experiences,badges,articles,links,projects}.blade.php` (note the `⚡` filename prefix), registered with `Route::livewire()` in `routes/web.php` behind `auth` + `verified`. Settings pages live in `resources/views/pages/settings/⚡*.blade.php` (routes in `routes/settings.php`).
+
+## Models & i18n
+
+- `app/Models/`: `Article`, `Badge`, `Project`, `Link` use UUID primary keys; `Experience` uses a bigint id.
+- Translatable model fields are JSON columns shaped `{"en": …, "cs": …}`, read via a `getTranslation()` helper duplicated in each model.
+- Static UI strings live in `resources/lang/{en,cs}/` PHP files (grouped `home/`, `layout/`, `pages/`).
+- Locale is session-based: GET `/language/toggle` (`LanguageController`) flips it, `app/Http/Middleware/SetLocale.php` (appended in `bootstrap/app.php`) applies it.
+
+## Auth
+
+Laravel Fortify: registration disabled, 2FA and email verification enabled (`config/fortify.php`).
+
+## Frontend
+
+- Tailwind v4 + Flux UI (free tier — no Pro components like tabs). Custom Flux icons published under `resources/views/flux/icon/`.
+- Design tokens live once in the `@theme` block of `resources/css/app.css`; `--c-*` are aliases only. Theme = `.dark` on `<html>`, driven by the `theme` cookie (`dark|light|system`, default dark) and applied pre-paint by `partials/theme.blade.php`; `resources/js/app.js` owns the toggle.
+- Page-CSS loading is still inconsistent (three different loading patterns); see `docs/design-audit-findings.md` before touching CSS. Vite entries are listed in `vite.config.js`.
+
+# Project Docs
+
+- `docs/audit-findings.md` — code audit, severity-sorted
+- `docs/design-audit-findings.md` — design/UI audit + component extraction proposal
+- `docs/supr-cupr-upgrade-plan.md` — the overall upgrade plan
+- `docs/database.md`, `docs/badges.md`, `docs/typography.md` — feature notes
+
+# Deployment
+
+No deployment pipeline or CI exists (no `.github/workflows`, no deploy scripts).

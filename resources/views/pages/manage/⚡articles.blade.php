@@ -25,7 +25,7 @@ new #[Title('Manage Articles')] class extends Component {
     public function articles(): \Illuminate\Support\Collection
     {
         return Article::query()
-            ->when($this->search, fn ($q) => $q->whereRaw("header->>'en' ILIKE ?", ["%{$this->search}%"]))
+            ->when($this->search, fn ($q) => $q->whereRaw("lower(header->>'en') LIKE lower(?)", ['%'.addcslashes($this->search, '%_\\').'%']))
             ->orderBy('sort_order')
             ->orderBy('date', 'desc')
             ->orderByRaw("header->>'en'")
@@ -34,14 +34,24 @@ new #[Title('Manage Articles')] class extends Component {
 
     public function reorder(string $id, int $position): void
     {
+        // Reordering renumbers the whole table; a filtered subset would corrupt
+        // positions of hidden rows, so only allow it when no filter is active.
+        if (filled($this->search)) {
+            return;
+        }
+
         $articles = Article::query()
-            ->when($this->search, fn ($q) => $q->whereRaw("header->>'en' ILIKE ?", ["%{$this->search}%"]))
             ->orderBy('sort_order')
             ->orderBy('date', 'desc')
             ->orderByRaw("header->>'en'")
             ->get();
 
         $item = $articles->firstWhere('id', $id);
+
+        if (! $item) {
+            return;
+        }
+
         $articles = $articles->reject(fn ($a) => $a->id === $id)->values();
         $articles->splice($position, 0, [$item]);
 
@@ -96,6 +106,8 @@ new #[Title('Manage Articles')] class extends Component {
 
     public function save(): void
     {
+        $article = $this->editingId ? Article::findOrFail($this->editingId) : null;
+
         $validated = $this->validate([
             'header' => ['required', 'array'],
             'header.en' => ['required', 'string', 'max:255'],
@@ -106,9 +118,7 @@ new #[Title('Manage Articles')] class extends Component {
             'content' => ['nullable', 'array'],
             'content.en' => ['nullable', 'string'],
             'content.cs' => ['nullable', 'string'],
-            'slug' => ['required', 'string', 'max:255', $this->editingId
-                ? \Illuminate\Validation\Rule::unique('articles', 'slug')->ignore($this->editingId)
-                : 'unique:articles,slug'],
+            'slug' => ['required', 'string', 'max:255', \Illuminate\Validation\Rule::unique('articles', 'slug')->ignore($article)],
             'date' => ['required', 'date'],
             'thumbnail_url' => ['nullable', 'url', 'max:500'],
             'selectedBadgeIds' => ['nullable', 'array'],
@@ -131,8 +141,7 @@ new #[Title('Manage Articles')] class extends Component {
             'user_id' => auth()->id(),
         ];
 
-        if ($this->editingId) {
-            $article = Article::findOrFail($this->editingId);
+        if ($article) {
             $article->update($data);
             $article->badges()->sync($badgeIds);
         } else {
@@ -175,7 +184,7 @@ new #[Title('Manage Articles')] class extends Component {
     }
 }; ?>
 
-<div style="font-family: var(--font-body); color: var(--c-fg);" class="p-6 space-y-6">
+<div style="font-family: var(--font-sans); color: var(--c-fg);" class="p-6 space-y-6">
 
     {{-- Header --}}
     <div class="flex items-center justify-between">
@@ -237,7 +246,7 @@ new #[Title('Manage Articles')] class extends Component {
         <form wire:submit="save" class="space-y-4">
             {{-- Language tabs --}}
             <div x-data="{ locale: 'en' }">
-                <div class="flex gap-1 mb-4 p-1 rounded-lg" style="background: var(--c-surface-raised, rgba(0,0,0,0.08));">
+                <div class="flex gap-1 mb-4 p-1 rounded-lg" style="background: var(--c-surface-sunken);">
                     <button type="button" x-on:click="locale = 'en'"
                         :class="locale === 'en' ? 'shadow-sm font-semibold' : 'opacity-60 hover:opacity-80'"
                         class="flex-1 px-3 py-1.5 rounded-md text-sm transition-all"
@@ -255,7 +264,7 @@ new #[Title('Manage Articles')] class extends Component {
                 <div x-show="locale === 'en'" class="space-y-4">
                     <flux:field>
                         <flux:label>Header <flux:badge size="sm" color="yellow" inset="top bottom">Required</flux:badge></flux:label>
-                        <flux:input wire:model="header.en" wire:model.live.debounce="header.en" placeholder="e.g. How I Built This Portfolio" />
+                        <flux:input wire:model.live.debounce="header.en" placeholder="e.g. How I Built This Portfolio" />
                         <flux:error name="header.en" />
                     </flux:field>
                     <flux:field>

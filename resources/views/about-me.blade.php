@@ -1,4 +1,4 @@
-<x-portfolio-layout :title="__('layout/header.about_title')" :description="__('layout/header.about_desc')">
+<x-portfolio-layout :title="__('layout/header.about_title')" :description="__('layout/header.about_desc')" :styles="['resources/css/pages/about-me.css']">
 
     {{-- About Me --}}
     <section id="about-me" class="portfolio-section" style="padding-top: var(--sp-section)">

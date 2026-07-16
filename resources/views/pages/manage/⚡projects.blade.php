@@ -3,6 +3,7 @@
 use App\Models\Badge;
 use App\Models\Link;
 use App\Models\Project;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Title;
@@ -30,7 +31,7 @@ new #[Title('Manage Projects')] class extends Component {
     public function projects(): \Illuminate\Support\Collection
     {
         return Project::query()
-            ->when($this->search, fn ($q) => $q->whereRaw("header->>'en' ILIKE ?", ["%{$this->search}%"]))
+            ->when($this->search, fn ($q) => $q->whereRaw("lower(header->>'en') LIKE lower(?)", ['%'.addcslashes($this->search, '%_\\').'%']))
             ->orderBy('sort_order')
             ->orderBy('year', 'desc')
             ->orderByRaw("header->>'en'")
@@ -39,14 +40,24 @@ new #[Title('Manage Projects')] class extends Component {
 
     public function reorder(string $id, int $position): void
     {
+        // Reordering renumbers the whole table; a filtered subset would corrupt
+        // positions of hidden rows, so only allow it when no filter is active.
+        if (filled($this->search)) {
+            return;
+        }
+
         $projects = Project::query()
-            ->when($this->search, fn ($q) => $q->whereRaw("header->>'en' ILIKE ?", ["%{$this->search}%"]))
             ->orderBy('sort_order')
             ->orderBy('year', 'desc')
             ->orderByRaw("header->>'en'")
             ->get();
 
         $item = $projects->firstWhere('id', $id);
+
+        if (! $item) {
+            return;
+        }
+
         $projects = $projects->reject(fn ($p) => $p->id === $id)->values();
         $projects->splice($position, 0, [$item]);
 
@@ -117,6 +128,8 @@ new #[Title('Manage Projects')] class extends Component {
 
     public function save(): void
     {
+        $project = $this->editingId ? Project::findOrFail($this->editingId) : null;
+
         $validated = $this->validate([
             'header' => ['required', 'array'],
             'header.en' => ['required', 'string', 'max:255'],
@@ -124,9 +137,7 @@ new #[Title('Manage Projects')] class extends Component {
             'description' => ['nullable', 'array'],
             'description.en' => ['nullable', 'string', 'max:1000'],
             'description.cs' => ['nullable', 'string', 'max:1000'],
-            'slug' => ['required', 'string', 'max:255', $this->editingId
-                ? \Illuminate\Validation\Rule::unique('projects', 'slug')->ignore($this->editingId)
-                : 'unique:projects,slug'],
+            'slug' => ['required', 'string', 'max:255', \Illuminate\Validation\Rule::unique('projects', 'slug')->ignore($project)],
             'year' => ['required', 'integer', 'min:1900', 'max:2100'],
             'imageFile' => ['nullable', 'image', 'max:4096'],
             'links' => ['nullable', 'array'],
@@ -152,7 +163,15 @@ new #[Title('Manage Projects')] class extends Component {
 
         if ($this->imageFile) {
             $path = $this->imageFile->store('projects', 'public');
+
+            if ($project?->img_url && str_starts_with($project->img_url, 'storage/')) {
+                Storage::disk('public')->delete(substr($project->img_url, strlen('storage/')));
+            }
+
             $this->img_url = 'storage/' . $path;
+        } else {
+            // img_url is never trusted from the client; derive it from the stored model.
+            $this->img_url = $project?->img_url ?? '';
         }
 
         $data = [
@@ -163,8 +182,7 @@ new #[Title('Manage Projects')] class extends Component {
             'img_url' => $this->img_url ?: null,
         ];
 
-        if ($this->editingId) {
-            $project = Project::findOrFail($this->editingId);
+        if ($project) {
             $project->update($data);
             $project->badges()->sync($badgeIds);
             $project->links()->delete();
@@ -217,7 +235,7 @@ new #[Title('Manage Projects')] class extends Component {
     }
 }; ?>
 
-<div style="font-family: var(--font-body); color: var(--c-fg);" class="p-6 space-y-6">
+<div style="font-family: var(--font-sans); color: var(--c-fg);" class="p-6 space-y-6">
 
     {{-- Header --}}
     <div class="flex items-center justify-between">
@@ -279,7 +297,7 @@ new #[Title('Manage Projects')] class extends Component {
         <form wire:submit="save" class="space-y-4">
             {{-- Language tabs --}}
             <div x-data="{ locale: 'en' }">
-                <div class="flex gap-1 mb-4 p-1 rounded-lg" style="background: var(--c-surface-raised, rgba(0,0,0,0.08));">
+                <div class="flex gap-1 mb-4 p-1 rounded-lg" style="background: var(--c-surface-sunken);">
                     <button type="button" x-on:click="locale = 'en'"
                         :class="locale === 'en' ? 'shadow-sm font-semibold' : 'opacity-60 hover:opacity-80'"
                         class="flex-1 px-3 py-1.5 rounded-md text-sm transition-all"

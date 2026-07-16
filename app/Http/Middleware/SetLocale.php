@@ -9,10 +9,13 @@ use Illuminate\Support\Facades\Session;
 
 class SetLocale
 {
-    public function handle(Request $request, Closure $next)
+    private const SUPPORTED_LOCALES = ['cs', 'en'];
+
+    public function handle(Request $request, Closure $next): mixed
     {
-        if (Session::has('locale')) {
-            App::setLocale(Session::get('locale'));
+        $locale = Session::get('locale');
+        if (in_array($locale, self::SUPPORTED_LOCALES, true)) {
+            App::setLocale($locale);
         }
         return $next($request);
     }

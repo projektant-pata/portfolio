@@ -1,4 +1,4 @@
-<x-portfolio-layout :title="__('layout/header.projects_title')" :description="__('layout/header.projects_desc')">
+<x-portfolio-layout :title="__('layout/header.projects_title')" :description="__('layout/header.projects_desc')" :styles="['resources/css/pages/projects.css']">
 
     @php $locale = app()->getLocale(); @endphp
     <section id="projects" class="portfolio-section" style="padding-top: var(--sp-section)">

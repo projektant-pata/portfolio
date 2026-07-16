@@ -2,6 +2,8 @@
 
 use App\Models\Experience;
 use App\Models\User;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
 
 test('experience stores title as json with locale keys', function () {
@@ -113,4 +115,36 @@ test('can edit experience and update translations', function () {
         ->assertHasNoErrors();
 
     expect($experience->fresh()->title)->toBe(['en' => 'Developer', 'cs' => 'Vývojář']);
+});
+
+test('reorder is a no-op while a type filter is active', function () {
+    $user = User::factory()->create();
+    $work = Experience::factory()->create(['type' => 'work', 'sort_order' => 0]);
+    $life = Experience::factory()->create(['type' => 'life', 'sort_order' => 1]);
+
+    Livewire::actingAs($user)
+        ->test('pages::manage.experiences')
+        ->set('typeFilter', 'work')
+        ->call('reorder', $life->id, 0);
+
+    expect($work->fresh()->sort_order)->toBe(0)
+        ->and($life->fresh()->sort_order)->toBe(1);
+});
+
+test('uploading a new experience image deletes the previous file', function () {
+    Storage::fake('public');
+    $user = User::factory()->create();
+
+    $oldPath = UploadedFile::fake()->create('old.jpg', 10, 'image/jpeg')->store('experiences', 'public');
+    $experience = Experience::factory()->create(['image_path' => 'storage/'.$oldPath]);
+
+    Livewire::actingAs($user)
+        ->test('pages::manage.experiences')
+        ->call('openEdit', $experience->id)
+        ->set('imageFile', UploadedFile::fake()->create('new.jpg', 10, 'image/jpeg'))
+        ->call('save')
+        ->assertHasNoErrors();
+
+    Storage::disk('public')->assertMissing($oldPath);
+    expect($experience->fresh()->image_path)->not->toBe('storage/'.$oldPath);
 });

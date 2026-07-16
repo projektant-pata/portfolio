@@ -5,8 +5,6 @@ services:
       dockerfile: docker/php/Dockerfile
     volumes:
       - .:/var/www
-    environment:
-      - APP_ENV=local
     depends_on:
       - db
     command: sh -c "chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache && php-fpm"

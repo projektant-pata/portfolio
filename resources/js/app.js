@@ -45,27 +45,48 @@ function toggleMobileNav() {
     document.body.classList.toggle('no-scroll');
 }
 
-function applyTheme(theme) {
+// ── Theme ────────────────────────────────────────────────────
+// The `theme` cookie ('dark' | 'light' | 'system', default 'dark')
+// is the single source of truth for public pages, admin and Flux.
+// partials/theme.blade.php applies the same rule before first paint.
+
+const prefersDark = () => window.matchMedia('(prefers-color-scheme: dark)');
+
+function resolveTheme(preference) {
+    return preference === 'system'
+        ? (prefersDark().matches ? 'dark' : 'light')
+        : (preference === 'light' ? 'light' : 'dark');
+}
+
+function applyTheme(preference) {
     const nav = document.getElementById('mobile-nav');
     const weatherImg = document.getElementById('mobile-nav-weather-img');
+    const isDark = resolveTheme(preference) === 'dark';
 
-    if (theme === 'light') {
-        document.documentElement.classList.add('light-theme');
-        if (nav) nav.style.backgroundImage = "url('/images/mobile/wallpapers/wallpaper_light.webp')";
-        if (weatherImg) weatherImg.src = '/images/mobile/icons/weather_light.webp';
-    } else {
-        document.documentElement.classList.remove('light-theme');
+    document.documentElement.classList.toggle('dark', isDark);
+
+    if (isDark) {
         if (nav) nav.style.backgroundImage = "url('/images/mobile/wallpapers/wallpaper_dark.webp')";
         if (weatherImg) weatherImg.src = '/images/mobile/icons/weather_dark.png';
+    } else {
+        if (nav) nav.style.backgroundImage = "url('/images/mobile/wallpapers/wallpaper_light.webp')";
+        if (weatherImg) weatherImg.src = '/images/mobile/icons/weather_light.webp';
     }
 }
 
 function toggleTheme() {
-    const isLight = document.documentElement.classList.contains('light-theme');
-    const next = isLight ? 'dark' : 'light';
-    applyTheme(next);
-    setCookie('theme', next, 7);
+    const next = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
+    setTheme(next);
 }
+
+function setTheme(preference) {
+    setCookie('theme', preference, 365);
+    applyTheme(preference);
+}
+
+/** Exposed for the admin appearance settings page (pages/settings/⚡appearance.blade.php). */
+window.getThemePreference = () => getCookie('theme') || 'dark';
+window.setThemePreference = setTheme;
 
 // ── Work / Education tab toggle ──────────────────────────────
 
@@ -135,8 +156,15 @@ function fetchGithubRepos() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Apply saved theme
+    // Apply saved theme (wallpaper + icons; the class itself is set in <head>)
     applyTheme(getCookie('theme') || 'dark');
+
+    // Follow the OS while the preference is 'system'
+    prefersDark().addEventListener('change', () => {
+        if ((getCookie('theme') || 'dark') === 'system') {
+            applyTheme('system');
+        }
+    });
 
     // Clock
     updateClock();

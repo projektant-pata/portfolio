@@ -3,6 +3,8 @@
 use App\Models\Badge;
 use App\Models\Project;
 use App\Models\User;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
 
 test('manage projects page renders for authenticated user', function () {
@@ -59,6 +61,61 @@ test('can edit project and update translations', function () {
         ->assertHasNoErrors();
 
     expect($project->fresh()->header)->toBe(['en' => 'My Project', 'cs' => 'Můj projekt']);
+});
+
+test('creating a project with a duplicate slug fails', function () {
+    $user = User::factory()->create();
+    Project::factory()->create(['slug' => 'taken']);
+
+    Livewire::actingAs($user)
+        ->test('pages::manage.projects')
+        ->set('header', ['en' => 'Another', 'cs' => ''])
+        ->set('slug', 'taken')
+        ->set('year', '2026')
+        ->call('save')
+        ->assertHasErrors(['slug']);
+});
+
+test('reorder is a no-op while a search filter is active', function () {
+    $user = User::factory()->create();
+    $a = Project::factory()->create(['slug' => 'a', 'sort_order' => 0]);
+    $b = Project::factory()->create(['slug' => 'b', 'sort_order' => 1]);
+
+    Livewire::actingAs($user)
+        ->test('pages::manage.projects')
+        ->set('search', $a->header['en'])
+        ->call('reorder', $b->id, 0);
+
+    expect($a->fresh()->sort_order)->toBe(0)
+        ->and($b->fresh()->sort_order)->toBe(1);
+});
+
+test('reorder ignores an unknown id without crashing', function () {
+    $user = User::factory()->create();
+    Project::factory()->create(['sort_order' => 0]);
+
+    Livewire::actingAs($user)
+        ->test('pages::manage.projects')
+        ->call('reorder', (string) \Illuminate\Support\Str::uuid(), 0)
+        ->assertHasNoErrors();
+});
+
+test('uploading a new project image deletes the previous file', function () {
+    Storage::fake('public');
+    $user = User::factory()->create();
+
+    $oldPath = UploadedFile::fake()->create('old.jpg', 10, 'image/jpeg')->store('projects', 'public');
+    $project = Project::factory()->create(['img_url' => 'storage/'.$oldPath]);
+
+    Livewire::actingAs($user)
+        ->test('pages::manage.projects')
+        ->call('openEdit', $project->id)
+        ->set('imageFile', UploadedFile::fake()->create('new.jpg', 10, 'image/jpeg'))
+        ->call('save')
+        ->assertHasNoErrors();
+
+    Storage::disk('public')->assertMissing($oldPath);
+    expect($project->fresh()->img_url)->not->toBe('storage/'.$oldPath);
 });
 
 test('can delete project', function () {

@@ -8,18 +8,34 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* ================================================================
+   DESIGN TOKENS — single source of truth
+   ================================================================
+   Every color lives here once, as a Tailwind theme variable, so
+   utilities (bg-primary) and hand-written CSS (var(--c-primary))
+   read the same value. The short --c-* names below are aliases
+   only; never give them their own values.
+
+   Values here are the dark theme (the default). Light overrides
+   the same --color-* variables in the `html:not(.dark)` block, so
+   both utilities and aliases follow the theme automatically.
+   ================================================================ */
+
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
-    --font-portfolio: 'Inter', ui-sans-serif, system-ui, sans-serif;
+    --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
 
     /* Portfolio color palette — dark theme (default) */
-    --color-primary:            #FACC15;
-    --color-primary-dark:       #9B870C;
-    --color-primary-light:      #FED7AA;
-    --color-primary-light-fade: #605443;
-    --color-portfolio-bg:       #1C1B17;
-    --color-portfolio-surface:  #1C1B17;
-    --color-portfolio-fg:       #FFFFFF;
+    --color-primary:                   #FACC15;  /* yellow-gold accent           */
+    --color-primary-dark:              #9B870C;  /* darker gold for hover states */
+    --color-primary-light:             #FED7AA;  /* peach-light for borders/h2   */
+    --color-primary-fade:              #605443;  /* muted gold, subtle surfaces  */
+    --color-portfolio-bg:              #1C1B17;  /* page background              */
+    --color-portfolio-surface:         #232219;  /* card / panel background      */
+    --color-portfolio-surface-sunken:  #131210;  /* recessed tracks, tab strips  */
+    --color-portfolio-fg:              #FFFFFF;  /* default text color           */
+    --color-portfolio-muted:           #A3A3A3;  /* muted text (subtitles)       */
+    --color-selection-bg:              #FFB347;  /* ::selection background       */
+    --color-selection-fg:              #000000;  /* ::selection text             */
 
     --color-zinc-50: #fafafa;
     --color-zinc-100: #f5f5f5;
@@ -84,41 +100,39 @@ select:focus[data-flux-control] {
 
    SECTIONS
    ─────────────────────────────────────────────────────────────
-   1. Design Tokens   – colors, typography, spacing, layout
-   2. Light Theme     – .light-theme overrides on <html>
+   1. Token Aliases   – short --c-* names + non-color tokens
+   2. Light Theme     – overrides on <html> without .dark
    3. Base Styles     – reset + global elements for .portfolio-page
    4. Layout System   – wrapper, sidebar, content column, footer
    5. Phone Nav       – smartphone-style navigation component
 
-   Page-specific styles live in resources/css/pages/
+   Color values themselves live in the @theme block at the top of
+   this file. Page-specific styles live in resources/css/pages/
    ================================================================ */
 
 
 /* ================================================================
-   1. DESIGN TOKENS
+   1. TOKEN ALIASES + NON-COLOR TOKENS
    ================================================================ */
 
 :root {
 
-    /* ── Colors (dark theme, default) ──────────────────────────
-       Primary is a warm yellow-gold. Background and foreground
-       are near-black and white respectively.                      */
-    --c-primary:       #FACC15;   /* yellow-gold accent             */
-    --c-primary-dk:    #9B870C;   /* darker gold for hover states   */
-    --c-primary-lt:    #FED7AA;   /* peach-light for borders/h2     */
-    --c-primary-fade:  #605443;   /* muted gold for subtle surfaces */
-    --c-bg:            #1C1B17;   /* page background                */
-    --c-surface:       #1C1B17;   /* card / panel background        */
-    --c-fg:            #FFFFFF;   /* default text color             */
-    --c-selection-bg:  #ffb347;   /* ::selection background         */
-    --c-selection-fg:  #000000;   /* ::selection text               */
-    --c-muted:         #a3a3a3;   /* muted text (suptitle, subtitle)  */
-    --border-w:        1px;        /* card / component border width    */
+    /* ── Color aliases ─────────────────────────────────────────
+       Aliases of the @theme palette — no values of their own, so
+       a theme switch on <html> carries through automatically.    */
+    --c-primary:        var(--color-primary);
+    --c-primary-dk:     var(--color-primary-dark);
+    --c-primary-lt:     var(--color-primary-light);
+    --c-primary-fade:   var(--color-primary-fade);
+    --c-bg:             var(--color-portfolio-bg);
+    --c-surface:        var(--color-portfolio-surface);
+    --c-surface-sunken: var(--color-portfolio-surface-sunken);
+    --c-fg:             var(--color-portfolio-fg);
+    --c-muted:          var(--color-portfolio-muted);
+    --c-selection-bg:   var(--color-selection-bg);
+    --c-selection-fg:   var(--color-selection-fg);
 
-    /* ── Typography ────────────────────────────────────────────
-       Font family is set in @theme for Tailwind; re-declared here
-       so non-Tailwind CSS can reference it without @apply.        */
-    --font-body:    'Inter', ui-sans-serif, system-ui, sans-serif;
+    --border-w:        1px;        /* card / component border width    */
 
     /* Font sizes – fluid via clamp(min, preferred, max)
        All sizes use rem so they respect the user's browser
@@ -163,39 +177,48 @@ select:focus[data-flux-control] {
 
 
 /* ================================================================
-   2. LIGHT THEME   (.light-theme on <html>, toggled via JS)
+   2. LIGHT THEME
+   ================================================================
+   `.dark` on <html> is the single theme switch for the whole app
+   (public + admin + Flux). It is applied before first paint by
+   partials/theme.blade.php from the `theme` cookie; dark is the
+   default, so light is the state without the class.
+
+   These override the same @theme variables the dark palette
+   declares, so Tailwind utilities switch along with var(--c-*).
    ================================================================ */
 
-.light-theme {
+html:not(.dark) {
     /* Primary: rich amber — legible as text, beautiful as accent */
-    --c-primary:      #B45309;   /* amber-700 — readable on light surfaces  */
-    --c-primary-dk:   #92400E;   /* amber-800 — hover/darker states         */
-    --c-primary-lt:   #FBBF24;   /* amber-400 — visible golden borders      */
-    --c-primary-fade: #FDE68A;   /* amber-200 — warm fills, dividers        */
+    --color-primary:       #B45309;   /* amber-700 — readable on light surfaces */
+    --color-primary-dark:  #92400E;   /* amber-800 — hover/darker states        */
+    --color-primary-light: #FBBF24;   /* amber-400 — visible golden borders     */
+    --color-primary-fade:  #FDE68A;   /* amber-200 — warm fills, dividers       */
 
     /* Surfaces: warm hierarchy — cards visually lift off the page */
-    --c-bg:           #F3F1EC;   /* warm parchment — like quality paper     */
-    --c-surface:      #FFFFFF;   /* pure white card faces pop off bg        */
+    --color-portfolio-bg:             #F3F1EC;  /* warm parchment           */
+    --color-portfolio-surface:        #FFFFFF;  /* white card faces pop     */
+    --color-portfolio-surface-sunken: #E4E0D7;  /* recessed tracks          */
 
     /* Text */
-    --c-fg:           #1C1B17;
-    --c-muted:        #78716C;   /* warm stone-500 — harmonizes with amber  */
+    --color-portfolio-fg:    #1C1B17;
+    --color-portfolio-muted: #78716C;   /* warm stone-500 — harmonizes with amber */
 
     /* Selection */
-    --c-selection-bg: #FCD34D;   /* amber-300                               */
-    --c-selection-fg: #1C1B17;
+    --color-selection-bg: #FCD34D;   /* amber-300                                */
+    --color-selection-fg: #1C1B17;
 
     --border-w:       2px;        /* thicker borders in light mode           */
 }
 
 /* h2 watermark: solid amber fill in light mode — stroke is too faint on parchment */
-.light-theme .portfolio-page h2 {
+html:not(.dark) .portfolio-page h2 {
     color: var(--c-primary-lt);
     -webkit-text-stroke: 0;
 }
 
 /* Special card shimmer: swap white sweeps for parchment bg so they read on amber border */
-.light-theme .exp-card--special {
+html:not(.dark) .exp-card--special {
     background:
         linear-gradient(var(--c-surface), var(--c-surface)) padding-box,
         conic-gradient(
@@ -216,7 +239,7 @@ select:focus[data-flux-control] {
    ================================================================ */
 
 .portfolio-page {
-    font-family: var(--font-body);
+    font-family: var(--font-sans);
     background-color: var(--c-bg);
     color: var(--c-fg);
     transition:
@@ -230,7 +253,7 @@ select:focus[data-flux-control] {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-family: var(--font-body);
+    font-family: var(--font-sans);
     font-optical-sizing: auto;
     font-style: normal;
     text-decoration: none;
@@ -686,6 +709,3 @@ body.no-scroll { overflow: hidden; }
     width: 270px;
     margin: auto;
 }
-
-@import './pages/about-me.css';
-@import './pages/projects.css';

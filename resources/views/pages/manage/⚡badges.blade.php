@@ -20,7 +20,7 @@ new #[Title('Manage Badges')] class extends Component {
     public function badges(): \Illuminate\Support\Collection
     {
         return Badge::query()
-            ->when($this->search, fn ($q) => $q->whereRaw("name->>'en' ILIKE ?", ["%{$this->search}%"]))
+            ->when($this->search, fn ($q) => $q->whereRaw("lower(name->>'en') LIKE lower(?)", ['%'.addcslashes($this->search, '%_\\').'%']))
             ->orderByRaw("name->>'en'")
             ->get();
     }
@@ -50,14 +50,14 @@ new #[Title('Manage Badges')] class extends Component {
 
     public function save(): void
     {
+        $badge = $this->editingId ? Badge::findOrFail($this->editingId) : null;
+
         $validated = $this->validate([
             'name' => ['required', 'array'],
             'name.en' => ['required', 'string', 'max:100'],
             'name.cs' => ['nullable', 'string', 'max:100'],
-            'slug' => ['required', 'string', 'max:100', $this->editingId
-                ? \Illuminate\Validation\Rule::unique('badges', 'slug')->ignore($this->editingId)
-                : 'unique:badges,slug'],
-            'color' => ['nullable', 'string', 'max:50'],
+            'slug' => ['required', 'string', 'max:100', \Illuminate\Validation\Rule::unique('badges', 'slug')->ignore($badge)],
+            'color' => ['nullable', 'string', 'regex:/^#[0-9A-Fa-f]{6}$/'],
         ]);
 
         $data = [
@@ -66,8 +66,8 @@ new #[Title('Manage Badges')] class extends Component {
             'color' => $validated['color'] ?: null,
         ];
 
-        if ($this->editingId) {
-            Badge::findOrFail($this->editingId)->update($data);
+        if ($badge) {
+            $badge->update($data);
         } else {
             Badge::create($data);
         }
@@ -103,7 +103,7 @@ new #[Title('Manage Badges')] class extends Component {
     }
 }; ?>
 
-<div style="font-family: var(--font-body); color: var(--c-fg);" class="p-6 space-y-6">
+<div style="font-family: var(--font-sans); color: var(--c-fg);" class="p-6 space-y-6">
 
     {{-- Header --}}
     <div class="flex items-center justify-between">
@@ -138,7 +138,10 @@ new #[Title('Manage Badges')] class extends Component {
                     <flux:table.cell>{{ $badge->slug }}</flux:table.cell>
                     <flux:table.cell>
                         @if ($badge->color)
-                            <flux:badge size="sm" color="{{ $badge->color }}" inset="top bottom">{{ $badge->color }}</flux:badge>
+                            <span class="inline-flex items-center gap-2">
+                                <span class="inline-block w-3 h-3 rounded-full" style="background: {{ $badge->color }}"></span>
+                                <span class="font-mono text-xs">{{ $badge->color }}</span>
+                            </span>
                         @else
                             —
                         @endif
@@ -169,7 +172,7 @@ new #[Title('Manage Badges')] class extends Component {
         <form wire:submit="save" class="space-y-4">
             {{-- Language tabs --}}
             <div x-data="{ locale: 'en' }">
-                <div class="flex gap-1 mb-4 p-1 rounded-lg" style="background: var(--c-surface-raised, rgba(0,0,0,0.08));">
+                <div class="flex gap-1 mb-4 p-1 rounded-lg" style="background: var(--c-surface-sunken);">
                     <button type="button" x-on:click="locale = 'en'"
                         :class="locale === 'en' ? 'shadow-sm font-semibold' : 'opacity-60 hover:opacity-80'"
                         class="flex-1 px-3 py-1.5 rounded-md text-sm transition-all"
@@ -187,7 +190,7 @@ new #[Title('Manage Badges')] class extends Component {
                 <div x-show="locale === 'en'" class="space-y-4">
                     <flux:field>
                         <flux:label>Name <flux:badge size="sm" color="yellow" inset="top bottom">Required</flux:badge></flux:label>
-                        <flux:input wire:model="name.en" wire:model.live.debounce="name.en" placeholder="e.g. Laravel" />
+                        <flux:input wire:model.live.debounce="name.en" placeholder="e.g. Laravel" />
                         <flux:error name="name.en" />
                     </flux:field>
                 </div>
@@ -213,13 +216,15 @@ new #[Title('Manage Badges')] class extends Component {
                     <flux:label>Color</flux:label>
                     <flux:select wire:model="color">
                         <flux:select.option value="">— none —</flux:select.option>
-                        <flux:select.option value="red">Red</flux:select.option>
-                        <flux:select.option value="orange">Orange</flux:select.option>
-                        <flux:select.option value="yellow">Yellow</flux:select.option>
-                        <flux:select.option value="green">Green</flux:select.option>
-                        <flux:select.option value="blue">Blue</flux:select.option>
-                        <flux:select.option value="purple">Purple</flux:select.option>
-                        <flux:select.option value="zinc">Zinc</flux:select.option>
+                        <flux:select.option value="#EAB308">Gold</flux:select.option>
+                        <flux:select.option value="#F59E0B">Amber</flux:select.option>
+                        <flux:select.option value="#F97316">Orange</flux:select.option>
+                        <flux:select.option value="#34D399">Emerald</flux:select.option>
+                        <flux:select.option value="#2DD4BF">Teal</flux:select.option>
+                        <flux:select.option value="#38BDF8">Sky</flux:select.option>
+                        <flux:select.option value="#60A5FA">Blue</flux:select.option>
+                        <flux:select.option value="#818CF8">Indigo</flux:select.option>
+                        <flux:select.option value="#A78BFA">Violet</flux:select.option>
                     </flux:select>
                     <flux:error name="color" />
                 </flux:field>

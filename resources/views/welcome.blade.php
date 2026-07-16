@@ -55,7 +55,7 @@
                     @php
                         $link = is_array($experience->links) ? ($experience->links[0]['url'] ?? null) : null;
                     @endphp
-                    <a @if($link) href="{{ $link }}" target="_blank" @endif class="work-bot-content-row">
+                    <a @if($link) href="{{ $link }}" target="_blank" rel="noopener noreferrer" @endif class="work-bot-content-row">
                         @if ($experience->image_path)
                             <img src="{{ asset($experience->image_path) }}" alt="{{ $experience->getTranslation('title', $locale) }}">
                         @endif
@@ -73,7 +73,7 @@
                     @php
                         $link = is_array($experience->links) ? ($experience->links[0]['url'] ?? null) : null;
                     @endphp
-                    <a @if($link) href="{{ $link }}" target="_blank" @endif class="work-bot-content-row">
+                    <a @if($link) href="{{ $link }}" target="_blank" rel="noopener noreferrer" @endif class="work-bot-content-row">
                         @if ($experience->image_path)
                             <img src="{{ asset($experience->image_path) }}" alt="{{ $experience->getTranslation('title', $locale) }}">
                         @endif
@@ -98,10 +98,10 @@
                 <h3>{{ __('home/projects.spsehub_title') }}</h3>
                 <p>{{ __('home/projects.spsehub_text') }}</p>
                 <div class="projects-row-text-links">
-                    <a target="_blank" href="{{ __('home/projects.spsehub_web') }}">
+                    <a target="_blank" rel="noopener noreferrer" href="{{ __('home/projects.spsehub_web') }}">
                         <img src="{{ asset('images/projects/icons/web.webp') }}" alt="web">
                     </a>
-                    <a target="_blank" href="{{ __('home/projects.spsehub_github') }}">
+                    <a target="_blank" rel="noopener noreferrer" href="{{ __('home/projects.spsehub_github') }}">
                         <img src="{{ asset('images/mobile/icons/github.webp') }}" alt="github">
                     </a>
                 </div>
@@ -112,7 +112,7 @@
                 <h3>{{ __('home/projects.usladovny_title') }}</h3>
                 <p>{{ __('home/projects.usladovny_text') }}</p>
                 <div class="projects-row-text-links">
-                    <a target="_blank" href="{{ __('home/projects.usladovny_web') }}">
+                    <a target="_blank" rel="noopener noreferrer" href="{{ __('home/projects.usladovny_web') }}">
                         <img src="{{ asset('images/projects/icons/web.webp') }}" alt="web">
                     </a>
                 </div>

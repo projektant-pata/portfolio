@@ -111,9 +111,12 @@
             </a>
         </div>
         <div class="mobile-nav-app">
-            <a href="{{ route('language.toggle') }}">
-                <img src="{{ asset('images/mobile/icons/translator.png') }}" alt="language">
-            </a>
+            <form action="{{ route('language.toggle') }}" method="POST">
+                @csrf
+                <button type="submit">
+                    <img src="{{ asset('images/mobile/icons/translator.png') }}" alt="language">
+                </button>
+            </form>
         </div>
         <div class="mobile-nav-app">
             <a href="#">

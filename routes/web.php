@@ -12,7 +12,7 @@ Route::get('/about-me', AboutMeController::class)->name('about-me');
 Route::get('/experience', ExperienceController::class)->name('experience');
 Route::get('/projects', ProjectsController::class)->name('projects');
 
-Route::get('/language/toggle', [LanguageController::class, 'toggle'])->name('language.toggle');
+Route::post('/language/toggle', [LanguageController::class, 'toggle'])->name('language.toggle');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::view('dashboard', 'dashboard')->name('dashboard');

@@ -21,7 +21,7 @@ new #[Title('Manage Links')] class extends Component {
     public function links(): \Illuminate\Support\Collection
     {
         return Link::with('project')
-            ->when($this->search, fn ($q) => $q->where('url', 'ILIKE', "%{$this->search}%"))
+            ->when($this->search, fn ($q) => $q->whereRaw('lower(url) LIKE lower(?)', ['%'.addcslashes($this->search, '%_\\').'%']))
             ->orderByRaw("alt->>'en'")
             ->get();
     }
@@ -105,7 +105,7 @@ new #[Title('Manage Links')] class extends Component {
     }
 }; ?>
 
-<div style="font-family: var(--font-body); color: var(--c-fg);" class="p-6 space-y-6">
+<div style="font-family: var(--font-sans); color: var(--c-fg);" class="p-6 space-y-6">
 
     {{-- Header --}}
     <div class="flex items-center justify-between">
@@ -182,7 +182,7 @@ new #[Title('Manage Links')] class extends Component {
 
             {{-- Language tabs for alt --}}
             <div x-data="{ locale: 'en' }">
-                <div class="flex gap-1 mb-4 p-1 rounded-lg" style="background: var(--c-surface-raised, rgba(0,0,0,0.08));">
+                <div class="flex gap-1 mb-4 p-1 rounded-lg" style="background: var(--c-surface-sunken);">
                     <button type="button" x-on:click="locale = 'en'"
                         :class="locale === 'en' ? 'shadow-sm font-semibold' : 'opacity-60 hover:opacity-80'"
                         class="flex-1 px-3 py-1.5 rounded-md text-sm transition-all"

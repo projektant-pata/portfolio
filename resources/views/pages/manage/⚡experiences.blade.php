@@ -2,6 +2,7 @@
 
 use App\Models\Badge;
 use App\Models\Experience;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -32,7 +33,7 @@ new #[Title('Manage Experiences')] class extends Component {
     public function experiences(): \Illuminate\Support\Collection
     {
         return Experience::query()
-            ->when($this->search, fn ($q) => $q->whereRaw("title->>'en' ILIKE ?", ["%{$this->search}%"]))
+            ->when($this->search, fn ($q) => $q->whereRaw("lower(title->>'en') LIKE lower(?)", ['%'.addcslashes($this->search, '%_\\').'%']))
             ->when($this->typeFilter, fn ($q) => $q->where('type', $this->typeFilter))
             ->orderBy('sort_order')
             ->orderByRaw("title->>'en'")
@@ -41,14 +42,23 @@ new #[Title('Manage Experiences')] class extends Component {
 
     public function reorder(int $id, int $position): void
     {
+        // Reordering renumbers the whole table; a filtered subset would corrupt
+        // positions of hidden rows, so only allow it when no filter is active.
+        if (filled($this->search) || filled($this->typeFilter)) {
+            return;
+        }
+
         $experiences = Experience::query()
-            ->when($this->search, fn ($q) => $q->whereRaw("title->>'en' ILIKE ?", ["%{$this->search}%"]))
-            ->when($this->typeFilter, fn ($q) => $q->where('type', $this->typeFilter))
             ->orderBy('sort_order')
             ->orderByRaw("title->>'en'")
             ->get();
 
         $item = $experiences->firstWhere('id', $id);
+
+        if (! $item) {
+            return;
+        }
+
         $experiences = $experiences->reject(fn ($e) => $e->id === $id)->values();
         $experiences->splice($position, 0, [$item]);
 
@@ -135,9 +145,19 @@ new #[Title('Manage Experiences')] class extends Component {
             'selectedBadgeIds.*' => ['nullable', 'uuid', 'exists:badges,id'],
         ]);
 
+        $experience = $this->editingId ? Experience::findOrFail($this->editingId) : null;
+
         if ($this->imageFile) {
             $path = $this->imageFile->store('experiences', 'public');
+
+            if ($experience?->image_path && str_starts_with($experience->image_path, 'storage/')) {
+                Storage::disk('public')->delete(substr($experience->image_path, strlen('storage/')));
+            }
+
             $this->image_path = 'storage/' . $path;
+        } else {
+            // image_path is never trusted from the client; derive it from the stored model.
+            $this->image_path = $experience?->image_path ?? '';
         }
 
         $links = collect($this->links)
@@ -163,8 +183,7 @@ new #[Title('Manage Experiences')] class extends Component {
             'sort_order' => $this->sort_order,
         ];
 
-        if ($this->editingId) {
-            $experience = Experience::findOrFail($this->editingId);
+        if ($experience) {
             $experience->update($data);
             $experience->badges()->sync($badgeIds);
         } else {
@@ -211,7 +230,7 @@ new #[Title('Manage Experiences')] class extends Component {
     }
 }; ?>
 
-<div style="font-family: var(--font-body); color: var(--c-fg);" class="p-6 space-y-6">
+<div style="font-family: var(--font-sans); color: var(--c-fg);" class="p-6 space-y-6">
 
     {{-- Header --}}
     <div class="flex items-center justify-between">
@@ -300,7 +319,7 @@ new #[Title('Manage Experiences')] class extends Component {
         <form wire:submit="save" class="space-y-4">
             {{-- Language tabs --}}
             <div x-data="{ locale: 'en' }">
-                <div class="flex gap-1 mb-4 p-1 rounded-lg" style="background: var(--c-surface-raised, rgba(0,0,0,0.08));">
+                <div class="flex gap-1 mb-4 p-1 rounded-lg" style="background: var(--c-surface-sunken);">
                     <button
                         type="button"
                         x-on:click="locale = 'en'"
