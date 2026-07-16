@@ -1,0 +1,43 @@
+/* ================================================================
+   DASHBOARD (MANAGE) PAGE STYLES
+   ================================================================ */
+
+
+/* ── Button variants ── */
+
+.btn-gold {
+    background-color: var(--c-primary) !important;
+    color: #000 !important;
+    font-weight: 600 !important;
+    cursor: pointer;
+    transition: background-color var(--t-fast), transform var(--t-fast), box-shadow var(--t-fast);
+}
+
+.btn-gold:hover {
+    background-color: var(--c-primary-dk) !important;
+    box-shadow: 0 0 10px color-mix(in srgb, var(--c-primary) 40%, transparent);
+}
+
+.btn-gold-subtle {
+    background-color: var(--c-primary-fade) !important;
+    color: var(--c-primary) !important;
+    border-color: var(--c-primary-fade) !important;
+    cursor: pointer;
+    transition: background-color var(--t-fast), color var(--t-fast);
+}
+
+.btn-gold-subtle:hover {
+    background-color: color-mix(in srgb, var(--c-primary-fade) 70%, var(--c-primary)) !important;
+    color: #fff !important;
+}
+
+.btn-muted-icon {
+    color: var(--c-muted) !important;
+    cursor: pointer;
+    transition: color var(--t-fast), transform var(--t-fast);
+}
+
+.btn-muted-icon:hover {
+    color: var(--c-fg) !important;
+    transform: scale(1.15);
+}

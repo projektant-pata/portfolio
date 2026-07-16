@@ -1,17 +1,10 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Dashboard') }}
-        </h2>
-    </x-slot>
-
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
-                    {{ __("You're logged in!") }}
-                </div>
-            </div>
-        </div>
+<x-layouts::app :title="__('Dashboard')">
+    <div style="font-family: var(--font-body); color: var(--c-fg);" class="p-6">
+        <h1 style="font-size: 2rem; font-weight: 600; margin-bottom: 0.25rem; color: var(--c-fg);">
+            Dashboard
+        </h1>
+        <p style="color: var(--c-muted); font-size: 0.875rem;">
+            Welcome back, {{ auth()->user()->name }}.
+        </p>
     </div>
-</x-app-layout>
+</x-layouts::app>

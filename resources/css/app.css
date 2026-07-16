@@ -1,3 +1,691 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+@import '../../vendor/livewire/flux/dist/flux.css';
+
+@source '../views';
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../vendor/livewire/flux-pro/stubs/**/*.blade.php';
+@source '../../vendor/livewire/flux/stubs/**/*.blade.php';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-portfolio: 'Inter', ui-sans-serif, system-ui, sans-serif;
+
+    /* Portfolio color palette — dark theme (default) */
+    --color-primary:            #FACC15;
+    --color-primary-dark:       #9B870C;
+    --color-primary-light:      #FED7AA;
+    --color-primary-light-fade: #605443;
+    --color-portfolio-bg:       #1C1B17;
+    --color-portfolio-surface:  #1C1B17;
+    --color-portfolio-fg:       #FFFFFF;
+
+    --color-zinc-50: #fafafa;
+    --color-zinc-100: #f5f5f5;
+    --color-zinc-200: #e5e5e5;
+    --color-zinc-300: #d4d4d4;
+    --color-zinc-400: #a3a3a3;
+    --color-zinc-500: #737373;
+    --color-zinc-600: #525252;
+    --color-zinc-700: #404040;
+    --color-zinc-800: #262626;
+    --color-zinc-900: #171717;
+    --color-zinc-950: #0a0a0a;
+
+    --color-accent: var(--color-neutral-800);
+    --color-accent-content: var(--color-neutral-800);
+    --color-accent-foreground: var(--color-white);
+}
+
+@layer theme {
+    .dark {
+        --color-accent: var(--color-white);
+        --color-accent-content: var(--color-white);
+        --color-accent-foreground: var(--color-neutral-800);
+    }
+}
+
+@layer base {
+
+    *,
+    ::after,
+    ::before,
+    ::backdrop,
+    ::file-selector-button {
+        border-color: var(--color-gray-200, currentColor);
+    }
+}
+
+[data-flux-field]:not(ui-radio, ui-checkbox) {
+    @apply grid gap-2;
+}
+
+[data-flux-label] {
+    @apply  !mb-0 !leading-tight;
+}
+
+input:focus[data-flux-control],
+textarea:focus[data-flux-control],
+select:focus[data-flux-control] {
+    @apply outline-hidden ring-2 ring-accent ring-offset-2 ring-offset-accent-foreground;
+}
+
+/* \[:where(&)\]:size-4 {
+    @apply size-4;
+} */
+
+/* ================================================================
+   PORTFOLIO DESIGN SYSTEM
+   ================================================================
+   Public-facing portfolio styles. All values are CSS custom
+   properties so they can be referenced consistently across every
+   page and component without magic numbers.
+
+   SECTIONS
+   ─────────────────────────────────────────────────────────────
+   1. Design Tokens   – colors, typography, spacing, layout
+   2. Light Theme     – .light-theme overrides on <html>
+   3. Base Styles     – reset + global elements for .portfolio-page
+   4. Layout System   – wrapper, sidebar, content column, footer
+   5. Phone Nav       – smartphone-style navigation component
+
+   Page-specific styles live in resources/css/pages/
+   ================================================================ */
+
+
+/* ================================================================
+   1. DESIGN TOKENS
+   ================================================================ */
+
+:root {
+
+    /* ── Colors (dark theme, default) ──────────────────────────
+       Primary is a warm yellow-gold. Background and foreground
+       are near-black and white respectively.                      */
+    --c-primary:       #FACC15;   /* yellow-gold accent             */
+    --c-primary-dk:    #9B870C;   /* darker gold for hover states   */
+    --c-primary-lt:    #FED7AA;   /* peach-light for borders/h2     */
+    --c-primary-fade:  #605443;   /* muted gold for subtle surfaces */
+    --c-bg:            #1C1B17;   /* page background                */
+    --c-surface:       #1C1B17;   /* card / panel background        */
+    --c-fg:            #FFFFFF;   /* default text color             */
+    --c-selection-bg:  #ffb347;   /* ::selection background         */
+    --c-selection-fg:  #000000;   /* ::selection text               */
+    --c-muted:         #a3a3a3;   /* muted text (suptitle, subtitle)  */
+    --border-w:        1px;        /* card / component border width    */
+
+    /* ── Typography ────────────────────────────────────────────
+       Font family is set in @theme for Tailwind; re-declared here
+       so non-Tailwind CSS can reference it without @apply.        */
+    --font-body:    'Inter', ui-sans-serif, system-ui, sans-serif;
+
+    /* Font sizes – fluid via clamp(min, preferred, max)
+       All sizes use rem so they respect the user's browser
+       base font preference.                                        */
+    --fs-mini:  0.85rem;   /* .mini labels  */
+    --fs-sm:    0.875rem;  /* body small    */
+    --fs-base:  1rem;      /* body          */
+    --fs-h4:    1.6rem;    /* subheading    */
+    --fs-h3:    2.56rem;   /* section title */
+    --fs-h1:    4.1rem;    /* hero title    */
+    --fs-h2:    6.56rem;   /* watermark h2  */
+
+    /* Font weights */
+    --fw-light:    200;
+    --fw-regular:  400;
+    --fw-semibold: 600;
+    --fw-bold:     700;
+
+    /* ── Spacing ────────────────────────────────────────────────
+       Section and component gaps in rem.                          */
+    --sp-section:   6.25rem;  /* gap between page sections (~100px)*/
+    --sp-card-pad:  1.5rem;   /* inner padding for cards           */
+
+    /* ── Radii ──────────────────────────────────────────────────*/
+    --r-card:   1.875rem;  /* large card corner radius (~30px)     */
+    --r-card-sm: 1.25rem;  /* smaller card corner radius (~20px)   */
+    --r-phone:  2.8125rem; /* phone nav corner radius (~45px)      */
+
+    /* ── Layout ─────────────────────────────────────────────────
+       The outer wrapper uses min() to be both fluid and capped.
+       Sidebar holds the phone nav; its width accommodates the
+       370px phone frame plus breathing room.                      */
+    --layout-max:     106.25rem;  /* max wrapper width (~1700px)    */
+    --layout-padding: 2.5%;      /* horizontal page padding        */
+    --sidebar-w:      26rem;     /* left column width (~415px)     */
+    --content-gap:    2rem;      /* gap between sidebar + content  */
+
+    /* ── Transitions ────────────────────────────────────────────*/
+    --t-base: 0.5s ease-out;
+    --t-fast: 0.3s ease-out;
+}
+
+
+/* ================================================================
+   2. LIGHT THEME   (.light-theme on <html>, toggled via JS)
+   ================================================================ */
+
+.light-theme {
+    /* Primary: rich amber — legible as text, beautiful as accent */
+    --c-primary:      #B45309;   /* amber-700 — readable on light surfaces  */
+    --c-primary-dk:   #92400E;   /* amber-800 — hover/darker states         */
+    --c-primary-lt:   #FBBF24;   /* amber-400 — visible golden borders      */
+    --c-primary-fade: #FDE68A;   /* amber-200 — warm fills, dividers        */
+
+    /* Surfaces: warm hierarchy — cards visually lift off the page */
+    --c-bg:           #F3F1EC;   /* warm parchment — like quality paper     */
+    --c-surface:      #FFFFFF;   /* pure white card faces pop off bg        */
+
+    /* Text */
+    --c-fg:           #1C1B17;
+    --c-muted:        #78716C;   /* warm stone-500 — harmonizes with amber  */
+
+    /* Selection */
+    --c-selection-bg: #FCD34D;   /* amber-300                               */
+    --c-selection-fg: #1C1B17;
+
+    --border-w:       2px;        /* thicker borders in light mode           */
+}
+
+/* h2 watermark: solid amber fill in light mode — stroke is too faint on parchment */
+.light-theme .portfolio-page h2 {
+    color: var(--c-primary-lt);
+    -webkit-text-stroke: 0;
+}
+
+/* Special card shimmer: swap white sweeps for parchment bg so they read on amber border */
+.light-theme .exp-card--special {
+    background:
+        linear-gradient(var(--c-surface), var(--c-surface)) padding-box,
+        conic-gradient(
+            from var(--exp-border-angle),
+            var(--c-primary-lt)  0%,
+            var(--c-bg)          12%,
+            var(--c-primary-lt)  18%,
+            var(--c-primary-lt)  62%,
+            var(--c-bg)          68%,
+            var(--c-primary-lt)  75%,
+            var(--c-primary-lt)  100%
+        ) border-box;
+}
+
+
+/* ================================================================
+   3. BASE STYLES   (scoped to .portfolio-page on <body>)
+   ================================================================ */
+
+.portfolio-page {
+    font-family: var(--font-body);
+    background-color: var(--c-bg);
+    color: var(--c-fg);
+    transition:
+        background-color var(--t-base),
+        color var(--t-base);
+}
+
+.portfolio-page *,
+.portfolio-page ::after,
+.portfolio-page ::before {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-body);
+    font-optical-sizing: auto;
+    font-style: normal;
+    text-decoration: none;
+    list-style: none;
+    color: var(--c-fg);
+    transition: var(--t-base);
+    position: relative;
+    z-index: 1;
+}
+
+.portfolio-page ::selection {
+    background-color: var(--c-selection-bg);
+    color: var(--c-selection-fg);
+}
+
+/* ── Headings ── */
+
+.portfolio-page h1 {
+    font-size: var(--fs-h1);
+    font-weight: var(--fw-bold);
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    margin-bottom: 0;
+}
+
+/* Outlined span inside h1 */
+.portfolio-page h1 span {
+    font-family: sans-serif;
+    color: transparent;
+    -webkit-text-stroke: 2px var(--c-primary);
+}
+
+/* Giant watermark heading used as section label */
+.portfolio-page h2 {
+    text-align: center;
+    margin-bottom: -50px;
+    font-size: var(--fs-h2);
+    font-weight: 300;
+    font-family: sans-serif;
+    color: transparent;
+    -webkit-text-stroke: 1px var(--c-primary-lt);
+}
+
+.portfolio-page h3 {
+    font-size: var(--fs-h3);
+    font-weight: var(--fw-regular);
+}
+
+.portfolio-page h4 {
+    font-size: var(--fs-h4);
+    font-weight: var(--fw-regular);
+}
+
+/* Accent spans inside h3, h4, p */
+.portfolio-page h3 span,
+.portfolio-page h4 span,
+.portfolio-page p   span {
+    color: var(--c-primary);
+}
+
+.portfolio-page p {
+    font-size: var(--fs-base);
+    font-weight: var(--fw-light);
+}
+
+/* Small label text (clock, app names, years) */
+.portfolio-page .mini {
+    font-size: var(--fs-mini) !important;
+    font-weight: var(--fw-light) !important;
+}
+
+
+/* ================================================================
+   4. LAYOUT SYSTEM
+   ================================================================
+
+   Structure
+   ─────────────────────────────────────────────────────────────
+   body.portfolio-page
+   └── div.portfolio-wrapper        ← centered, max-width capped
+       ├── aside.portfolio-sidebar  ← sticky, holds phone nav
+       └── div.portfolio-col        ← flex column
+           ├── main.portfolio-main  ← grows to fill space
+           └── footer.portfolio-footer
+   ================================================================ */
+
+/* ── Outer wrapper ── */
+.portfolio-wrapper {
+    display: grid;
+    grid-template-columns: var(--sidebar-w) 1fr;
+    gap: var(--content-gap);
+
+    width: min(100% - var(--layout-padding) * 2, var(--layout-max));
+    margin-inline: auto;
+    min-height: 100vh;
+}
+
+/* ── Left: sidebar (phone nav lives here) ── */
+.portfolio-sidebar {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: visible;
+}
+
+/* ── Right: content column ── */
+.portfolio-col {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.portfolio-main {
+    flex: 1;
+}
+
+/* ── Section spacing ── */
+.portfolio-section {
+    margin-bottom: var(--sp-section);
+}
+
+/* ── Footer ── */
+.portfolio-footer {
+    border: var(--border-w) solid var(--c-primary-lt);
+    border-radius: var(--r-card) var(--r-card) 0 0;
+    border-bottom: 0;
+    background-color: var(--c-surface);
+    padding: 3rem 4rem 1.5rem;
+}
+
+.portfolio-footer-inner {
+    display: flex;
+    gap: 2rem;
+}
+
+.portfolio-footer-brand {
+    flex: 1;
+}
+
+.portfolio-footer-brand h4:first-child {
+    margin-bottom: 0.6rem;
+}
+
+.portfolio-footer-nav {
+    flex: 2;
+}
+
+.portfolio-footer-social {
+    flex: 2;
+}
+
+.portfolio-footer-nav h4,
+.portfolio-footer-social h4 {
+    margin-bottom: 0.8rem;
+}
+
+.portfolio-footer-nav-links {
+    display: grid;
+    grid-template-columns: repeat(3, auto);
+    grid-template-rows: repeat(2, auto);
+    grid-auto-flow: column;
+    gap: 0.4rem 1.5rem;
+    justify-content: start;
+}
+
+.portfolio-footer-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.portfolio-footer-nav-link img {
+    height: 1.4rem;
+    border-radius: 0.3rem;
+}
+
+.portfolio-footer-nav-link p {
+    transition: var(--t-fast);
+}
+
+.portfolio-footer-nav-link:hover p {
+    color: var(--c-primary);
+}
+
+.portfolio-footer-social-links {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.6rem 1rem;
+}
+
+.portfolio-footer-social-link {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+}
+
+.portfolio-footer-social-link img {
+    height: 1.4rem;
+    border-radius: 0.4rem;
+}
+
+.portfolio-footer-social-link p {
+    transition: var(--t-fast);
+}
+
+.portfolio-footer-social-link:hover p {
+    color: var(--c-primary);
+}
+
+/* ── Responsive layout ── */
+@media (max-width: 992px) {
+    .portfolio-wrapper {
+        grid-template-columns: 1fr; /* sidebar hidden via nav, single column */
+        width: 100%;
+        padding-inline: 3rem;
+    }
+
+    .portfolio-sidebar {
+        display: none; /* phone nav slides in via toggle button instead */
+    }
+
+    .portfolio-footer-inner {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 576px) {
+    .portfolio-wrapper {
+        padding-inline: 1.25rem;
+    }
+}
+
+
+/* ================================================================
+   5. PHONE NAV
+   ================================================================
+
+   On desktop the nav is positioned normally inside the sticky
+   sidebar column — no fixed positioning needed.
+   On ≤992 px the sidebar is hidden; the nav re-enters as a
+   fixed panel that slides in from the right via #toggle-mobile-nav.
+   ================================================================ */
+
+/* ── Phone frame ── */
+#mobile-nav {
+    display: flex;
+    flex-direction: column;
+    position: relative;         /* in-flow inside .portfolio-sidebar  */
+
+    width: 370px;
+    height: 820px;
+    flex-shrink: 0;
+
+    background-image: url('/images/mobile/wallpapers/wallpaper_dark.webp');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    border: 3px solid var(--c-primary-lt);
+    border-radius: var(--r-phone);
+    transition: var(--t-base);
+}
+
+#mobile-nav p {
+    color: #fff !important;
+    font-weight: var(--fw-regular) !important;
+    font-size: 0.75rem !important;
+}
+
+/* ── Status bar (top of phone) ── */
+#mobile-nav-top {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 31px;
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+}
+
+#mobile-nav-top-left {
+    display: flex;
+    align-items: end;
+    justify-content: center;
+    height: 100%;
+    width: 60px;
+    padding-bottom: 2px;
+}
+
+#mobile-nav-clock {
+    margin-bottom: -4px;
+}
+
+#mobile-nav-top-mid {
+    width: 180px;
+    height: 100%;
+    position: relative;
+    background-color: #000;
+    border-radius: 0 0 15px 15px;
+}
+
+#mobile-nav-top-mid-speaker {
+    position: absolute;
+    background-color: #161616;
+    height: 8px;
+    width: 42px;
+    left: 50%; top: 50%;
+    border-radius: 5px;
+    transform: translate(-50%, -50%);
+}
+
+#mobile-nav-top-mid-cam {
+    position: absolute;
+    background-color: #09071E;
+    height: 10px;
+    width: 10px;
+    left: 75%; top: 50%;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+}
+
+#mobile-nav-top-right {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    height: 100%;
+    width: 60px;
+    padding-bottom: 2px;
+}
+
+/* ── App icon grid ── */
+#mobile-nav-mid {
+    width: 100%;
+    height: 100%;
+    padding: 71px 27px 27px;
+}
+
+.mobile-nav-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 27px;
+    width: 100%;
+}
+
+.mobile-nav-app {
+    width: 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.mobile-nav-app img {
+    width: 60px;
+    height: 60px;
+    border-radius: 15px;
+    object-fit: cover;
+}
+
+.mobile-nav-app .mini {
+    text-align: center;
+    margin-top: 5px;
+    font-weight: var(--fw-regular) !important;
+}
+
+/* ── Bottom dock ──
+   margin: 11px on all visible sides keeps the pill 11px from the
+   phone frame. padding: 16px on all sides gives equal breathing
+   room and aligns icons with the grid above:
+     11 (margin) + 16 (padding) = 27px = same as #mobile-nav-mid
+   side padding → icon columns line up exactly.               */
+#mobile-nav-bottom {
+    flex-shrink: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0 11px 11px;
+    padding: 16px;
+    background-color: rgba(0, 0, 0, 0.4);
+    border-radius: 2.2rem;
+}
+
+/* ── Mobile toggle button (hidden on desktop) ── */
+#toggle-mobile-nav {
+    display: none;
+    position: fixed;
+    top: 10px; right: 10px;
+    width: 40px; height: 40px;
+    font-size: 1.875rem;
+    background-color: transparent;
+    border: 0;
+    cursor: pointer;
+    color: var(--c-fg);
+    z-index: 800;
+}
+
+/* ── Overlay (behind open nav on mobile) ── */
+#mobile-nav-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 998;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity var(--t-fast);
+}
+
+#mobile-nav-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+body.no-scroll { overflow: hidden; }
+
+/* ── ≤992 px: sidebar hidden, nav slides in from right ── */
+@media (max-width: 992px) {
+    #toggle-mobile-nav {
+        display: block;
+    }
+
+    #mobile-nav {
+        position: fixed;
+        top: 10px;
+        right: 0;
+        transform: translateX(120%);
+        transition: transform var(--t-fast);
+        z-index: 999;
+    }
+
+    #mobile-nav.active {
+        transform: translateX(-20px);
+    }
+}
+
+@media (max-width: 576px) {
+    #mobile-nav {
+        scale: 0.8;
+        top: -5vh;
+    }
+}
+
+
+/* ── Stats card (shared between home and about-me) ── */
+.stats-cards-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 2rem;
+    border-radius: var(--r-card);
+    border: var(--border-w) solid var(--c-primary-lt);
+    background-color: var(--c-surface);
+    height: 160px;
+    width: 270px;
+    margin: auto;
+}
+
+@import './pages/about-me.css';
+@import './pages/projects.css';

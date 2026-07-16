@@ -1,192 +1,217 @@
-@extends('base')
+<x-portfolio-layout :title="__('layout/header.experience_title')" :description="__('layout/header.experience_desc')" :styles="['resources/css/pages/experience.css']">
 
-@section('title', __('header.experience_title'))
-@section('description', __('header.experience_desc'))
-@section('styles')
-    <link rel="stylesheet" href="{{ asset('css/experience.css') }}">
-@endsection
-@section('scripts')
-    <script src="{{asset('js/experience.js')}}" defer></script>
-@endsection
+    @php $locale = app()->getLocale(); @endphp
 
-@section('content')
-    <section id="experience">
-        <h2>{{ __('experience.title') }}</h2>
-        <div id="experience-timeline">        <div id="experience-timelineender"></div>
+    <section id="experience" class="portfolio-section" style="padding-top: var(--sp-section)">
+        <h2>{{ __('home/experience.title') }}</h2>
+
+        {{-- Filter tabs --}}
+        <div id="exp-filters">
+            <div class="exp-filters-group">
+                <button type="button" class="exp-filter" data-filter="work">{{ __('home/experience.title_work') }}</button>
+                <button type="button" class="exp-filter" data-filter="life">{{ __('home/experience.title_life') }}</button>
+            </div>
+            @if ($badges->isNotEmpty())
+                <div class="exp-filters-group">
+                    @foreach ($badges as $badge)
+                        <button
+                            type="button"
+                            class="exp-filter exp-filter--badge"
+                            data-filter="badge:{{ $badge->slug }}"
+                            style="--badge-color: {{ $badge->color }}"
+                        >{{ $badge->getTranslation('name', $locale) }}</button>
+                    @endforeach
+                </div>
+            @endif
+            <div id="exp-search-wrap">
+                <button type="button" id="exp-search-btn" aria-label="{{ __('home/experience.search_placeholder') }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                </button>
+                <input type="search" id="exp-search" placeholder="{{ __('home/experience.search_placeholder') }}" autocomplete="off">
+            </div>
         </div>
-        <div id="experience-triangle"></div>
-        <div id="experience-content">
-            <article class="experience-content-row">
-                <div class="experience-content-row-circle"></div>
-                <div class="experience-content-row-line"></div>
-                <div class="experience-content-row-card">
-                    <h4>{!! __('experience.card7_year') !!}</h4>
-                    <h3><span>{!! __('experience.card7_title') !!}</span></h3>
-                    <p class="mini">{!! __('experience.card7_subtitle') !!}</p>
-                    <p>{!! __('experience.card7_text') !!}
-                    </p>
-                    <div class="experience-content-row-card-buttons">
-                        <div class="experience-content-row-card-buttons-button">
-                            {!! __('experience.card7_but1') !!}
-                        </div>
-                        <div class="experience-content-row-card-buttons-button">
-                            {!! __('experience.card7_but2') !!}
-                        </div>
-                        <div class="experience-content-row-card-buttons-button">
-                            {!! __('experience.card7_but3') !!}
+
+        {{-- Masonry grid --}}
+        <div id="exp-grid">
+            <div id="exp-grid-line"></div>
+            <div id="exp-col-left"></div>
+            <div id="exp-col-right"></div>
+        </div>
+
+        {{-- Hidden card pool: source of truth for JS --}}
+        <div id="exp-cards-pool" style="display: none">
+            @foreach ($experiences as $exp)
+                @php
+                    $badgeSlugs = $exp->badges->pluck('slug')->toArray();
+                @endphp
+                <div
+                    class="exp-card {{ $exp->is_special ? 'exp-card--special' : '' }}"
+                    data-type="{{ $exp->type }}"
+                    data-badges='@json($badgeSlugs)'
+                >
+                    {{-- Top row: image, year, title, subtitle --}}
+                    <div class="exp-card-header">
+                        @if ($exp->image_path)
+                            <img class="exp-card-img" src="{{ asset($exp->image_path) }}" alt="{{ $exp->getTranslation('title', $locale) }}">
+                        @endif
+                        <div class="exp-card-meta">
+                            <div style="display:flex;align-items:center;gap:0.5rem">
+                                @if ($exp->getTranslation('year', $locale))
+                                    <span class="mini exp-card-year">{{ $exp->getTranslation('year', $locale) }}</span>
+                                @endif
+                                <span class="exp-card-type">{{ $exp->type }}</span>
+                            </div>
+                            <h4 class="exp-card-title">{{ $exp->getTranslation('title', $locale) }}</h4>
+                            @if ($exp->getTranslation('subtitle', $locale))
+                                <p class="exp-card-subtitle">{{ $exp->getTranslation('subtitle', $locale) }}</p>
+                            @endif
                         </div>
                     </div>
 
-                </div>
-            </article>
-            <article class="experience-content-row">
-                <div class="experience-content-row-circle"></div>
-                <div class="experience-content-row-line"></div>
-                <div class="experience-content-row-card">
-                    <h4>{!! __('experience.card6_year') !!}</h4>
-                    <h3><span>{!! __('experience.card6_title') !!}</span></h3>
-                    <p class="mini">{!! __('experience.card6_subtitle') !!}</p>
-                    <p>{!! __('experience.card6_text') !!}</p>
-                    <div class="experience-content-row-card-buttons">
-                        <div class="experience-content-row-card-buttons-button">
-                            {!! __('experience.card6_but1') !!}
-                        </div>
-                        <div class="experience-content-row-card-buttons-button">
-                            {!! __('experience.card6_but2') !!}
-                        </div>
-                        <div class="experience-content-row-card-buttons-button">
-                            {!! __('experience.card6_but3') !!}
-                        </div>
-                    </div>
+                    {{-- Optional content (markdown) --}}
+                    @php $content = $exp->getTranslation('content', $locale); @endphp
+                    @if ($content)
+                        <div class="exp-card-content">{!! Str::markdown($content) !!}</div>
+                    @endif
 
-                </div>
-            </article>
-            <article class="experience-content-row">
-                <div class="experience-content-row-circle"></div>
-                <div class="experience-content-row-line"></div>
-                <div class="experience-content-row-card">
-                    <h4>{!! __('experience.card8_year') !!}</h4>
-                    <h3><span>{!! __('experience.card8_title') !!}</span></h3>
-                    <p class="mini">{!! __('experience.card8_subtitle') !!}</p>
-                    <p>{!! __('experience.card8_text') !!}</p>
-                    <div class="experience-content-row-card-buttons">
-                        <div class="experience-content-row-card-buttons-button">
-                            {!! __('experience.card8_but1') !!}
+                    {{-- Badges row --}}
+                    @if ($exp->badges->isNotEmpty())
+                        <div class="exp-card-badges">
+                            @foreach ($exp->badges as $badge)
+                                <span class="exp-badge" style="--badge-color: {{ $badge->color }}">
+                                    {{ $badge->getTranslation('name', $locale) }}
+                                </span>
+                            @endforeach
                         </div>
+                    @endif
 
-                        <div class="experience-content-row-card-buttons-button">
-                            {!! __('experience.card8_but3') !!}
+                    {{-- Links row --}}
+                    @if (!empty($exp->links))
+                        <div class="exp-card-links">
+                            @foreach ($exp->links as $link)
+                                <a href="{{ $link['url'] }}" target="_blank" rel="noopener" class="exp-card-link">
+                                    @if (!empty($link['img_url']))
+                                        <img
+                                            src="{{ $link['img_url'] }}"
+                                            alt="{{ is_array($link['alt'] ?? null) ? ($link['alt'][$locale] ?? $link['alt']['en'] ?? '') : ($link['alt'] ?? '') }}"
+                                        >
+                                    @endif
+                                </a>
+                            @endforeach
                         </div>
-                    </div>
-
+                    @endif
                 </div>
-            </article>
-            <article class="experience-content-row">
-                <div class="experience-content-row-circle"></div>
-                <div class="experience-content-row-line"></div>
-                <div class="experience-content-row-card experience-content-row-specialcard">
-                    <h4>{!! __('experience.card5_year') !!}</h4>
-                    <h3><span>{!! __('experience.card5_title') !!}</span></h3>
-                    <p class="mini">{!! __('experience.card5_subtitle') !!}</p>
-                    <p>{!! __('experience.card5_text') !!}</p>
-                    <div class="experience-content-row-card-buttons">
-                        <div class="experience-content-row-card-buttons-button">
-                            {!! __('experience.card5_but1') !!}
-                        </div>
-                        <div class="experience-content-row-card-buttons-button">
-                            {!! __('experience.card5_but2') !!}
-                        </div>
-                        <div class="experience-content-row-card-buttons-button">
-                            {!! __('experience.card5_but3') !!}
-                        </div>
-                    </div>
-
-                </div>
-            </article>
-            <article class="experience-content-row">
-                <div class="experience-content-row-circle"></div>
-                <div class="experience-content-row-line"></div>
-                <div class="experience-content-row-card">
-                    <h4>{!! __('experience.card4_year') !!}</h4>
-                    <h3><span>{!! __('experience.card4_title') !!}</span></h3>
-                    <p class="mini">{!! __('experience.card4_subtitle') !!}</p>
-                    <div class="experience-content-row-card-buttons">
-                        <div class="experience-content-row-card-buttons-button">
-                            {!! __('experience.card4_but1') !!}
-                        </div>
-                        <div class="experience-content-row-card-buttons-button">
-                            {!! __('experience.card4_but2') !!}
-                        </div>
-                        <div class="experience-content-row-card-buttons-button">
-                            {!! __('experience.card4_but3') !!}
-                        </div>
-                    </div>
-
-                </div>
-            </article>
-            <article class="experience-content-row">
-                <div class="experience-content-row-circle"></div>
-                <div class="experience-content-row-line"></div>
-                <div class="experience-content-row-card">
-                    <h4>{!! __('experience.card3_year') !!}</h4>
-                    <h3><span>{!! __('experience.card3_title') !!}</span></h3>
-                    <p class="mini">{!! __('experience.card3_subtitle') !!}</p>
-                    <p>{!! __('experience.card3_text') !!}</p>
-                    <div class="experience-content-row-card-buttons">
-                        <div class="experience-content-row-card-buttons-button">
-                            {!! __('experience.card3_but1') !!}
-                        </div>
-                        <div class="experience-content-row-card-buttons-button">
-                            {!! __('experience.card3_but2') !!}
-                        </div>
-                        <div class="experience-content-row-card-buttons-button">
-                            {!! __('experience.card3_but3') !!}
-                        </div>
-                    </div>
-
-                </div>
-            </article>
-            <article class="experience-content-row">
-                <div class="experience-content-row-circle"></div>
-                <div class="experience-content-row-line"></div>
-                <div class="experience-content-row-card experience-content-row-specialcard">
-                    <h4>{!! __('experience.card2_year') !!}</h4>
-                    <h3><span>{!! __('experience.card2_title') !!}</span></h3>
-                    <p class="mini">{!! __('experience.card2_subtitle') !!}</p>
-                    <div class="experience-content-row-card-buttons">
-                        <div class="experience-content-row-card-buttons-button">
-                            {!! __('experience.card2_but1') !!}
-                        </div>
-                        <div class="experience-content-row-card-buttons-button">
-                            {!! __('experience.card2_but2') !!}
-                        </div>
-                        <div class="experience-content-row-card-buttons-button">
-                            {!! __('experience.card2_but3') !!}
-                        </div>
-                    </div>
-
-                </div>
-            </article>
-            <article class="experience-content-row">
-                <div class="experience-content-row-circle"></div>
-                <div class="experience-content-row-line"></div>
-                <div class="experience-content-row-card">
-                    <h4>{!! __('experience.card1_year') !!}</h4>
-                    <h3><span>{!! __('experience.card1_title') !!}</span></h3>
-                    <p class="mini">{!! __('experience.card1_subtitle') !!}</p>
-                    <div class="experience-content-row-card-buttons">
-                        <div class="experience-content-row-card-buttons-button">
-                            {!! __('experience.card1_but1') !!}
-                        </div>
-                        <div class="experience-content-row-card-buttons-button">
-                            {!! __('experience.card1_but2') !!}
-                        </div>
-                        <div class="experience-content-row-card-buttons-button">
-                            {!! __('experience.card1_but3') !!}
-                        </div>
-                    </div>
-                </div>
-            </article>
+            @endforeach
         </div>
     </section>
-@endsection
+
+    <script>
+    (function () {
+        const pool = document.getElementById('exp-cards-pool');
+        const colLeft = document.getElementById('exp-col-left');
+        const colRight = document.getElementById('exp-col-right');
+        const gridEl = document.getElementById('exp-grid');
+        const gridLine = document.getElementById('exp-grid-line');
+        const searchInput = document.getElementById('exp-search');
+        const allCards = Array.from(pool.querySelectorAll('.exp-card'));
+        const activeFilters = new Set();
+
+        function matchesFilters(card) {
+            const query = searchInput.value.trim().toLowerCase();
+            if (query) {
+                const title = (card.querySelector('.exp-card-title')?.textContent || '').toLowerCase();
+                if (!title.includes(query)) { return false; }
+            }
+            if (activeFilters.size === 0) { return true; }
+            for (const f of activeFilters) {
+                if (f.startsWith('badge:')) {
+                    const slugs = JSON.parse(card.dataset.badges || '[]');
+                    if (slugs.includes(f.slice(6))) { return true; }
+                } else {
+                    if (card.dataset.type === f) { return true; }
+                }
+            }
+            return false;
+        }
+
+        function updateGridLine() {
+            const cards = [...colLeft.querySelectorAll('.exp-card'), ...colRight.querySelectorAll('.exp-card')];
+            if (cards.length === 0) {
+                gridLine.style.top = '0px';
+                gridLine.style.height = '0px';
+                return;
+            }
+            const gridTop = gridEl.getBoundingClientRect().top;
+            let firstMid = Infinity;
+            let lastMid = -Infinity;
+            cards.forEach(function (card) {
+                const r = card.getBoundingClientRect();
+                const mid = r.top + r.height / 2 - gridTop;
+                if (mid < firstMid) { firstMid = mid; }
+                if (mid > lastMid) { lastMid = mid; }
+            });
+            gridLine.style.top = firstMid + 'px';
+            gridLine.style.height = (lastMid - firstMid) + 'px';
+        }
+
+        function layoutMasonry() {
+            colLeft.replaceChildren();
+            colRight.replaceChildren();
+            let leftH = 0;
+            let rightH = 0;
+            allCards.forEach(function (card) {
+                if (!matchesFilters(card)) { return; }
+                const clone = card.cloneNode(true);
+                if (leftH <= rightH) {
+                    colLeft.appendChild(clone);
+                    leftH += clone.offsetHeight;
+                } else {
+                    colRight.appendChild(clone);
+                    rightH += clone.offsetHeight;
+                }
+            });
+            updateGridLine();
+        }
+
+        document.querySelectorAll('.exp-filter').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                const f = btn.dataset.filter;
+                if (activeFilters.has(f)) {
+                    activeFilters.delete(f);
+                    btn.classList.remove('active');
+                } else {
+                    activeFilters.add(f);
+                    btn.classList.add('active');
+                }
+                layoutMasonry();
+            });
+        });
+
+        searchInput.addEventListener('input', layoutMasonry);
+
+        const searchWrap = document.getElementById('exp-search-wrap');
+        const searchBtn = document.getElementById('exp-search-btn');
+
+        searchBtn.addEventListener('click', function () {
+            searchWrap.classList.toggle('open');
+            if (searchWrap.classList.contains('open')) {
+                searchInput.focus();
+            } else {
+                searchInput.value = '';
+                layoutMasonry();
+            }
+        });
+
+        document.addEventListener('click', function (e) {
+            if (!searchWrap.contains(e.target)) {
+                searchWrap.classList.remove('open');
+                searchInput.value = '';
+                layoutMasonry();
+            }
+        });
+
+        layoutMasonry();
+    })();
+    </script>
+
+</x-portfolio-layout>

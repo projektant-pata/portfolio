@@ -1,0 +1,109 @@
+/* ================================================================
+   ABOUT ME PAGE STYLES
+   ================================================================ */
+
+
+/* ── About Me cards — Pinterest masonry ── */
+#about-me-content {
+    column-count: 2;
+    column-gap: 2rem;
+}
+
+.about-me-card {
+    break-inside: avoid;
+    margin-bottom: 2rem;
+    border: var(--border-w) solid var(--c-primary-lt);
+    background-color: var(--c-surface);
+    border-radius: var(--r-card);
+    padding: 2.5rem;
+}
+
+.about-me-card h3 {
+    color: var(--c-primary);
+    margin-bottom: 1.25rem;
+    font-size: var(--fs-h3);
+}
+
+.about-me-card p {
+    font-weight: var(--fw-light);
+    line-height: 1.6;
+}
+
+.about-me-card ul {
+    margin-top: 1rem;
+    padding-left: 1.25rem;
+}
+
+.about-me-card ul li {
+    list-style: circle;
+    margin-bottom: 0.75rem;
+}
+
+/* ── About Me stats grid (11 cards) — staggered 4:3:4 ────────
+   Flexbox approach. All cards same width = (100% - 3×gap) / 4.
+   Row 2 (items 5–7) offset by (card_width + gap) / 2 so each
+   card's centre lands exactly on a gap-centre from row above.
+
+   card_width = 25% - 1.40625rem  (gap = 1.875rem)
+   offset     = 12.5% + 0.234375rem                           */
+#about-me-stats-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.875rem;
+}
+
+#about-me-stats-cards > div {
+    flex: 0 0 calc(25% - 1.40625rem);
+    width: auto;
+    margin: 0;
+}
+
+#about-me-stats-cards > div:nth-child(5) {
+    margin-left: calc(12.5% + 0.234375rem);
+}
+
+/* ── Responsive ── */
+
+/* 1440px: 3:2 staggered pattern
+   card_width = 33.333% - 1.25rem  (gap = 1.875rem)
+   offset     = 16.667% + 0.3125rem                          */
+@media (max-width: 1440px) {
+    #about-me-stats-cards > div {
+        flex: 0 0 calc(33.333% - 1.25rem);
+    }
+
+    /* reset desktop offset */
+    #about-me-stats-cards > div:nth-child(5) { margin-left: 0; }
+
+    /* row 2 starts at item 4 */
+    #about-me-stats-cards > div:nth-child(4) {
+        margin-left: calc(16.667% + 0.3125rem);
+    }
+
+    /* row 4 starts at item 9 */
+    #about-me-stats-cards > div:nth-child(9) {
+        margin-left: calc(16.667% + 0.3125rem);
+    }
+
+    /* item 11 alone — centre it */
+    #about-me-stats-cards > div:nth-child(11) {
+        margin-left: calc(33.333% + 0.625rem);
+    }
+}
+
+@media (max-width: 992px) {
+    #about-me-content { column-count: 1; }
+
+    #about-me-stats-cards > div {
+        flex: 0 0 calc(50% - 0.9375rem);
+    }
+
+    /* reset all offsets */
+    #about-me-stats-cards > div:nth-child(n) { margin-left: 0; }
+}
+
+@media (max-width: 576px) {
+    #about-me-stats-cards > div {
+        flex: 0 0 100%;
+    }
+}
