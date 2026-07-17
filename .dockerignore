@@ -1,0 +1,29 @@
+# Build context exclusions. Without these the whole working tree (node_modules,
+# .git, vendor, runtime storage) is shipped to the daemon on every build, and
+# root-owned runtime dirs under storage/framework make the context unreadable.
+
+.git
+.github
+node_modules
+vendor
+
+# Runtime state — recreated by the app, and chown'd to www-data at runtime,
+# which makes it unreadable to the build context.
+storage/framework/cache/data/*
+storage/framework/sessions/*
+storage/framework/testing
+storage/framework/views/*
+storage/logs/*
+storage/app/public/*
+
+# Built by `npm run build` on the host and bind-mounted in.
+public/build
+public/hot
+
+# Secrets and local-only files.
+.env
+.env.*
+!.env.example
+
+tests
+.phpunit.cache

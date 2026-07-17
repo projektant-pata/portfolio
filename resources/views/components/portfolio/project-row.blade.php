@@ -22,7 +22,7 @@
                     <span class="projects-badge" style="--badge-color: {{ $badge->color }}">{{ $badge->getTranslation('name', $locale) }}</span>
                 @endforeach
                 @foreach ($project->links as $link)
-                    <a href="{{ $link->url }}" target="_blank" rel="noopener" class="projects-row-link">
+                    <a href="{{ $link->url }}" target="_blank" rel="noopener noreferrer" class="projects-row-link">
                         @if ($link->img_url)
                             <img src="{{ $link->img_url }}" alt="{{ is_array($link->alt) ? ($link->alt[$locale] ?? $link->alt['en'] ?? '') : '' }}">
                         @endif

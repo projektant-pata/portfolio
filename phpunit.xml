@@ -11,6 +11,9 @@
         <testsuite name="Feature">
             <directory>tests/Feature</directory>
         </testsuite>
+        <testsuite name="Browser">
+            <directory>tests/Browser</directory>
+        </testsuite>
     </testsuites>
     <source>
         <include>
@@ -23,8 +26,18 @@
         <env name="BCRYPT_ROUNDS" value="4"/>
         <env name="BROADCAST_CONNECTION" value="null"/>
         <env name="CACHE_STORE" value="array"/>
-        <env name="DB_CONNECTION" value="sqlite"/>
-        <env name="DB_DATABASE" value=":memory:"/>
+        <!--
+            Tests run on PostgreSQL, the same engine as production, so PG-only
+            SQL is covered and browser tests (which hit a real HTTP server in a
+            separate process) can see the data a test sets up. Credentials match
+            the db service in docker-compose.yml.
+        -->
+        <env name="DB_CONNECTION" value="pgsql" force="true"/>
+        <env name="DB_HOST" value="db" force="true"/>
+        <env name="DB_PORT" value="5432" force="true"/>
+        <env name="DB_DATABASE" value="portfolio_test" force="true"/>
+        <env name="DB_USERNAME" value="portfolio" force="true"/>
+        <env name="DB_PASSWORD" value="secret" force="true"/>
         <env name="DB_URL" value=""/>
         <env name="MAIL_MAILER" value="array"/>
         <env name="QUEUE_CONNECTION" value="sync"/>

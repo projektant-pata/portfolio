@@ -55,35 +55,9 @@
     {{-- Projects --}}
     <section id="projects" class="portfolio-section">
         <h2>{{ __('home/projects.title') }}</h2>
-        <article class="projects-row">
-            <img src="{{ asset(__('home/projects.spsehub_img')) }}" alt="spse hub">
-            <div class="projects-row-space"></div>
-            <div class="projects-row-text">
-                <h3>{{ __('home/projects.spsehub_title') }}</h3>
-                <p>{{ __('home/projects.spsehub_text') }}</p>
-                <div class="projects-row-text-links">
-                    <a target="_blank" rel="noopener noreferrer" href="{{ __('home/projects.spsehub_web') }}">
-                        <img src="{{ asset('images/projects/icons/web.webp') }}" alt="web">
-                    </a>
-                    <a target="_blank" rel="noopener noreferrer" href="{{ __('home/projects.spsehub_github') }}">
-                        <img src="{{ asset('images/mobile/icons/github.webp') }}" alt="github">
-                    </a>
-                </div>
-            </div>
-        </article>
-        <article class="projects-row">
-            <div class="projects-row-text">
-                <h3>{{ __('home/projects.usladovny_title') }}</h3>
-                <p>{{ __('home/projects.usladovny_text') }}</p>
-                <div class="projects-row-text-links">
-                    <a target="_blank" rel="noopener noreferrer" href="{{ __('home/projects.usladovny_web') }}">
-                        <img src="{{ asset('images/projects/icons/web.webp') }}" alt="web">
-                    </a>
-                </div>
-            </div>
-            <div class="projects-row-space"></div>
-            <img src="{{ asset(__('home/projects.usladovny_img')) }}" alt="usladovny">
-        </article>
+        @foreach ($featuredProjects as $index => $project)
+            <x-portfolio.project-row :project="$project" :locale="$locale" :reverse="$index % 2 !== 0" />
+        @endforeach
     </section>
 
     {{-- Tools --}}

@@ -30,7 +30,7 @@ Původní nálezy:
 
 ## B. Architektura CSS — ✅ OPRAVENO 2026-07-17
 
-Stav: page CSS se načítá jednotně přes `:styles` prop (welcome/about-me/projects/experience), `@import`y z konce `app.css` jsou pryč → `projects.css` už neuniká na homepage, takže runtime kolize `.projects-row` (B7) neexistuje (zůstává jen duplicitní název třídy ve dvou page-scoped souborech — kosmetika, řeší se s D24). `dashboard.css` zůstává napevno v admin `head.blade.php` (admin nepoužívá `portfolio-layout`, `:styles` tam neplatí — OK). B8 hardcoded `rgba(96,84,67,0.15)` nahrazeno `color-mix(in srgb, var(--c-primary-fade) 15%, transparent)` v nové třídě `.manage-link-box` (`dashboard.css`).
+Stav: page CSS se načítá jednotně přes `:styles` prop (welcome/about-me/projects/experience), `@import`y z konce `app.css` jsou pryč → `projects.css` už neuniká na homepage, takže runtime kolize `.projects-row` (B7) neexistuje. Duplicitní definice ve dvou page-scoped souborech dořešena 2026-07-17 s E24: pravidla jsou jednou v `resources/css/components/project-row.css`, oba page soubory ho `@import`ují. `dashboard.css` zůstává napevno v admin `head.blade.php` (admin nepoužívá `portfolio-layout`, `:styles` tam neplatí — OK). B8 hardcoded `rgba(96,84,67,0.15)` nahrazeno `color-mix(in srgb, var(--c-primary-fade) 15%, transparent)` v nové třídě `.manage-link-box` (`dashboard.css`).
 
 Původní nálezy:
 
@@ -56,7 +56,7 @@ Původní nálezy:
 
 Stav D10 (id→třída pro styling): hotovo pro **home** (`index.css` + `welcome.blade.php`) a **about-me** (`about-me.css` + `about-me.blade.php`) — `#hero-page`, `#underh1`, `#stats-cards`, `#work`, `#work-top`, `#work-bot`, `#work-bot-line`, `#about-me-content`, `#about-me-stats-cards` převedeny na třídy (1:1 přejmenování). Ověřeno staticky: žádné z těchto id není JS hook ani anchor target a nekoliduje s třídou → bez dopadu na specificitu. JS-hook id (`work-top-btn-*`, `work-bot-content-*`) ponechána.
 
-**ODLOŽENO (nejde ověřit bez běžící appky — Docker v tomto prostředí nefunguje, host PHP nemá pdo_sqlite):**
+**ODLOŽENO** (2026-07-17: Docker už běží a testy jdou spustit, takže DB/test-suite blokace padá — zbývá blokace na *vizuální* ověření v prohlížeči, pro které v projektu není tooling: žádný playwright ani `pest-plugin-browser`):
 - D10 pro `experience.css`/`experience.blade.php` — `#exp-grid`, `#exp-col-left/right`, `#exp-search*` jsou **JS hooky** (`getElementById` v inline `<script>`) + `.open` compound selektory; přepis vyžaduje i úpravu JS → nutná browser verifikace.
 - D10 stavové přepínače `style="display:none"` → `.hidden` (`welcome.blade.php:71`, `experience.blade.php:42`) — `app.js` nastavuje `.style.display` napřímo, konverze vyžaduje i změnu toggle logiky → browser verifikace.
 - D11 (přejmenování sloupců `header`/`title`, `img_url`/`image_path`/`thumbnail_url`) a D12 (sjednocení `alt` na překládaný tvar) — **DB migrace** dotýkající se modelů, seederů, testů, veřejných views → nutný běh test suite.
@@ -70,7 +70,19 @@ Původní nálezy:
 
 12. **Alt text linků: 2 různé tvary** — Experience ukládá linky jako JSON pole s **plain-string** `alt`, Project má `Link` model s **překládaným** `alt` `{'en','cs'}`. Blade to musí řešit runtime typechecky (`experience.blade.php:96` — `is_array($link['alt'] ?? null) ? ...`). Sjednotit na překládaný tvar.
 
-## E. Duplicitní markup (kandidáti na komponenty)
+## E. Duplicitní markup (kandidáti na komponenty) — ✅ OPRAVENO 2026-07-17
+
+Stav: **E13–E25 hotové.** Manage komponenty žijí v `resources/views/components/manage/` (`locale-tabs`, `page-header`, `delete-modal`, `search-input`, `empty-row`, `badge-picker`, `link-repeater`, `modal-footer`, `drag-handle`) a všech 5 `⚡*.blade.php` je používá. Public komponenty v `components/portfolio/` (`stats-card`, `project-row`, `experience-row`).
+
+Odchylky od původního návrhu (F), vědomé:
+
+- **E16** řešeno vlastní `<x-manage.drag-handle>` místo `php artisan flux:icon grip-vertical` — komponenta zapouzdřuje i `.manage-drag-handle` styling, ne jen ikonu.
+- **E23** řešeno jen `config/portfolio.php` (`social` pole) bez sdílené `social-links` komponenty — footer a mobile-nav mají odlišné ikony i markup, sdílet jde rozumně jen URL. Single source of truth splněn.
+- **E24** (2026-07-17): homepage bere projekty z DB (`HomeController::FEATURED_PROJECT_LIMIT = 2`, řazení shodné s `/projects`) a renderuje je `<x-portfolio.project-row>`. Lang klíče `home/projects.{spsehub,usladovny,portfolio}_*` smazány (zůstal jen `title`) — obsah je v `projects` tabulce, seedovaný `ProjectsSeeder`em. **Viditelná změna:** seeder nenastavuje `sort_order` (vše 0) → řadí se `year desc` → homepage teď ukazuje Portfolio (2026) + U Sladovny (2025), dřív natvrdo SPŠE Hub + U Sladovny. Pořadí teď řídí admin přes `sort_order`.
+  Zároveň dořešena kolize `.projects-row` (**D24/B7**): pravidla vytažena do `resources/css/components/project-row.css`, které `index.css` i `projects.css` `@import`ují na svém začátku (validní pozice, Vite inlinuje při buildu). Homepage tím přebrala projects verzi řádku (border u obrázku, `margin-bottom` 3.125rem → 3rem, `.projects-row-space` 25px margin → 50px width) — **ověřeno jen staticky + HTTP 200, ne vizuálně** (v projektu není browser tooling, viz níže).
+  Pokrytí: `tests/Feature/HomePageTest.php` (featured z DB, limit 2, locale, link `rel`).
+
+Původní nálezy:
 
 13. **Přepínač jazykových tabů** — identický ~20řádkový Alpine blok (`x-data="{ locale: 'en' }"` + 2 buttony s inline styly) v **5** manage stránkách. Největší duplicita v repu.
 14. **Hlavička stránky** (h1 + podtitulek + „Add X" tlačítko) — stejný blok ×5.
@@ -86,7 +98,10 @@ Původní nálezy:
 24. **Projects na homepage vs projects stránka** — `welcome.blade.php:92-123` má 2 projekty natvrdo přes lang klíče (`home/projects.spsehub_*`), zatímco `/projects` renderuje z DB stejným vizuálem. Dvojí zdroj pravdy + kolize `.projects-row` (viz B7). → homepage brát top-N z DB (`Project::orderBy('sort_order')->take(2)`), jedna komponenta `project-row`.
 25. **Work/life obsah na homepage 2×** — `welcome.blade.php:53-87`: dva takřka identické `@foreach` bloky (life/work), liší se jen kolekcí. → jeden loop / komponenta řádku.
 
-## F. Návrh struktury komponent
+## F. Návrh struktury komponent — ✅ REALIZOVÁNO 2026-07-17 (s odchylkami, viz E)
+
+Níže původní návrh. PHP traity (`ManagesCrudModals`, `HasTranslations`) **zatím nerealizované** — `app/Concerns/` obsahuje jen `PasswordValidationRules` a `ProfileValidationRules`.
+
 
 ```
 resources/views/components/
@@ -114,7 +129,15 @@ Design tokens: po sjednocení (A1) doplnit chybějící (`--c-surface-raised`), 
 
 ## G. Responzivita — 🟡 ČÁSTEČNĚ 2026-07-17
 
-Stav: #26 opraveno staticky. #27/#28 odloženy — vyžadují vizuální ověření layoutu v browseru (přetečení fixních rozměrů, sjednocení breakpointů), což v tomto prostředí nejde ([[env-cannot-run-app]]).
+Stav: #26 opraveno staticky. #27/#28 stále otevřené. **Browser tooling už existuje** (Playwright na hostu + `pest-plugin-browser` v containeru, viz CLAUDE.md → Testing), takže dřívější blokace „nejde ověřit vizuálně" **neplatí** — první měření hned vyprodukovalo nový nález #26b níže.
+
+26b. **[🔴 NOVÝ NÁLEZ 2026-07-17 — změřeno Playwrightem]** **Všechny 4 veřejné stránky přetékají vodorovně na mobilu.** Při viewportu 375 px je `document.scrollWidth` **512 px** (`/`, `/about-me`, `/projects`) resp. **531 px** (`/experience`) → stránka jde posouvat do strany. Na 900/1280/1920 je to v pořádku.
+    Příčina (řetěz dvou věcí, ani jedna sama o sobě nestačí):
+    1. Dekorativní watermark `h2` má `--fs-h2: 6.56rem` (105 px) a jeho text je **jedno nezalomitelné slovo** — „projektant-pata" ve footeru, „Experience" na experience. Jeho min-content je tím pádem ~492/511 px bez ohledu na viewport.
+    2. `.portfolio-col` je grid item, a grid items mají implicitně `min-width: auto` → **nesmrsknou se pod min-content svého obsahu**. Sloupec se roztáhne na 492 px, wrapper přeteče a všechno uvnitř (i obyčejné `<p>`) zdědí 492 px šířku.
+    Proto to postihuje i stránky bez jediného širokého prvku — měření ukázalo, že přetékají `.portfolio-col`, `main.portfolio-main` i všechny sekce naráz, což je typický podpis min-content roztažení, ne konkrétního přetékajícího elementu.
+    Návrh: `.portfolio-col { min-width: 0 }` **a zároveň** responzivní `--fs-h2` (`clamp()` s `vw`), aby watermark reálně zmenšil. Samotné `min-width: 0` jen přesune přetečení na `h2`. Souvisí s #30 (dekorativní `h2`) a #28 (breakpointy).
+    Není regrese z E24 — ověřeno, že se to týká i `/about-me` a `/experience`, kterých se E24 nedotklo.
 
 26. **[✅ 2026-07-17]** **Modální formuláře: `grid grid-cols-2` bez mobilní varianty** — všechny manage formy (`grid grid-cols-2 gap-4`); na malém displeji zůstávají 2 sloupce nacpané. → `grid-cols-1 md:grid-cols-2`.
 27. **Fixní rozměry** — `.projects-row` fixní výška 360/300 px (dlouhý popis přeteče bez ošetření), `.projects-row > img` fixní 600 px; `#mobile-nav` fixní 370×820 px — na desktopu s viewportem < ~840 px výšky přeteče sticky sidebar (100vh, overflow visible); na ≤576 px řešeno `scale: 0.8` hackem.

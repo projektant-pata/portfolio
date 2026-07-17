@@ -186,18 +186,18 @@ docker exec portfolio-app-1 vendor/bin/pint --dirty --format agent
 ```
 
 Running containers:
-- `portfolio-app-1` — PHP/Laravel app (PHP 8.5, no Node — run `npm` on the host)
-- `portfolio-db-1` — PostgreSQL 17 database
+- `portfolio-app-1` — PHP/Laravel app (PHP 8.5; also carries Node 24 + Playwright/chromium for browser tests, but **Vite builds still run on the host**)
+- `portfolio-db-1` — PostgreSQL 17 database (`portfolio` for dev, `portfolio_test` for the suite)
 - `portfolio-nginx-1` — Nginx web server, serves the app at http://localhost:8008
+
+If `composer` inside the container fails with `Could not resolve host: repo.packagist.org` while the host resolves fine, the container's DNS upstream went stale (host changed networks since the container was created). Fix with `docker compose up -d --force-recreate app` — `restart` is not enough.
 
 ## Environment Setup (fresh clone)
 
-The repo is missing pieces a fresh clone needs:
-
-- There is **no `.env.example`** — create `.env` manually (`DB_CONNECTION=pgsql`, `DB_HOST=db`, `APP_URL=http://localhost:8008`, session/queue/cache = `database`), then `php artisan key:generate`.
-- `bootstrap/cache/` and `storage/framework/*` directories are not in the repo; create them before the Docker build or it fails.
-- Frontend assets must be built on the host (`npm install && npm run build`) — without a Vite manifest every page 500s.
+- `cp .env.example .env` then `php artisan key:generate`.
+- Frontend assets must be built on the host (`npm install && npm run build`) — without a Vite manifest every page 500s. `npm install` is also what puts `playwright` in `node_modules`, which the container's browser tests use over the bind mount.
 - `.claude/skills/` (Boost skills) is untracked; restore with `docker exec portfolio-app-1 php artisan boost:update --no-interaction`.
+- The dev database starts empty; `docker exec portfolio-app-1 php artisan db:seed` creates the admin (`SEED_ADMIN_*` env) and the projects. Public pages render empty states until you do.
 
 ## Testing
 
@@ -209,7 +209,10 @@ The repo is missing pieces a fresh clone needs:
 
   (The old `APP_ENV=testing` override is no longer needed: `docker-compose.yml` no longer forces `APP_ENV=local` into `$_SERVER`, and `phpunit.xml` sets `APP_ENV=testing` with `force="true"`. Runtime env now comes from `.env`.)
 
-- Tests use SQLite `:memory:` while the app runs on PostgreSQL — PG-only SQL (`ILIKE`, JSON `->>` operators) cannot be covered by tests.
+- **Tests run on PostgreSQL** (`portfolio_test`), same engine as production — so `ILIKE`, JSON `->>` and friends are all covered. The database is created by `docker/postgres/init/01-test-database.sql`, which Postgres only executes on the **first** init of the `db_data` volume; on an existing volume create it by hand (the SQL file documents the command).
+- **JSON key order is not stable.** `badges.name`, `experiences.year` and `links.alt` are `jsonb` (Postgres reorders keys) while the other translatable columns are plain `json` (order preserved) — a drift left by which migration path created them. Assert translatable fields with `toEqual`, never `toBe`, which compares with `===` and is order-sensitive.
+- Browser tests live in `tests/Browser/` (`pestphp/pest-plugin-browser`) and run inside the container: Node 24 and chromium are baked into the image at `PLAYWRIGHT_BROWSERS_PATH=/ms-playwright`, while the `playwright` npm package itself is resolved from the bind-mounted `node_modules`. **Keep the `playwright` version in `package.json` in sync with the pinned `playwright@…` in `docker/php/Dockerfile`** — they must agree or the browsers won't match the client.
+- For ad-hoc visual checks (screenshots, measuring layout), driving Playwright from the **host** against the running http://localhost:8008 is faster than writing a browser test.
 
 # Architecture
 
@@ -232,7 +235,7 @@ Livewire 4 single-file components in `resources/views/pages/manage/⚡{experienc
 
 ## Auth
 
-Laravel Fortify: registration disabled, 2FA and email verification enabled (`config/fortify.php`).
+Laravel Fortify: registration disabled, 2FA and password resets enabled, **email verification deliberately off** (`config/fortify.php`). The only account is the seeded admin, so no route uses the `verified` middleware and `User` does not implement `MustVerifyEmail`. The `users.email_verified_at` column still exists but nothing reads it.
 
 ## Frontend
 

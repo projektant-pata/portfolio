@@ -12,7 +12,7 @@ test('badge name is stored as json with locale keys', function () {
         'color' => '#60A5FA',
     ]);
 
-    expect($badge->fresh()->name)->toBe(['en' => 'Laravel', 'cs' => 'Laravel']);
+    expect($badge->fresh()->name)->toEqual(['en' => 'Laravel', 'cs' => 'Laravel']);
 });
 
 test('manage badges page renders for authenticated user', function () {
@@ -66,7 +66,7 @@ test('can edit badge and update translations', function () {
         ->call('save')
         ->assertHasNoErrors();
 
-    expect($badge->fresh()->name)->toBe(['en' => 'Laravel', 'cs' => 'Laravel']);
+    expect($badge->fresh()->name)->toEqual(['en' => 'Laravel', 'cs' => 'Laravel']);
 });
 
 test('badge experiences relation uses the experience_badge pivot table', function () {

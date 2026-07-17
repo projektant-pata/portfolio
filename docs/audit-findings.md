@@ -1,6 +1,8 @@
 # Audit nálezy (krok 1 z docs/supr-cupr-upgrade-plan.md)
 
-Stav: 2026-07-16. **Nálezy #1–#7, #9–#20 opraveny** (viz jednotlivé body). Zbývá: #8 (email verification). Ověřeno testy (`docker exec portfolio-app-1 php artisan test`): 87 passed, 2 skipped.
+Stav: 2026-07-17. **Všech 20 nálezů vyřešeno** (#8 vypnutím feature, ne implementací — viz bod). Ověřeno testy (`docker exec portfolio-app-1 php artisan test --compact`): 92 passed, 2 skipped (skipnuté = `RegistrationTest`, registrace je záměrně zakázaná).
+
+Zbývá jediná **ruční** práce, kterou nelze udělat z kódu: vyčistit `Heslo123!` z git historie (BFG) a heslo rotovat (nález #1).
 
 ## Kritické / vysoké
 
@@ -43,9 +45,12 @@ Stav: 2026-07-16. **Nálezy #1–#7, #9–#20 opraveny** (viz jednotlivé body).
    Fix: `belongsToMany(Experience::class, 'experience_badge')` nebo smazat.
    → Přidán explicitní název `'experience_badge'` (shodně s `Experience::badges()`). Test: attach + read-back přes relaci.
 
-8. **Email verification fakticky nefunguje** — `app/Models/User.php` + `routes/web.php:17` + `config/fortify.php:149`
+8. ✅ OPRAVENO **Email verification fakticky nefunguje** — `app/Models/User.php` + `routes/web.php:17` + `config/fortify.php:149`
    User neimplementuje `MustVerifyEmail` → `verified` middleware propustí každého, verifikační e-mail se nikdy neposílá. Feature zapnutá jen naoko.
    Fix: buď implementovat interface, nebo vypnout feature + odstranit `verified` z rout (registrace je stejně vypnutá).
+   → **Vypnuto** (2026-07-17, rozhodnutí uživatele — verifikaci nechce; registrace je stejně zakázaná a jediný účet je seedovaný admin). Změny: `Features::emailVerification()` zakomentováno v `config/fortify.php`; `verified` odebráno z obou skupin v `routes/web.php` i `routes/settings.php` (obě settings skupiny se tím slily do jedné `['auth']`); `Fortify::verifyEmailView()` binding pryč z `FortifyServiceProvider`; smazána `pages/auth/verify-email.blade.php`. V `⚡profile.blade.php` odstraněn mrtvý kód, který nešlo nikdy vykonat (User není `MustVerifyEmail` → `hasUnverifiedEmail` vždy false, `showDeleteUser` vždy true): `resendVerificationNotification()`, obě computed property, resend UI blok a `email_verified_at = null` při změně e-mailu.
+   **Ponecháno záměrně:** sloupec `users.email_verified_at` a factory state `unverified()` — aplikace je nečte, drop by byl migrace navíc bez užitku, a state se hodí v testu. Kdyby se verifikace někdy zapínala zpět, chybí jen `implements MustVerifyEmail` na modelu.
+   **Smazané testy** (se souhlasem, feature zanikla): celý `tests/Feature/Auth/EmailVerificationTest.php` (4 testy — samy by se odskipovaly přes `skipUnlessFortifyHas`, ale navždy skipnuté testy mrtvé feature jsou balast) a `ProfileUpdateTest::'email verification status is unchanged…'`. Nově: `DashboardTest` zamyká, že feature je off, Fortify neregistruje žádnou `verification.*` routu a neověřený user se dostane na dashboard.
 
 9. ✅ OPRAVENO **Repo nejde rozjet z čistého klonu** — chybí `.env.example` (composer `setup` skript ho kopíruje) a `bootstrap/cache/` (docker build padal, dokud jsem adresář nevytvořil).
    Fix: commitnout `.env.example` a `bootstrap/cache/.gitignore` (+ `storage/framework/*` konvence).

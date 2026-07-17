@@ -14,7 +14,7 @@ Route::get('/projects', ProjectsController::class)->name('projects');
 
 Route::post('/language/toggle', [LanguageController::class, 'toggle'])->name('language.toggle');
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth'])->group(function () {
     Route::view('dashboard', 'dashboard')->name('dashboard');
 
     Route::livewire('dashboard/experiences', 'pages::manage.experiences')->name('manage.experiences');

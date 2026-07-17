@@ -11,7 +11,7 @@ test('experience stores title as json with locale keys', function () {
         'title' => ['en' => 'Software Developer', 'cs' => 'Softwarový vývojář'],
     ]);
 
-    expect($experience->fresh()->title)->toBe(['en' => 'Software Developer', 'cs' => 'Softwarový vývojář']);
+    expect($experience->fresh()->title)->toEqual(['en' => 'Software Developer', 'cs' => 'Softwarový vývojář']);
 });
 
 test('getTranslation returns value for requested locale', function () {
@@ -51,7 +51,7 @@ test('experience year is stored as json with locale keys', function () {
         'year' => ['en' => '2022 – present', 'cs' => '2022 – nyní'],
     ]);
 
-    expect($experience->fresh()->year)->toBe(['en' => '2022 – present', 'cs' => '2022 – nyní']);
+    expect($experience->fresh()->year)->toEqual(['en' => '2022 – present', 'cs' => '2022 – nyní']);
 });
 
 test('can create experience with i18n year', function () {
@@ -65,7 +65,7 @@ test('can create experience with i18n year', function () {
         ->call('save')
         ->assertHasNoErrors();
 
-    expect(Experience::first()->year)->toBe(['en' => '2024 – present', 'cs' => '2024 – nyní']);
+    expect(Experience::first()->year)->toEqual(['en' => '2024 – present', 'cs' => '2024 – nyní']);
 });
 
 test('can create experience with english title', function () {
@@ -114,7 +114,7 @@ test('can edit experience and update translations', function () {
         ->call('save')
         ->assertHasNoErrors();
 
-    expect($experience->fresh()->title)->toBe(['en' => 'Developer', 'cs' => 'Vývojář']);
+    expect($experience->fresh()->title)->toEqual(['en' => 'Developer', 'cs' => 'Vývojář']);
 });
 
 test('reorder is a no-op while a type filter is active', function () {

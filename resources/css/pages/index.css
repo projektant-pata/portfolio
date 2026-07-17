@@ -1,3 +1,5 @@
+@import '../components/project-row.css';
+
 /* ================================================================
    INDEX (HOME) PAGE STYLES
    ================================================================ */
@@ -130,41 +132,6 @@
 
 .work-bot-content-row-text .mini { margin-bottom: 7px; }
 
-/* ── Projects ── */
-.projects-row {
-    width: 100%;
-    height: 360px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 3.125rem;
-}
-
-.projects-row > img {
-    height: 100%;
-    width: 600px;
-    object-fit: cover;
-    border-radius: var(--r-card);
-}
-
-.projects-row-space { margin: 0 25px; }
-
-.projects-row-text h3 { margin-bottom: 15px; }
-.projects-row-text p  { margin-bottom: 10px; }
-
-.projects-row-text-links {
-    margin-top: 20px;
-    display: flex;
-    align-items: center;
-}
-
-.projects-row-text-links img {
-    height: 30px;
-    width: 30px;
-    border-radius: 50%;
-    margin-right: 10px;
-}
-
 /* ── Tools ── */
 .tools-row {
     max-width: 62.5rem;
@@ -233,8 +200,6 @@ html:not(.dark) .tool-github-light { display: block; }
 /* ── Responsive ── */
 @media (max-width: 1440px) {
     .stats-cards-card      { width: 100%; }
-    .projects-row          { height: 270px; }
-    .projects-row > img    { width: 500px; }
     .reviews-row           { flex-direction: column; align-items: center; }
     .reviews-row-card      { max-width: 450px; width: 100%; }
 }
@@ -250,8 +215,6 @@ html:not(.dark) .tool-github-light { display: block; }
 
     .stats-cards { grid-template-columns: repeat(2, 1fr); }
 
-    .projects-row > img { height: 220px; max-width: 300px; }
-
     .tools-row { grid-template-columns: repeat(4, 1fr); }
 }
 
@@ -260,10 +223,6 @@ html:not(.dark) .tool-github-light { display: block; }
 
     .work-bot-line { left: 55px; }
     .work-bot-content { padding: 3.125rem 1.25rem !important; }
-
-    .projects-row       { flex-direction: column; height: auto; }
-    .projects-row > img { order: 1; margin-bottom: 20px; height: auto; max-height: 300px; width: 100%; }
-    .projects-row-text  { order: 2; }
 
     .tools-row          { grid-template-columns: repeat(2, 1fr); }
     .tools-row-card     { width: auto; }
