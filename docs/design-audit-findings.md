@@ -112,24 +112,28 @@ PHP strana (mimo scope designu, ale souvisí): CRUD logika manage stránek (sear
 
 Design tokens: po sjednocení (A1) doplnit chybějící (`--c-surface-raised`), badge barvy na hex (A5).
 
-## G. Responzivita
+## G. Responzivita — 🟡 ČÁSTEČNĚ 2026-07-17
 
-26. **Modální formuláře: `grid grid-cols-2` bez mobilní varianty** — všechny manage formy (`grid grid-cols-2 gap-4`); na malém displeji zůstávají 2 sloupce nacpané. → `grid-cols-1 md:grid-cols-2`.
+Stav: #26 opraveno staticky. #27/#28 odloženy — vyžadují vizuální ověření layoutu v browseru (přetečení fixních rozměrů, sjednocení breakpointů), což v tomto prostředí nejde ([[env-cannot-run-app]]).
+
+26. **[✅ 2026-07-17]** **Modální formuláře: `grid grid-cols-2` bez mobilní varianty** — všechny manage formy (`grid grid-cols-2 gap-4`); na malém displeji zůstávají 2 sloupce nacpané. → `grid-cols-1 md:grid-cols-2`.
 27. **Fixní rozměry** — `.projects-row` fixní výška 360/300 px (dlouhý popis přeteče bez ošetření), `.projects-row > img` fixní 600 px; `#mobile-nav` fixní 370×820 px — na desktopu s viewportem < ~840 px výšky přeteče sticky sidebar (100vh, overflow visible); na ≤576 px řešeno `scale: 0.8` hackem.
 28. **Dva breakpoint systémy** — public CSS ručně 1440/992/576 px, manage stránky Tailwind `md`/`lg` (768/1024). Přechod public→admin nemá společnou mřížku. Aspoň zdokumentovat, ideálně public breakpointy převést na Tailwind hodnoty.
 
-## H. Přístupnost (a11y)
+## H. Přístupnost (a11y) — 🟡 ČÁSTEČNĚ 2026-07-17
+
+Stav: opraveno staticky #31 (`aria-label` na icon tlačítkách), #34 (`rel="noopener noreferrer"` na všech `target="_blank"`), #36 (univerzální `transition: all` zúžen na `background-color/color/border-color` + přidán `@media (prefers-reduced-motion: reduce)`). #38 už bylo vyřešeno dřív (každý input má jen jednu `wire:model` vazbu). Odloženo (nutná běžící appka/browser/live — [[env-cannot-run-app]]): #30 (h2→p refactor mění CSS selektory keyed na `h2`, nutné vizuální ověření všech stránek), #32/#33 (JS hooky + vlastní styling), #35 (Alpine/wire live), #37 (runtime kontrast/logika). #29 není bug (záměr).
 
 29. **`<h2>projektant-pata</h2>` PŘED `<footer>`** — `portfolio-footer.blade.php:1`. Záměr: dekorativní nadpis stejně jako na ostatních sekcích, umístění mimo `<footer>` je vědomé (konzistence napříč stránkou). Ne bug — ale viz #30 pro SEO/a11y dopad.
 30. **Rozbitá hierarchie nadpisů kvůli dekorativním `h2`** — obří `h2` watermarky na každé sekci (záměr, ne chyba) skutečně nesou tag `<h2>`, takže search engine i screen reader outline je zaplaven opakovaným dekorativním textem místo skutečné struktury obsahu; `h3` ve stats kartách obsahuje jen číslo, `h1 → h4` skok v hero. **SEO dopad**: Google používá heading outline k pochopení struktury stránky — dekorativní watermarky v `h2` ředí relevanci skutečných nadpisů sekcí a matou strukturovaná data. **Návrh**: dekorativní watermark texty přepsat na `<p aria-hidden="true">` / `<div>` (vizuálně beze změny), a každé sekci dát *skutečný* sémantický nadpis (může být `sr-only`/vizuálně skrytý pokud dekorativní text sekci dostatečně popisuje vizuálně) tak, aby `h1 → h2 → h3` hierarchie odpovídala skutečnému obsahu. Čísla statistik nejsou nadpisy.
-31. **Icon-only tlačítka bez popisku** — pencil/trash/x-mark `<flux:button icon=... />` ve všech manage tabulkách a repeaterech; screen reader přečte nic. → doplň `aria-label`/`tooltip`.
+31. **[✅ 2026-07-17]** **Icon-only tlačítka bez popisku** — pencil/trash/x-mark `<flux:button icon=... />` ve všech manage tabulkách a repeaterech; screen reader přečte nic. → doplň `aria-label`/`tooltip`.
 32. **Work/life přepínač jsou `<div>`y** — `welcome.blade.php:43-48` (`.work-top-btn`) nejsou fokusovatelné, bez klávesnice/role. Experience stránka to samé řeší správně `<button>`. → `<button type="button">` + `aria-pressed`.
 33. **Mrtvé `href="#"` odkazy v mobile-nav** — messages/music/weather (theme toggle!) jsou `<a href="#">`; theme toggle má být `<button>`; dekorativní ikony nemají být fokusovatelné. Footer `nav5` také `href="#"`.
-34. **`target="_blank"` bez `rel="noopener"`** — `welcome.blade.php` (projekt linky), celý `portfolio-footer.blade.php`, celý `mobile-nav.blade.php` (rozšíření nálezu #16 z kroku 1; `experience.blade.php` a `projects.blade.php` to mají správně).
+34. **[✅ 2026-07-17]** **`target="_blank"` bez `rel="noopener"`** — `welcome.blade.php` (projekt linky), celý `portfolio-footer.blade.php`, celý `mobile-nav.blade.php` (rozšíření nálezu #16 z kroku 1; `experience.blade.php` a `projects.blade.php` to mají správně).
 35. **Chyby validace ve skrytém jazykovém tabu** — manage formy: submit s chybou jen v CS poli, zatímco je zobrazen EN tab → uživatel nevidí žádnou chybu a submit „nefunguje". → indikátor chyby na tab tlačítku (Alpine: červená tečka když `$wire.getErrors()` obsahuje daný prefix), nebo auto-přepnout na tab s chybou.
-36. **Globální transition + z-index na všem** — `app.css:227-242`: `.portfolio-page *` má `transition: var(--t-base)` (0.5s all!) a `position:relative; z-index:1`. Výkon (transition na každém elementu při přepnutí theme), chybí `prefers-reduced-motion`, z-index kontext na všem ztěžuje vrstvení. → transition jen na `background-color/color/border-color` u vybraných elementů + `@media (prefers-reduced-motion: reduce)`.
+36. **[🟡 2026-07-17 — transition + reduced-motion opraveno; z-index na všem zůstává]** **Globální transition + z-index na všem** — `app.css:227-242`: `.portfolio-page *` má `transition: var(--t-base)` (0.5s all!) a `position:relative; z-index:1`. Výkon (transition na každém elementu při přepnutí theme), chybí `prefers-reduced-motion`, z-index kontext na všem ztěžuje vrstvení. → transition jen na `background-color/color/border-color` u vybraných elementů + `@media (prefers-reduced-motion: reduce)`.
 37. **Kontrast řízený libovolnou badge barvou** — `.exp-filter--badge.active` = text `--c-bg` na pozadí `--badge-color` (uživatelem zadaný hex); tmavý badge → nečitelné. Body text `--fw-light: 200` na 1rem je na hraně čitelnosti obecně.
-38. **Duplicitní `wire:model` na jednom inputu** (= nález #14 z kroku 1) — ×3: `⚡badges.blade.php:190`, `⚡articles.blade.php:258`, `⚡projects.blade.php:300`. Nechat jen `.live.debounce`.
+38. **[✅ vyřešeno dřív]** **Duplicitní `wire:model` na jednom inputu** (= nález #14 z kroku 1) — ×3: `⚡badges.blade.php:190`, `⚡articles.blade.php:258`, `⚡projects.blade.php:300`. Nechat jen `.live.debounce`.
 
 ## Poznámky (ne-nálezy)
 
