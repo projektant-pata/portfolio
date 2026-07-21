@@ -128,7 +128,31 @@
     max-width: 600px;
 }
 
-.work-bot-content-row-text .mini { margin-bottom: 7px; }
+.work-bot-content-row-meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 7px;
+}
+
+.work-bot-content-row-meta .mini { margin-bottom: 0; }
+
+.work-bot-content-row-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.work-bot-badge {
+    font-size: var(--fs-mini);
+    line-height: 1;
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    border: 1px solid color-mix(in srgb, var(--badge-color, var(--c-primary)) 45%, transparent);
+    color: var(--badge-color, var(--c-primary));
+    background: color-mix(in srgb, var(--badge-color, var(--c-primary)) 12%, transparent);
+}
 
 /* ── Projects ── */
 .projects-row {
@@ -231,14 +255,26 @@ html:not(.dark) .tool-github-light { display: block; }
 }
 
 /* ── Responsive ── */
-@media (max-width: 1440px) {
-    .stats-cards-card      { width: 100%; }
-    .projects-row          { height: 270px; }
-    .projects-row > img    { width: 500px; }
-    .reviews-row           { flex-direction: column; align-items: center; }
-    .reviews-row-card      { max-width: 450px; width: 100%; }
+
+/* Notebook (993–1440px): relax the desktop grids for the narrower column */
+@media (min-width: 993px) and (max-width: 1440px) {
+    .stats-cards        { grid-template-columns: repeat(2, 1fr); } /* 2×2 */
+    .stats-cards-card   { width: 100%; }
+
+    .tools-row          { grid-template-columns: repeat(4, 1fr); justify-items: center; }
+
+    /* 3 reviews → 2 per row, the third centred on its own row */
+    .reviews-row        { flex-wrap: wrap; justify-content: center; }
+    .reviews-row-card   { flex: 0 1 calc(50% - 0.75rem); max-width: 420px; }
+
+    .projects-row       { height: 300px; }
+    .projects-row > img { width: clamp(300px, 40%, 500px); }
+    .projects-row-text  { min-width: 260px; }
+
+    .hero-page-image img { width: 340px; }
 }
 
+/* Tablet + mobile: single-column, slide-in phone nav */
 @media (max-width: 992px) {
     .hero-page {
         flex-direction: column;
@@ -250,21 +286,25 @@ html:not(.dark) .tool-github-light { display: block; }
 
     .stats-cards { grid-template-columns: repeat(2, 1fr); }
 
+    .tools-row { grid-template-columns: repeat(4, 1fr); }
+
+    .projects-row       { height: auto; }
     .projects-row > img { height: 220px; max-width: 300px; }
 
-    .tools-row { grid-template-columns: repeat(4, 1fr); }
+    .reviews-row        { flex-direction: column; align-items: center; }
+    .reviews-row-card   { max-width: 450px; width: 100%; }
 }
 
 @media (max-width: 576px) {
     .stats-cards { grid-template-columns: 1fr; }
 
-    .work-bot-line { left: 55px; }
+    .work-bot-line    { left: 55px; }
     .work-bot-content { padding: 3.125rem 1.25rem !important; }
 
     .projects-row       { flex-direction: column; height: auto; }
     .projects-row > img { order: 1; margin-bottom: 20px; height: auto; max-height: 300px; width: 100%; }
     .projects-row-text  { order: 2; }
 
-    .tools-row          { grid-template-columns: repeat(2, 1fr); }
-    .tools-row-card     { width: auto; }
+    .tools-row      { grid-template-columns: repeat(2, 1fr); }
+    .tools-row-card { width: auto; }
 }
