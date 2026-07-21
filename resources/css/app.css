@@ -407,9 +407,8 @@ html:not(.dark) .exp-card--special {
 
 /* ── Footer ── */
 .portfolio-footer {
-    border: var(--border-w) solid var(--c-primary-lt);
-    border-radius: var(--r-card) var(--r-card) 0 0;
-    border-bottom: 0;
+    border: 0;
+    border-top: var(--border-w) solid var(--c-primary-lt);
     background-color: var(--c-surface);
     padding: 3rem 4rem 1.5rem;
 }
@@ -417,6 +416,8 @@ html:not(.dark) .exp-card--special {
 .portfolio-footer-inner {
     display: flex;
     gap: 2rem;
+    max-width: var(--layout-max);
+    margin-inline: auto;
 }
 
 .portfolio-footer-brand {
@@ -507,6 +508,10 @@ html:not(.dark) .exp-card--special {
        descendants from showing, so the toggle/nav would never appear. */
     .portfolio-sidebar {
         display: contents;
+    }
+
+    .portfolio-footer {
+        padding: 2.5rem 1.5rem 1.5rem;
     }
 
     .portfolio-footer-inner {
