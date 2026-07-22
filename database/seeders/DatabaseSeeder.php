@@ -2,24 +2,25 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Str;
 
 class DatabaseSeeder extends Seeder
 {
     /**
-     * Seed the application's database.
+     * Seed the application's database. Order matters: badges must exist before
+     * projects/experiences attach them. All child seeders are re-runnable.
      */
     public function run(): void
     {
-        User::factory()->create([
-            'name' => env('SEED_ADMIN_NAME', 'admin'),
-            'email' => env('SEED_ADMIN_EMAIL', 'admin@example.com'),
-            'password' => env('SEED_ADMIN_PASSWORD', Str::password(16)),
-            'profile_picture_url' => env('SEED_ADMIN_PICTURE'),
+        $this->call([
+            UserSeeder::class,
+            BadgesSeeder::class,
+            ProjectsSeeder::class,
+            ExperienceSeeder::class,
+            SettingSeeder::class,
+            StatSeeder::class,
+            ReviewSeeder::class,
+            AboutCardSeeder::class,
         ]);
-
-        $this->call(ProjectsSeeder::class);
     }
 }

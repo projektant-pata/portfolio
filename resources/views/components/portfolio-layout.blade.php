@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $title }}</title>
+    <title>{{ $title === 'projektant-pata' ? $title : $title.' | projektant-pata' }}</title>
     @if($description)
         <meta name="description" content="{{ $description }}">
     @endif
@@ -29,6 +29,8 @@
 </head>
 <body class="portfolio-page">
 
+    <div id="scroll-progress"></div>
+
     {{--
         .portfolio-wrapper   — centered, max-width capped at --layout-max
         .portfolio-sidebar   — sticky left column, holds phone nav
@@ -51,6 +53,8 @@
     </div>
 
     <x-portfolio-footer />
+
+    <button id="scroll-top" type="button" aria-label="{{ __('layout/footer.scroll_top') }}" hidden>↑</button>
 
 </body>
 </html>

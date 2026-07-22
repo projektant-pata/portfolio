@@ -25,6 +25,13 @@ new #[Title('Manage Badges')] class extends Component {
             ->get();
     }
 
+    public function mount(): void
+    {
+        if (request()->boolean('create')) {
+            $this->openCreate();
+        }
+    }
+
     public function openCreate(): void
     {
         $this->resetForm();

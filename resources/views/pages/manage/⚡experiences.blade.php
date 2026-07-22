@@ -73,6 +73,13 @@ new #[Title('Manage Experiences')] class extends Component {
         return Badge::orderByRaw("name->>'en'")->get();
     }
 
+    public function mount(): void
+    {
+        if (request()->boolean('create')) {
+            $this->openCreate();
+        }
+    }
+
     public function openCreate(): void
     {
         $this->resetForm();

@@ -28,7 +28,19 @@ class User extends Authenticatable
     {
         return [
             'password' => 'hashed',
+            'is_admin' => 'boolean',
         ];
+    }
+
+    /**
+     * Determine whether the user may access the admin area.
+     *
+     * `is_admin` is intentionally excluded from mass assignment (see the
+     * #[Fillable] attribute) so it can only be granted server-side.
+     */
+    public function isAdmin(): bool
+    {
+        return (bool) $this->is_admin;
     }
 
     /**

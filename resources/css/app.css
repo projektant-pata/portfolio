@@ -290,6 +290,20 @@ html:not(.dark) .exp-card--special {
     color: var(--c-selection-fg);
 }
 
+/* Very faint film grain over everything — filmový nádech. Fixed, tiled SVG
+   fractal noise, non-interactive. Body's OWN ::after is `.portfolio-page::after`
+   (no space) so it dodges the descendant reset above. */
+.portfolio-page::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    pointer-events: none;
+    opacity: 0.1;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 140px 140px;
+}
+
 /* ── Headings ── */
 
 .portfolio-page h1 {
@@ -405,12 +419,105 @@ html:not(.dark) .exp-card--special {
     margin-bottom: var(--sp-section);
 }
 
+/* ── Scroll reveal (fade-up) ──
+   Every section except the hero (which gets its own entrance sequence,
+   see pages/index.css) fades up once it crosses into the viewport;
+   see initScrollReveal() in app.js. */
+.portfolio-section:not(.hero-page) {
+    opacity: 0;
+    translate: 0 24px;
+    transition: opacity var(--t-base), translate var(--t-base);
+}
+
+.portfolio-section:not(.hero-page).is-visible {
+    opacity: 1;
+    translate: 0;
+}
+
+/* ── Scroll progress bar (fixed, top of viewport) ── */
+#scroll-progress {
+    position: fixed;
+    top: 0; left: 0;
+    height: 3px;
+    width: 0%;
+    background-color: var(--c-primary);
+    transition: width 0.1s linear;
+    z-index: 1000;
+}
+
+/* ── Scroll-to-top gold FAB ──
+   Hidden (via [hidden]) until JS reveals it past a scroll threshold, then
+   fades/scales in. Sits above the grain overlay. */
+#scroll-top {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    width: 3rem;
+    height: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    line-height: 1;
+    color: var(--c-bg);
+    background-color: var(--c-primary);
+    border: 0;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 1001;
+    box-shadow: 0 6px 20px -6px color-mix(in srgb, var(--c-primary) 60%, transparent);
+    opacity: 0;
+    translate: 0 12px;
+    pointer-events: none;   /* not clickable while faded out */
+    transition: opacity var(--t-fast), translate var(--t-fast), scale var(--t-fast);
+}
+
+#scroll-top[hidden] {
+    display: none;
+}
+
+#scroll-top.is-visible {
+    opacity: 1;
+    translate: 0;
+    pointer-events: auto;
+}
+
+#scroll-top:hover {
+    scale: 1.08;
+}
+
 /* ── Footer ── */
+
+/* The "projektant-pata" watermark lives ABOVE the footer (on the page bg, not
+   the footer surface) and the footer is pulled up OVER it so the footer's
+   opaque band covers the lower part of the letters — the same "the block below
+   covers the bottom of the giant outlined heading" treatment every section
+   gets, except here the footer band itself is that covering block. */
+.portfolio-footer-band {
+    position: relative;
+    /* Held at z-index 0 (not the reset's default 1) so the whole band stays
+       BELOW .portfolio-wrapper — otherwise this later sibling would paint over
+       the fixed mobile nav (z-index 999) that lives inside the wrapper. */
+    z-index: 0;
+}
+
+.portfolio-footer-watermark {
+    /* generic .portfolio-page h2 already gives the outlined watermark look,
+       centring, display font and the -0.45em overlap that pulls the footer up
+       over the letters. Just drop it under the footer in the stack. */
+    z-index: 0;
+}
+
 .portfolio-footer {
     border: 0;
     border-top: var(--border-w) solid var(--c-primary-lt);
     background-color: var(--c-surface);
     padding: 3rem 4rem 1.5rem;
+    /* Sits at z-index 0 for two reasons: (1) it must paint OVER the watermark
+       sibling above (same z-index, later in DOM → footer wins, covering the
+       letters' lower half); (2) it must stay BELOW the fixed mobile nav that
+       lives in .portfolio-wrapper, so the open nav sits on top of the footer. */
+    z-index: 0;
 }
 
 .portfolio-footer-inner {
@@ -484,6 +591,7 @@ html:not(.dark) .exp-card--special {
 .portfolio-footer-social-link img {
     height: 1.4rem;
     border-radius: 0.4rem;
+    transition: filter var(--t-fast), transform var(--t-fast);
 }
 
 .portfolio-footer-social-link p {
@@ -492,6 +600,12 @@ html:not(.dark) .exp-card--special {
 
 .portfolio-footer-social-link:hover p {
     color: var(--c-primary);
+}
+
+/* Gold glow + lift on the icon itself, not just the label colour. */
+.portfolio-footer-social-link:hover img {
+    transform: translateY(-2px);
+    filter: drop-shadow(0 0 8px color-mix(in srgb, var(--c-primary) 70%, transparent));
 }
 
 /* ── Responsive layout ── */
@@ -567,6 +681,20 @@ html:not(.dark) .exp-card--special {
     border: 3px solid var(--c-primary-lt);
     border-radius: var(--r-phone);
     transition: var(--t-base);
+}
+
+/* Idle "breathing" animation — desktop only (the phone stands still as
+   a static sidebar element otherwise, which reads as inert/dead). Reduced
+   motion is already handled globally (see the .portfolio-page guard above). */
+@media (min-width: 993px) {
+    #mobile-nav {
+        animation: phone-breathe 6s ease-in-out infinite;
+    }
+}
+
+@keyframes phone-breathe {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50%      { transform: translateY(-6px) rotate(0.5deg); }
 }
 
 #mobile-nav p {
@@ -661,6 +789,20 @@ html:not(.dark) .exp-card--special {
     height: 60px;
     border-radius: 15px;
     object-fit: cover;
+    transition: scale var(--t-fast);
+}
+
+/* iOS-style bounce on hover — skip the decorative (non-interactive) tile
+   so hover feedback isn't shown on something that doesn't respond to clicks. */
+.mobile-nav-app:not(.mobile-nav-app--decorative):hover img {
+    scale: 1.12;
+}
+
+.mobile-nav-app button {
+    background: none;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
 }
 
 .mobile-nav-app .mini {
@@ -705,6 +847,8 @@ html:not(.dark) .exp-card--special {
     position: fixed;
     inset: 0;
     background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
     z-index: 998;
     opacity: 0;
     visibility: hidden;
@@ -724,24 +868,32 @@ body.no-scroll { overflow: hidden; }
         display: block;
     }
 
+    /* Centred with `inset:0 + margin:auto` — this works because the phone has
+       a fixed 370×820 size. Crucially it keeps the panel centred INDEPENDENTLY
+       of the `scale` applied at ≤576px. The previous `left:50% + translate(-50%)`
+       centring fought that separate `scale` property (they compose in a way that
+       shifted the phone off-centre to the right — measured leftGap 84px vs
+       rightGap 10px at 390px). Now only the slide (translateX) and the scale
+       ride on the element, both about its own centre, so it stays put. */
     #mobile-nav {
         position: fixed;
-        top: 10px;
-        right: 0;
-        transform: translateX(120%);
-        transition: transform var(--t-fast);
+        inset: 0;
+        margin: auto;
+        transform: translateX(150%);   /* hidden: parked off-screen to the right */
+        /* Spring-ish overshoot easing instead of the linear --t-fast — reads
+           closer to a native iOS sheet than a flat slide. */
+        transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
         z-index: 999;
     }
 
     #mobile-nav.active {
-        transform: translateX(-20px);
+        transform: translateX(0);
     }
 }
 
 @media (max-width: 576px) {
     #mobile-nav {
-        scale: 0.8;
-        top: -5vh;
+        scale: 0.8;   /* transform-origin defaults to centre → stays centred */
     }
 }
 
@@ -758,4 +910,20 @@ body.no-scroll { overflow: hidden; }
     height: 160px;
     width: 270px;
     margin: auto;
+    opacity: 0;
+    translate: 0 24px;
+    transition: opacity var(--t-base) calc(var(--i, 0) * 0.06s),
+                translate var(--t-fast),
+                box-shadow var(--t-fast);
+}
+
+.stats-cards-card.is-visible {
+    opacity: 1;
+    translate: 0;
+    transition-delay: calc(var(--i, 0) * 0.06s);
+}
+
+.stats-cards-card:hover {
+    translate: 0 -6px;
+    box-shadow: 0 12px 24px -10px color-mix(in srgb, var(--c-primary) 35%, transparent);
 }

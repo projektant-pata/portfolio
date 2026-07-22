@@ -20,19 +20,26 @@ The font family is also declared in the `@theme` block for Tailwind compatibilit
 ## Font Sizes
 
 All sizes are in `rem` so they respect the user's browser base font preference.
-Fluid `clamp()` is not used — sizes are fixed tokens.
+Headings (`h1`–`h4`) are **fluid** via `clamp(min, base + vw, max)` so they scale
+down on narrow viewports instead of forcing horizontal overflow. The `max` value
+of each clamp equals the original desktop size in the table below.
 
-| Token       | Value      | px equiv* | Role                          |
-|-------------|------------|-----------|-------------------------------|
-| `--fs-mini` | `0.625rem` | ~10 px    | `.mini` labels (clock, app names, years) |
-| `--fs-sm`   | `0.875rem` | ~14 px    | Small body text               |
-| `--fs-base` | `1rem`     | ~16 px    | Body paragraphs, hero suptitle |
-| `--fs-h4`   | `1.6rem`   | ~26 px    | Subheadings, hero subtitle (`#underh1`), tools card label |
-| `--fs-h3`   | `2.56rem`  | ~41 px    | Section titles                |
-| `--fs-h1`   | `4.1rem`   | ~66 px    | Hero title                    |
-| `--fs-h2`   | `6.56rem`  | ~105 px   | Giant watermark / section label (outlined) |
+| Token       | Clamp (min → max)            | Desktop max | Role                          |
+|-------------|------------------------------|-------------|-------------------------------|
+| `--fs-mini` | `0.85rem` (fixed)            | ~14 px      | `.mini` labels (clock, app names, years) |
+| `--fs-sm`   | `0.875rem` (fixed)           | ~14 px      | Small body text               |
+| `--fs-base` | `1rem` (fixed)               | ~16 px      | Body paragraphs, hero suptitle |
+| `--fs-h4`   | `1.3rem` → `1.6rem`          | ~26 px      | Subheadings, hero subtitle (`#underh1`), tools card label |
+| `--fs-h3`   | `1.9rem` → `2.56rem`         | ~41 px      | Section titles                |
+| `--fs-h1`   | `2.6rem` → `4.1rem`          | ~66 px      | Hero title                    |
+| `--fs-h2`   | `2.6rem` → `6.56rem`         | ~105 px     | Giant watermark / section label |
 
 *px equivalent assumes 16 px browser root.
+
+> **Why fluid:** with fixed sizes, the long unbreakable word `projektant-pata`
+> at 66 px (`--fs-h1`) forced the content column to a ~496 px min-width, which
+> overflowed every viewport below ~520 px. The clamp fixes this at the source;
+> `h1`/`h2` also carry `overflow-wrap: anywhere` as a safety net.
 
 ---
 
@@ -59,23 +66,29 @@ letter-spacing: -0.02em;
 margin-bottom:  0;
 ```
 
-`h1 span` renders outlined text: `color: transparent`, `-webkit-text-stroke: 2px var(--c-primary)`.
+`h1 span` (the accent word) is **outlined** in the display font (`--font-display`,
+Space Grotesk): `-webkit-text-stroke: 2px var(--c-primary)` with a faint interior
+fill `color: color-mix(in srgb, var(--c-primary) 16%, transparent)` — edges plus a
+hint of color inside, not a hollow frame. See `docs/frontend-headings-and-mobile-nav.md`.
 
 ---
 
 ### `h2` — Watermark / section label
 
 ```css
-font-size:      var(--fs-h2);   /* 6.56rem */
-font-weight:    300;
-font-family:    sans-serif;
-color:          transparent;
--webkit-text-stroke: 1px var(--c-primary-lt);
+font-size:      var(--fs-h2);   /* clamp → 6.56rem max */
+font-weight:    500;
+font-family:    var(--font-display);          /* Space Grotesk */
+color:          color-mix(in srgb, var(--c-primary-lt) 12%, transparent);
+-webkit-text-stroke: 1px var(--c-primary-lt);  /* outlined watermark */
 text-align:     center;
-margin-bottom:  -50px;          /* overlaps the content below */
+margin-bottom:  -0.45em;        /* overlap scales with the fluid font size */
 ```
 
-In `.light-theme`, `h2` is filled with `--c-primary-lt` instead of outlined.
+Dark mode is **outlined** (as above); the **light-mode override**
+(`html:not(.dark) .portfolio-page h2`) fills it solid with `--c-primary-lt` because
+a thin stroke is too faint on the light parchment background. Change the display
+look via the `--font-display` token.
 
 ---
 

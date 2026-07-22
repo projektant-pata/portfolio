@@ -344,11 +344,12 @@
 
 .exp-badge {
     font-size: var(--fs-mini);
-    padding: 0.2rem 0.65rem;
+    line-height: 1;
+    padding: 0.2rem 0.6rem;
     border-radius: 999px;
-    border: 1px solid var(--badge-color, var(--c-primary-fade));
+    border: 1px solid color-mix(in srgb, var(--badge-color, var(--c-primary)) 45%, transparent);
     color: var(--badge-color, var(--c-primary));
-    background: transparent;
+    background: color-mix(in srgb, var(--badge-color, var(--c-primary)) 12%, transparent);
     transition: opacity var(--t-fast);
 }
 

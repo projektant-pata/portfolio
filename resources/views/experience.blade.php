@@ -123,15 +123,27 @@
                 if (!title.includes(query)) { return false; }
             }
             if (activeFilters.size === 0) { return true; }
+
+            // Faceted filtering: OR within a group (type / badge), AND across
+            // groups. Selecting "Work" + a badge narrows to work cards that
+            // also carry that badge, instead of unioning the two sets.
+            const typeFilters = [];
+            const badgeFilters = [];
             for (const f of activeFilters) {
-                if (f.startsWith('badge:')) {
-                    const slugs = JSON.parse(card.dataset.badges || '[]');
-                    if (slugs.includes(f.slice(6))) { return true; }
-                } else {
-                    if (card.dataset.type === f) { return true; }
+                if (f.startsWith('badge:')) { badgeFilters.push(f.slice(6)); }
+                else { typeFilters.push(f); }
+            }
+
+            if (typeFilters.length && !typeFilters.includes(card.dataset.type)) {
+                return false;
+            }
+            if (badgeFilters.length) {
+                const slugs = JSON.parse(card.dataset.badges || '[]');
+                if (!badgeFilters.some(function (b) { return slugs.includes(b); })) {
+                    return false;
                 }
             }
-            return false;
+            return true;
         }
 
         function updateGridLine() {
