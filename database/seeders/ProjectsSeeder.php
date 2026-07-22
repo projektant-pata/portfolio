@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Badge;
 use App\Models\Link;
 use App\Models\Project;
 use Illuminate\Database\Seeder;
@@ -10,6 +11,10 @@ class ProjectsSeeder extends Seeder
 {
     public function run(): void
     {
+        Project::query()->delete(); // cascades to links + project_badge
+
+        $badgeIds = Badge::pluck('id', 'slug');
+
         $spsehub = Project::create([
             'slug' => 'spse-hub',
             'year' => 2022,
@@ -35,6 +40,8 @@ class ProjectsSeeder extends Seeder
             'img_url' => 'images/mobile/icons/github.webp',
         ]);
 
+        $spsehub->badges()->sync($badgeIds->only(['javascript'])->values()->all());
+
         $usladovny = Project::create([
             'slug' => 'u-sladovny',
             'year' => 2025,
@@ -53,6 +60,8 @@ class ProjectsSeeder extends Seeder
             'img_url' => 'images/projects/icons/web.webp',
         ]);
 
+        $usladovny->badges()->sync($badgeIds->only(['symfony', 'php'])->values()->all());
+
         $portfolio = Project::create([
             'slug' => 'portfolio',
             'year' => 2026,
@@ -70,5 +79,7 @@ class ProjectsSeeder extends Seeder
             'alt' => ['en' => 'View on GitHub', 'cs' => 'Zobrazit na GitHubu'],
             'img_url' => 'images/mobile/icons/github.webp',
         ]);
+
+        $portfolio->badges()->sync($badgeIds->only(['laravel', 'php'])->values()->all());
     }
 }

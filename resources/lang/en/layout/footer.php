@@ -16,4 +16,6 @@ return [
     'soc4' => 'LinkedIn',
     'soc5' => 'GitHub',
     'soc6' => 'Chess',
+
+    'scroll_top' => 'Back to top',
 ];

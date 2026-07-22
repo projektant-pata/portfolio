@@ -101,14 +101,14 @@
 
     <div id="mobile-nav-bottom">
         <div class="mobile-nav-app">
-            <a href="#">
+            <a href="{{ config('portfolio.social.email') }}">
                 <img src="{{ asset('images/mobile/icons/messages.webp') }}" alt="messages">
             </a>
         </div>
         <div id="mobile-nav-weather" class="mobile-nav-app">
-            <a href="#">
+            <button type="button">
                 <img id="mobile-nav-weather-img" src="{{ asset('images/mobile/icons/weather_dark.png') }}" alt="theme toggle">
-            </a>
+            </button>
         </div>
         <div class="mobile-nav-app">
             <form action="{{ route('language.toggle') }}" method="POST">
@@ -118,10 +118,8 @@
                 </button>
             </form>
         </div>
-        <div class="mobile-nav-app">
-            <a href="#">
-                <img src="{{ asset('images/mobile/icons/music.webp') }}" alt="music">
-            </a>
+        <div class="mobile-nav-app mobile-nav-app--decorative">
+            <img src="{{ asset('images/mobile/icons/music.webp') }}" alt="">
         </div>
     </div>
 </nav>

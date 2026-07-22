@@ -95,6 +95,16 @@
     }
 }
 
+/* Notebook (993–1440px): the phone sidebar narrows the content column, so a
+   fixed 500px image crushed the text beside it. Shrink the image fluidly so
+   the description column keeps a readable width. */
+@media (min-width: 993px) and (max-width: 1440px) {
+    .projects-row > img,
+    .projects-row-img-placeholder {
+        width: clamp(280px, 42%, 500px);
+    }
+}
+
 @media (max-width: 992px) {
     .projects-row,
     .projects-row--reverse {

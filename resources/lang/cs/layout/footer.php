@@ -17,4 +17,6 @@ return [
     'soc4' => 'LinkedIn',
     'soc5' => 'GitHub',
     'soc6' => 'Šachy',
+
+    'scroll_top' => 'Zpět nahoru',
 ];

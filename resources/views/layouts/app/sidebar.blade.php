@@ -35,6 +35,21 @@
                         {{ __('Links') }}
                     </flux:sidebar.item>
                 </flux:sidebar.group>
+
+                <flux:sidebar.group :heading="__('Content')" class="grid">
+                    <flux:sidebar.item icon="pencil-square" :href="route('manage.site-content')" :current="request()->routeIs('manage.site-content')" wire:navigate>
+                        {{ __('Site content') }}
+                    </flux:sidebar.item>
+                    <flux:sidebar.item icon="chart-bar" :href="route('manage.stats')" :current="request()->routeIs('manage.stats')" wire:navigate>
+                        {{ __('Stats') }}
+                    </flux:sidebar.item>
+                    <flux:sidebar.item icon="chat-bubble-left-right" :href="route('manage.reviews')" :current="request()->routeIs('manage.reviews')" wire:navigate>
+                        {{ __('Reviews') }}
+                    </flux:sidebar.item>
+                    <flux:sidebar.item icon="identification" :href="route('manage.about-cards')" :current="request()->routeIs('manage.about-cards')" wire:navigate>
+                        {{ __('About cards') }}
+                    </flux:sidebar.item>
+                </flux:sidebar.group>
             </flux:sidebar.nav>
 
             <flux:spacer />

@@ -101,3 +101,109 @@
 .locale-tab--active {
     background: var(--c-surface);
 }
+
+
+/* ── Dashboard overview (stat tiles, quick actions, recent) ── */
+
+.dash-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr));
+    gap: 1rem;
+}
+
+.dash-tile {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    padding: 1.1rem 1.25rem;
+    border-radius: var(--r-card-sm);
+    border: 1px solid var(--c-primary-fade);
+    background-color: var(--c-surface);
+    color: var(--c-fg);
+    text-decoration: none;
+    transition: transform var(--t-fast), box-shadow var(--t-fast), border-color var(--t-fast);
+}
+
+.dash-tile:hover {
+    transform: translateY(-3px);
+    border-color: color-mix(in srgb, var(--c-primary) 45%, transparent);
+    box-shadow: 0 6px 18px color-mix(in srgb, var(--c-primary) 14%, transparent);
+}
+
+.dash-tile__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: var(--c-primary);
+}
+
+.dash-tile__count {
+    font-family: var(--font-display, var(--font-sans));
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--c-fg);
+}
+
+.dash-tile__label {
+    font-size: 0.8rem;
+    color: var(--c-muted);
+}
+
+.dash-card {
+    padding: 1.25rem 1.4rem;
+    border-radius: var(--r-card-sm);
+    border: 1px solid var(--c-primary-fade);
+    background-color: var(--c-surface);
+}
+
+.dash-card__title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--c-fg);
+    margin-bottom: 0.9rem;
+}
+
+.dash-recent {
+    display: flex;
+    flex-direction: column;
+}
+
+.dash-recent__row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.6rem 0.25rem;
+    border-top: 1px solid var(--c-primary-fade);
+    color: var(--c-fg);
+    text-decoration: none;
+    transition: background-color var(--t-fast);
+}
+
+.dash-recent__row:first-child {
+    border-top: 0;
+}
+
+.dash-recent__row:hover {
+    background-color: color-mix(in srgb, var(--c-primary-fade) 22%, transparent);
+}
+
+.dash-recent__icon {
+    color: var(--c-primary);
+    flex-shrink: 0;
+}
+
+.dash-recent__title {
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.dash-recent__meta {
+    margin-left: auto;
+    padding-left: 0.5rem;
+    font-size: 0.75rem;
+    color: var(--c-muted);
+    white-space: nowrap;
+}

@@ -1,6 +1,8 @@
-<h2>projektant-pata</h2>
-<footer class="portfolio-footer">
-    <div class="portfolio-footer-inner">
+<div class="portfolio-footer-band">
+    <h2 class="portfolio-footer-watermark">projektant-pata</h2>
+
+    <footer class="portfolio-footer">
+        <div class="portfolio-footer-inner">
         <div class="portfolio-footer-brand">
             <h4><span>projektant-pata</span></h4>
             <p>&copy; {{ date('Y') }} | {{ __('layout/footer.rights') }}</p>
@@ -62,4 +64,5 @@
             </div>
         </div>
     </div>
-</footer>
+    </footer>
+</div>

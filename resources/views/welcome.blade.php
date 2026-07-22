@@ -1,11 +1,16 @@
 <x-portfolio-layout :title="__('layout/header.home_title')" :description="__('layout/header.home_desc')" :styles="['resources/css/pages/index.css']">
 
+    @php $locale = app()->getLocale(); @endphp
+    @php $heroRoles = \App\Models\Setting::list('hero_roles', $locale); @endphp
+
     {{-- Hero --}}
     <section class="hero-page portfolio-section">
         <article class="hero-page-text">
-            <p class="hero-suptitle">{{ __('home/hero.hero_suptitle') }}</p>
-            <h1>{!! __('home/hero.hero_title') !!}</h1>
-            <h4 class="underh1">{!! __('home/hero.hero_subtitle') !!}</h4>
+            <p class="hero-suptitle">{{ \App\Models\Setting::text('hero_suptitle', $locale) }}</p>
+            <h1>{!! \App\Models\Setting::text('hero_title', $locale) !!}</h1>
+            <h4 class="underh1">
+                <span id="hero-rotator" data-roles='@json($heroRoles)' aria-live="polite">{{ $heroRoles[0] ?? '' }}</span><span class="hero-caret" aria-hidden="true"></span>
+            </h4>
         </article>
         <article class="hero-page-image">
             <img src="{{ asset('images/id-photo-portrait-businessman-suit-260nw-1505360618 1.png') }}" alt="hero">
@@ -14,26 +19,24 @@
 
     {{-- Stats --}}
     <section id="stats" class="portfolio-section">
-        <h2>{{ __('home/stats.title') }}</h2>
+        <h2>{{ \App\Models\Setting::text('stats_title', $locale) }}</h2>
         <article class="stats-cards">
-            <x-portfolio.stats-card :value="__('home/stats.card1_title')" :text="__('home/stats.card1_text')" />
-            <x-portfolio.stats-card :value="__('home/stats.card2_title')" :text="__('home/stats.card2_text')" />
-            <x-portfolio.stats-card :value="(now()->year - 2022).'+'" :text="__('home/stats.card3_text')" />
-            <x-portfolio.stats-card :value="__('home/stats.card4_title')" :text="__('home/stats.card4_text')" />
+            @foreach ($stats as $stat)
+                <x-portfolio.stats-card :value="$stat->displayValue($locale)" :text="$stat->getTranslation('text', $locale)" :value-id="$stat->value_id" />
+            @endforeach
         </article>
     </section>
 
-    @php $locale = app()->getLocale(); @endphp
     {{-- Work & Life --}}
     <section class="work portfolio-section">
         <h2>{{ __('home/experience.title_home') }}</h2>
         <article class="work-top">
-            <div id="work-top-btn-work" class="work-top-btn">
+            <button type="button" id="work-top-btn-work" class="work-top-btn" aria-pressed="false">
                 <h4>{{ __('home/experience.title_work') }}</h4>
-            </div>
-            <div id="work-top-btn-life" class="work-top-btn active">
+            </button>
+            <button type="button" id="work-top-btn-life" class="work-top-btn active" aria-pressed="true">
                 <h4>{{ __('home/experience.title_life') }}</h4>
-            </div>
+            </button>
         </article>
         <article class="work-bot">
             <div class="work-bot-line"></div>
@@ -62,7 +65,7 @@
 
     {{-- Tools --}}
     <section id="tools" class="portfolio-section">
-        <h2>{{ __('home/tools.title') }}</h2>
+        <h2>{{ \App\Models\Setting::text('tools_title', $locale) }}</h2>
         <article class="tools-row">
             <div class="tools-row-card">
                 <img src="{{ asset('images/tools/laravel.png') }}" alt="Laravel">
@@ -110,29 +113,17 @@
 
     {{-- Reviews --}}
     <section id="reviews" class="portfolio-section">
-        <h2>{{ __('home/reviews.title') }}</h2>
+        <h2>{{ \App\Models\Setting::text('reviews_title', $locale) }}</h2>
         <article class="reviews-row">
-            <div class="reviews-row-card">
-                <p>{{ __('home/reviews.card1_text') }}</p>
-                <div class="reviews-row-card-text">
-                    <span><p>{{ __('home/reviews.card1_name') }}</p></span>
-                    <p class="mini"> - {{ __('home/reviews.card1_position') }}</p>
+            @foreach ($reviews as $review)
+                <div class="reviews-row-card">
+                    <p>{{ $review->getTranslation('text', $locale) }}</p>
+                    <div class="reviews-row-card-text">
+                        <span><p>{{ $review->name }}</p></span>
+                        <p class="mini"> - {{ $review->getTranslation('position', $locale) }}</p>
+                    </div>
                 </div>
-            </div>
-            <div class="reviews-row-card">
-                <p>{{ __('home/reviews.card2_text') }}</p>
-                <div class="reviews-row-card-text">
-                    <span><p>{{ __('home/reviews.card2_name') }}</p></span>
-                    <p class="mini"> - {{ __('home/reviews.card2_position') }}</p>
-                </div>
-            </div>
-            <div class="reviews-row-card">
-                <p>{{ __('home/reviews.card3_text') }}</p>
-                <div class="reviews-row-card-text">
-                    <span><p>{{ __('home/reviews.card3_name') }}</p></span>
-                    <p class="mini"> - {{ __('home/reviews.card3_position') }}</p>
-                </div>
-            </div>
+            @endforeach
         </article>
     </section>
 

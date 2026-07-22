@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'home_title' => 'projektant_pata',
+    'home_title' => 'projektant-pata',
     'home_desc' => "Richard Hývl's (also known as projektant-pata) portfolio.  Web developer, student of SPŠE Pardubice. Explore web projects, coding experiments and contact info.",
 
     'about_title' => 'O mně',

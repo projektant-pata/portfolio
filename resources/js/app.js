@@ -90,6 +90,24 @@ window.setThemePreference = setTheme;
 
 // ── Work / Education tab toggle ──────────────────────────────
 
+function crossfadeContent(target, other) {
+    if (target === other || target.style.display === 'block') {
+        return;
+    }
+
+    other.classList.add('is-fading');
+    target.classList.add('is-fading');
+
+    setTimeout(() => {
+        other.style.display = 'none';
+        target.style.display = 'block';
+
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => target.classList.remove('is-fading'));
+        });
+    }, 180);
+}
+
 function initWorkToggle() {
     const workBtn = document.getElementById('work-top-btn-work');
     const lifeBtn = document.getElementById('work-top-btn-life');
@@ -101,18 +119,220 @@ function initWorkToggle() {
     }
 
     workBtn.addEventListener('click', () => {
-        workContent.style.display = 'block';
-        lifeContent.style.display = 'none';
+        crossfadeContent(workContent, lifeContent);
         workBtn.classList.add('active');
         lifeBtn.classList.remove('active');
+        workBtn.setAttribute('aria-pressed', 'true');
+        lifeBtn.setAttribute('aria-pressed', 'false');
     });
 
     lifeBtn.addEventListener('click', () => {
-        workContent.style.display = 'none';
-        lifeContent.style.display = 'block';
+        crossfadeContent(lifeContent, workContent);
         lifeBtn.classList.add('active');
         workBtn.classList.remove('active');
+        lifeBtn.setAttribute('aria-pressed', 'true');
+        workBtn.setAttribute('aria-pressed', 'false');
     });
+}
+
+// ── Hero rotator (typewriter) ─────────────────────────────────
+
+const prefersReducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function initHeroRotator() {
+    const el = document.getElementById('hero-rotator');
+    if (!el || prefersReducedMotion()) {
+        return;
+    }
+
+    let roles;
+    try {
+        roles = JSON.parse(el.dataset.roles);
+    } catch {
+        return;
+    }
+    if (!Array.isArray(roles) || roles.length < 2) {
+        return;
+    }
+
+    const TYPE_MS = 55;
+    const DELETE_MS = 35;
+    const PAUSE_MS = 1600;
+    let roleIndex = 0;
+
+    const type = (text, i, done) => {
+        el.textContent = text.slice(0, i);
+        if (i < text.length) {
+            setTimeout(() => type(text, i + 1, done), TYPE_MS);
+        } else {
+            setTimeout(done, PAUSE_MS);
+        }
+    };
+
+    const erase = (text, i, done) => {
+        el.textContent = text.slice(0, i);
+        if (i > 0) {
+            setTimeout(() => erase(text, i - 1, done), DELETE_MS);
+        } else {
+            done();
+        }
+    };
+
+    const cycle = () => {
+        const role = roles[roleIndex];
+        type(role, 0, () => {
+            erase(role, role.length, () => {
+                roleIndex = (roleIndex + 1) % roles.length;
+                cycle();
+            });
+        });
+    };
+
+    cycle();
+}
+
+// ── Scroll reveal ─────────────────────────────────────────────
+
+function setStagger(containerSelector) {
+    document.querySelectorAll(containerSelector).forEach((container) => {
+        [...container.children].forEach((child, i) => child.style.setProperty('--i', i));
+    });
+}
+
+function initScrollReveal() {
+    setStagger('.stats-cards');
+    setStagger('.tools-row');
+    setStagger('.reviews-row');
+
+    const targets = document.querySelectorAll(
+        '.portfolio-section:not(.hero-page), .stats-cards-card, .tools-row-card, .reviews-row-card'
+    );
+
+    if (!targets.length) {
+        return;
+    }
+
+    if (!('IntersectionObserver' in window)) {
+        targets.forEach((el) => el.classList.add('is-visible'));
+        return;
+    }
+
+    const observer = new IntersectionObserver(
+        (entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        },
+        { threshold: 0.15 }
+    );
+
+    targets.forEach((el) => observer.observe(el));
+}
+
+function initHeroEntrance() {
+    requestAnimationFrame(() => {
+        document.querySelector('.hero-page')?.classList.add('hero-loaded');
+    });
+}
+
+// ── Scroll progress bar ───────────────────────────────────────
+
+function initScrollProgress() {
+    const bar = document.getElementById('scroll-progress');
+    if (!bar) {
+        return;
+    }
+
+    const update = () => {
+        const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+        const progress = scrollable > 0 ? (window.scrollY / scrollable) * 100 : 0;
+        bar.style.width = `${progress}%`;
+    };
+
+    window.addEventListener('scroll', update, { passive: true });
+    update();
+}
+
+// ── Scroll-to-top FAB ─────────────────────────────────────────
+
+function initScrollToTop() {
+    const btn = document.getElementById('scroll-top');
+    if (!btn) {
+        return;
+    }
+
+    const THRESHOLD = 400;
+    let shown = false;
+
+    const update = () => {
+        const shouldShow = window.scrollY > THRESHOLD;
+        if (shouldShow === shown) {
+            return;
+        }
+        shown = shouldShow;
+
+        if (shouldShow) {
+            btn.hidden = false;
+            requestAnimationFrame(() => btn.classList.add('is-visible'));
+        } else {
+            btn.classList.remove('is-visible');
+        }
+    };
+
+    btn.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
+    });
+
+    window.addEventListener('scroll', update, { passive: true });
+    update();
+}
+
+// ── Stat count-up ─────────────────────────────────────────────
+
+function initStatCountUp() {
+    const spans = document.querySelectorAll('.stats-cards-card h3 span');
+    if (!spans.length || prefersReducedMotion() || !('IntersectionObserver' in window)) {
+        return;
+    }
+
+    const animate = (el) => {
+        const raw = el.textContent.trim();
+        const match = raw.match(/^(\d+)(.*)$/);
+        if (!match) {
+            return;
+        }
+
+        const target = parseInt(match[1], 10);
+        const suffix = match[2];
+        const duration = 900;
+        const start = performance.now();
+
+        const tick = (now) => {
+            const progress = Math.min((now - start) / duration, 1);
+            el.textContent = `${Math.round(target * progress)}${suffix}`;
+            if (progress < 1) {
+                requestAnimationFrame(tick);
+            }
+        };
+        requestAnimationFrame(tick);
+    };
+
+    const observer = new IntersectionObserver(
+        (entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    animate(entry.target);
+                    observer.unobserve(entry.target);
+                }
+            });
+        },
+        { threshold: 0.5 }
+    );
+
+    spans.forEach((span) => observer.observe(span));
 }
 
 // ── About Me — live stats ────────────────────────────────────
@@ -184,4 +404,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     fetchChessElo();
     fetchGithubRepos();
+
+    initHeroRotator();
+    initHeroEntrance();
+    initScrollReveal();
+    initScrollProgress();
+    initScrollToTop();
+    initStatCountUp();
 });
