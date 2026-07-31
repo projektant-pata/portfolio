@@ -568,12 +568,24 @@ html:not(.dark) .exp-card--special {
     border-radius: 0.3rem;
 }
 
+.portfolio-footer-nav-link img,
+.portfolio-footer-social-link img {
+    transition: filter var(--t-fast), transform var(--t-fast);
+}
+
 .portfolio-footer-nav-link p {
     transition: var(--t-fast);
 }
 
 .portfolio-footer-nav-link:hover p {
     color: var(--c-primary);
+}
+
+/* Gold glow + lift on the icon itself, not just the label colour. */
+.portfolio-footer-nav-link:hover img,
+.portfolio-footer-social-link:hover img {
+    transform: translateY(-2px);
+    filter: drop-shadow(0 0 8px color-mix(in srgb, var(--c-primary) 70%, transparent));
 }
 
 .portfolio-footer-social-links {
@@ -591,7 +603,6 @@ html:not(.dark) .exp-card--special {
 .portfolio-footer-social-link img {
     height: 1.4rem;
     border-radius: 0.4rem;
-    transition: filter var(--t-fast), transform var(--t-fast);
 }
 
 .portfolio-footer-social-link p {
@@ -600,12 +611,6 @@ html:not(.dark) .exp-card--special {
 
 .portfolio-footer-social-link:hover p {
     color: var(--c-primary);
-}
-
-/* Gold glow + lift on the icon itself, not just the label colour. */
-.portfolio-footer-social-link:hover img {
-    transform: translateY(-2px);
-    filter: drop-shadow(0 0 8px color-mix(in srgb, var(--c-primary) 70%, transparent));
 }
 
 /* Desktop: restore the pre-band card footer — aligned to the content column,
