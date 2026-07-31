@@ -265,12 +265,6 @@ html:not(.dark) .tool-github-light { display: block; }
     transition-delay: calc(var(--i, 0) * 0.06s);
 }
 
-.tools-row-card:hover {
-    translate: 0 -6px;
-    scale: 1.03;
-    box-shadow: 0 12px 24px -10px color-mix(in srgb, var(--c-primary) 45%, transparent);
-}
-
 .reviews-row-card:hover {
     translate: 0 -6px;
     box-shadow: 0 12px 24px -10px color-mix(in srgb, var(--c-primary) 35%, transparent);
