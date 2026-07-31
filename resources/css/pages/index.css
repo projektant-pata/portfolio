@@ -311,7 +311,6 @@ html:not(.dark) .tool-github-light { display: block; }
     .projects-row-text  { min-width: 260px; }
 
     .hero-page-image img { width: 340px; }
->>>>>>> responsive-refinement
 }
 
 /* Tablet + mobile: single-column, slide-in phone nav */

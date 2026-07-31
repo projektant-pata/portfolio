@@ -374,6 +374,12 @@ function fetchGithubRepos() {
         })
         .catch(error => console.error('GitHub repos fetch failed:', error));
 }
+// wire:navigate morphs <html> to match the freshly-fetched page's raw markup,
+// which wipes the `dark` class set by partials/theme.blade.php's pre-paint
+// script (that script only runs on a full page load). Reapply on every SPA nav.
+document.addEventListener('livewire:navigated', () => {
+    applyTheme(getCookie('theme') || 'dark');
+});
 
 document.addEventListener('DOMContentLoaded', () => {
     // Apply saved theme (wallpaper + icons; the class itself is set in <head>)
