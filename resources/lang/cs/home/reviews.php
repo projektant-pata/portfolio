@@ -2,6 +2,8 @@
 
 return [
     'title' => 'Reference',
+    'prev' => 'Předchozí reference',
+    'next' => 'Další reference',
 
     'card1_name' => 'Petr Machovec ',
     'card1_position' => 'Spoluzakladatel Prezz',

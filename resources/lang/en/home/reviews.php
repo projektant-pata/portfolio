@@ -2,6 +2,8 @@
 
 return [
     'title' => 'Reviews',
+    'prev' => 'Previous reviews',
+    'next' => 'Next reviews',
 
     'card1_name' => 'Petr Machovec ',
     'card1_position' => 'Co-founder of Prezz',

@@ -36,6 +36,46 @@ class ReviewSeeder extends Seeder
                     'cs' => '"Richard se rychle přizpůsobuje novým nástrojům a s důvěrou a kreativitou se vypořádává se složitými projekty."',
                 ],
             ],
+            [
+                'name' => 'Jana Nováková',
+                'position' => ['en' => 'Product Owner, freelance client', 'cs' => 'Product Owner, freelance klientka'],
+                'text' => [
+                    'en' => '"Clear communication from day one and code that just works. Richard turned a vague brief into a polished product ahead of schedule."',
+                    'cs' => '"Jasná komunikace od prvního dne a kód, který prostě funguje. Richard proměnil vágní zadání v propracovaný produkt dřív, než jsme čekali."',
+                ],
+            ],
+            [
+                'name' => 'Tomáš Dvořák',
+                'position' => ['en' => 'Backend engineer, former teammate', 'cs' => 'Backend vývojář, bývalý kolega'],
+                'text' => [
+                    'en' => '"One of the few developers who actually reads the docs before asking. His PRs are a pleasure to review."',
+                    'cs' => '"Jeden z mála vývojářů, kteří si nejdřív přečtou dokumentaci a až pak se ptají. Jeho PR se recenzují radost."',
+                ],
+            ],
+            [
+                'name' => 'Lucie Horáková',
+                'position' => ['en' => 'QA engineer, Prezz', 'cs' => 'QA inženýrka, Prezz'],
+                'text' => [
+                    'en' => '"Bugs I file against his features rarely come back twice. He tests edge cases before I even get to them."',
+                    'cs' => '"Chyby, které nahlásím na jeho featury, se skoro nikdy nevrací podruhé. Okrajové případy testuje dřív, než se k nim vůbec dostanu."',
+                ],
+            ],
+            [
+                'name' => 'Martin Sedlák',
+                'position' => ['en' => 'CTO, early-stage startup client', 'cs' => 'CTO, klient rané startupové fáze'],
+                'text' => [
+                    'en' => '"We needed someone who could own the whole stack under a tight deadline. Richard delivered, and the architecture held up long after."',
+                    'cs' => '"Potřebovali jsme někoho, kdo zvládne celý stack pod tlakem termínu. Richard to dodal a architektura vydržela i dlouho poté."',
+                ],
+            ],
+            [
+                'name' => 'Barbora King',
+                'position' => ['en' => 'Chess club teammate', 'cs' => 'Spoluhráčka v šachovém klubu'],
+                'text' => [
+                    'en' => '"Same methodical thinking at the board as in his code — plans three moves ahead and never panics."',
+                    'cs' => '"U šachovnice stejně metodické myšlení jako v kódu — plánuje tři tahy dopředu a nikdy nepanikaří."',
+                ],
+            ],
         ];
 
         foreach ($reviews as $i => $review) {

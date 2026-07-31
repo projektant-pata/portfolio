@@ -233,23 +233,98 @@ html:not(.dark) .tool-github-light { display: block; }
     font-size: var(--fs-h4);
 }
 
-/* ── Reviews ── */
+/* ── Reviews carousel ── */
+.reviews-carousel {
+    position: relative;
+    padding-inline: 3rem;
+}
+
+.reviews-carousel-viewport {
+    overflow: hidden;
+}
+
 .reviews-row {
     display: flex;
-    justify-content: space-between;
     gap: 1.25rem;
+    /* JS sets an inline `translate: -{px} 0` per page; this is just the
+       measured-viewport-width base case (no JS / before first measurement). */
+    translate: 0;
+    transition: translate var(--t-base);
 }
 
 .reviews-row-card {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    flex: 1;
-    max-width: 380px;
+    flex: 0 0 calc((100% - 2 * 1.25rem) / 3);
+    max-width: none;
     padding: var(--sp-card-pad);
     border-radius: var(--r-card-sm);
     border: var(--border-w) solid var(--c-primary-lt);
     background-color: var(--c-surface);
+}
+
+.reviews-carousel-arrow {
+    position: absolute;
+    top: 50%;
+    translate: 0 -50%;
+    width: 2.75rem;
+    height: 2.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: var(--border-w) solid var(--c-primary-lt);
+    background-color: var(--c-surface);
+    color: var(--c-primary);
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: translate var(--t-fast), box-shadow var(--t-fast);
+    z-index: 1;
+}
+
+.reviews-carousel-arrow:hover {
+    translate: 0 calc(-50% - 4px);
+    box-shadow: 0 8px 16px -6px color-mix(in srgb, var(--c-primary) 45%, transparent);
+}
+
+.reviews-carousel-arrow-prev { left: 0; }
+.reviews-carousel-arrow-next { right: 0; }
+
+.reviews-carousel-dots {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1.25rem;
+}
+
+.reviews-carousel-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background-color: var(--c-primary-lt);
+    opacity: 0.4;
+    cursor: pointer;
+    transition: opacity var(--t-fast), background-color var(--t-fast);
+}
+
+.reviews-carousel-dot[aria-current="true"] {
+    opacity: 1;
+    background-color: var(--c-primary);
+}
+
+/* JS adds this once the track fits the viewport without paging (few reviews
+   or a very wide screen) — arrows/dots would otherwise be no-ops. */
+.reviews-carousel.is-static .reviews-carousel-arrow,
+.reviews-carousel.is-static .reviews-carousel-dots {
+    display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .reviews-row { transition: none; }
 }
 
 /* ── Scroll reveal (fade-up) + hover lift — tools + reviews grid items ──
@@ -304,10 +379,6 @@ html:not(.dark) .tool-github-light { display: block; }
 
     .tools-row          { grid-template-columns: repeat(4, 1fr); justify-items: center; }
 
-    /* 3 reviews → 2 per row, the third centred on its own row */
-    .reviews-row        { flex-wrap: wrap; justify-content: center; }
-    .reviews-row-card   { flex: 0 1 calc(50% - 0.75rem); max-width: 420px; }
-
     .projects-row       { height: 300px; }
     .projects-row > img { width: clamp(300px, 40%, 500px); }
     .projects-row-text  { min-width: 260px; }
@@ -332,8 +403,9 @@ html:not(.dark) .tool-github-light { display: block; }
     .projects-row       { height: auto; }
     .projects-row > img { height: 220px; max-width: 300px; }
 
-    .reviews-row        { flex-direction: column; align-items: center; }
-    .reviews-row-card   { max-width: 450px; width: 100%; }
+    /* 2 reviews per view */
+    .reviews-row-card  { flex-basis: calc((100% - 1.25rem) / 2); }
+    .reviews-carousel  { padding-inline: 2.5rem; }
 }
 
 @media (max-width: 576px) {
@@ -348,4 +420,8 @@ html:not(.dark) .tool-github-light { display: block; }
 
     .tools-row      { grid-template-columns: repeat(2, 1fr); }
     .tools-row-card { width: auto; }
+
+    /* 1 review per view */
+    .reviews-row-card { flex-basis: 100%; }
+    .reviews-carousel { padding-inline: 2.25rem; }
 }

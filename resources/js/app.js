@@ -256,15 +256,16 @@ function initScrollReveal() {
     setStagger('.reviews-row');
 
     const targets = document.querySelectorAll(
-        '.portfolio-section:not(.hero-page), .stats-cards-card, .tools-row-card, .reviews-row-card'
+        '.portfolio-section:not(.hero-page), .stats-cards-card, .tools-row-card'
     );
-
-    if (!targets.length) {
-        return;
-    }
+    const carousels = document.querySelectorAll('.reviews-carousel');
+    const revealCards = (carousel) => {
+        carousel.querySelectorAll('.reviews-row-card').forEach((card) => card.classList.add('is-visible'));
+    };
 
     if (!('IntersectionObserver' in window)) {
         targets.forEach((el) => el.classList.add('is-visible'));
+        carousels.forEach(revealCards);
         return;
     }
 
@@ -281,6 +282,23 @@ function initScrollReveal() {
     );
 
     targets.forEach((el) => observer.observe(el));
+
+    // Carousel pages beyond the first are clipped by the viewport's
+    // `overflow: hidden` and never individually intersect on their own, so
+    // reveal every card in the track at once when the carousel scrolls in.
+    const reviewsObserver = new IntersectionObserver(
+        (entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    revealCards(entry.target);
+                    reviewsObserver.unobserve(entry.target);
+                }
+            });
+        },
+        { threshold: 0.15 }
+    );
+
+    carousels.forEach((el) => reviewsObserver.observe(el));
 }
 
 function initHeroEntrance() {
@@ -425,6 +443,148 @@ function fetchGithubRepos() {
         })
         .catch(error => console.error('GitHub repos fetch failed:', error));
 }
+
+// ── Reviews carousel ──────────────────────────────────────────
+
+function initReviewsCarousel() {
+    const carousel = document.querySelector('[data-reviews-carousel]');
+    const viewport = carousel?.querySelector('.reviews-carousel-viewport');
+    const track = carousel?.querySelector('.reviews-row');
+    const prevBtn = carousel?.querySelector('.reviews-carousel-arrow-prev');
+    const nextBtn = carousel?.querySelector('.reviews-carousel-arrow-next');
+    const dotsWrap = carousel?.querySelector('.reviews-carousel-dots');
+    const cards = track ? [...track.children] : [];
+
+    if (!carousel || !viewport || !track || !prevBtn || !nextBtn || !dotsWrap || cards.length < 2) {
+        return;
+    }
+
+    const AUTOPLAY_MS = 6000;
+    const SWIPE_THRESHOLD = 40;
+    let pageCount = 1;
+    let index = 0;
+    let autoplayTimer = null;
+    let touchStartX = null;
+
+    const getPerView = () => {
+        if (window.matchMedia('(min-width: 993px)').matches) {
+            return 3;
+        }
+        return window.matchMedia('(min-width: 577px)').matches ? 2 : 1;
+    };
+
+    const updateDots = () => {
+        [...dotsWrap.children].forEach((dot, i) => {
+            if (i === index) {
+                dot.setAttribute('aria-current', 'true');
+            } else {
+                dot.removeAttribute('aria-current');
+            }
+        });
+    };
+
+    const render = (animate) => {
+        if (!animate) {
+            track.style.transition = 'none';
+        }
+        track.style.translate = `${-index * viewport.clientWidth}px 0`;
+        if (!animate) {
+            void track.offsetWidth; // force reflow so the transition re-enables cleanly
+            track.style.transition = '';
+        }
+        updateDots();
+    };
+
+    const stopAutoplay = () => {
+        if (autoplayTimer) {
+            clearInterval(autoplayTimer);
+            autoplayTimer = null;
+        }
+    };
+
+    const startAutoplay = () => {
+        stopAutoplay();
+        if (prefersReducedMotion() || pageCount <= 1 || document.hidden) {
+            return;
+        }
+        autoplayTimer = setInterval(() => goTo(index + 1), AUTOPLAY_MS);
+    };
+
+    const goTo = (i, animate = true) => {
+        index = ((i % pageCount) + pageCount) % pageCount;
+        render(animate);
+        startAutoplay();
+    };
+
+    const buildDots = () => {
+        dotsWrap.innerHTML = '';
+        for (let i = 0; i < pageCount; i++) {
+            const dot = document.createElement('button');
+            dot.type = 'button';
+            dot.className = 'reviews-carousel-dot';
+            dot.setAttribute('aria-label', `Review page ${i + 1}`);
+            dot.addEventListener('click', () => goTo(i));
+            dotsWrap.appendChild(dot);
+        }
+    };
+
+    const recalc = () => {
+        pageCount = Math.max(1, Math.ceil(cards.length / getPerView()));
+        carousel.classList.toggle('is-static', pageCount <= 1);
+        index = Math.min(index, pageCount - 1);
+        buildDots();
+        render(false);
+        startAutoplay();
+    };
+
+    prevBtn.addEventListener('click', () => goTo(index - 1));
+    nextBtn.addEventListener('click', () => goTo(index + 1));
+
+    carousel.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft') {
+            goTo(index - 1);
+        } else if (e.key === 'ArrowRight') {
+            goTo(index + 1);
+        }
+    });
+
+    carousel.addEventListener('pointerenter', stopAutoplay);
+    carousel.addEventListener('pointerleave', startAutoplay);
+    carousel.addEventListener('focusin', stopAutoplay);
+    carousel.addEventListener('focusout', (e) => {
+        if (!carousel.contains(e.relatedTarget)) {
+            startAutoplay();
+        }
+    });
+    document.addEventListener('visibilitychange', () => {
+        document.hidden ? stopAutoplay() : startAutoplay();
+    });
+
+    viewport.addEventListener('pointerdown', (e) => {
+        touchStartX = e.clientX;
+    });
+    viewport.addEventListener('pointerup', (e) => {
+        if (touchStartX === null) {
+            return;
+        }
+        const delta = e.clientX - touchStartX;
+        touchStartX = null;
+        if (delta > SWIPE_THRESHOLD) {
+            goTo(index - 1);
+        } else if (delta < -SWIPE_THRESHOLD) {
+            goTo(index + 1);
+        }
+    });
+
+    let resizeTimer = null;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(recalc, 150);
+    });
+
+    recalc();
+}
+
 // wire:navigate morphs <html> to match the freshly-fetched page's raw markup,
 // which wipes the `dark` class set by partials/theme.blade.php's pre-paint
 // script (that script only runs on a full page load). Reapply on every SPA nav.
@@ -465,6 +625,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initHeroRotator();
     initHeroEntrance();
     initScrollReveal();
+    initReviewsCarousel();
     initScrollProgress();
     initScrollToTop();
     initStatCountUp();

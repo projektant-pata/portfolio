@@ -2,6 +2,7 @@
 
 use App\Models\Experience;
 use App\Models\Project;
+use App\Models\Review;
 use App\Models\Setting;
 
 test('home page returns 200', function () {
@@ -60,6 +61,20 @@ test('experience links open in a new tab with rel noopener', function () {
 
     $this->get(route('home'))
         ->assertSee('target="_blank" rel="noopener noreferrer"', false);
+});
+
+test('home page renders every seeded review inside the carousel track', function () {
+    Review::query()->delete();
+    Review::factory()->create(['sort_order' => 0, 'name' => 'First Reviewer']);
+    Review::factory()->create(['sort_order' => 1, 'name' => 'Second Reviewer']);
+    Review::factory()->create(['sort_order' => 2, 'name' => 'Third Reviewer']);
+
+    $response = $this->get(route('home'));
+
+    $response->assertOk()
+        ->assertSee('data-reviews-carousel', false)
+        ->assertSee('reviews-carousel-viewport', false)
+        ->assertSeeInOrder(['First Reviewer', 'Second Reviewer', 'Third Reviewer']);
 });
 
 test('hero_roles markup survives to the page unescaped', function () {

@@ -114,17 +114,24 @@
     {{-- Reviews --}}
     <section id="reviews" class="portfolio-section">
         <h2>{{ \App\Models\Setting::text('reviews_title', $locale) }}</h2>
-        <article class="reviews-row">
-            @foreach ($reviews as $review)
-                <div class="reviews-row-card">
-                    <p>{{ $review->getTranslation('text', $locale) }}</p>
-                    <div class="reviews-row-card-text">
-                        <span><p>{{ $review->name }}</p></span>
-                        <p class="mini"> - {{ $review->getTranslation('position', $locale) }}</p>
-                    </div>
-                </div>
-            @endforeach
-        </article>
+        <div class="reviews-carousel" data-reviews-carousel tabindex="0">
+            <button type="button" class="reviews-carousel-arrow reviews-carousel-arrow-prev" data-dir="-1" aria-label="{{ __('home/reviews.prev') }}">‹</button>
+            <div class="reviews-carousel-viewport">
+                <article class="reviews-row" role="list">
+                    @foreach ($reviews as $review)
+                        <div class="reviews-row-card" role="listitem">
+                            <p>{{ $review->getTranslation('text', $locale) }}</p>
+                            <div class="reviews-row-card-text">
+                                <span><p>{{ $review->name }}</p></span>
+                                <p class="mini"> - {{ $review->getTranslation('position', $locale) }}</p>
+                            </div>
+                        </div>
+                    @endforeach
+                </article>
+            </div>
+            <button type="button" class="reviews-carousel-arrow reviews-carousel-arrow-next" data-dir="1" aria-label="{{ __('home/reviews.next') }}">›</button>
+            <div class="reviews-carousel-dots" aria-hidden="true"></div>
+        </div>
     </section>
 
 </x-portfolio-layout>
