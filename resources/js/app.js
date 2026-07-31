@@ -160,28 +160,79 @@ function initHeroRotator() {
     const PAUSE_MS = 1600;
     let roleIndex = 0;
 
-    const type = (text, i, done) => {
-        el.textContent = text.slice(0, i);
-        if (i < text.length) {
-            setTimeout(() => type(text, i + 1, done), TYPE_MS);
+    // Flattens a role's HTML into {text, gold} runs — any character nested
+    // inside an element (e.g. `<span>`) is marked gold, everything else
+    // plain — so the typewriter can type *through* markup one visible
+    // character at a time instead of only ever handling plain text.
+    const parseRoleSegments = (html) => {
+        const template = document.createElement('template');
+        template.innerHTML = html;
+        const segments = [];
+        const walk = (node, gold) => {
+            node.childNodes.forEach((child) => {
+                if (child.nodeType === Node.TEXT_NODE) {
+                    if (child.textContent) {
+                        segments.push({ text: child.textContent, gold });
+                    }
+                } else if (child.nodeType === Node.ELEMENT_NODE) {
+                    walk(child, true);
+                }
+            });
+        };
+        walk(template.content, false);
+        return segments;
+    };
+
+    const escapeHtml = (text) => text.replace(/[&<>"']/g, (c) => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;',
+    }[c]));
+
+    // Renders the first `count` visible characters of the parsed segments.
+    // Text is re-escaped and gold runs are always wrapped in a plain
+    // `<span>` built here — the source HTML string itself is never
+    // assigned to innerHTML, so admin-entered content can't inject markup.
+    const renderSegments = (segments, count) => {
+        let remaining = count;
+        let html = '';
+        for (const segment of segments) {
+            if (remaining <= 0) {
+                break;
+            }
+            const slice = segment.text.slice(0, remaining);
+            remaining -= slice.length;
+            const escaped = escapeHtml(slice);
+            html += segment.gold ? `<span>${escaped}</span>` : escaped;
+        }
+        return html;
+    };
+
+    const type = (segments, total, i, done) => {
+        el.innerHTML = renderSegments(segments, i);
+        if (i < total) {
+            setTimeout(() => type(segments, total, i + 1, done), TYPE_MS);
         } else {
             setTimeout(done, PAUSE_MS);
         }
     };
 
-    const erase = (text, i, done) => {
-        el.textContent = text.slice(0, i);
+    const erase = (segments, total, i, done) => {
+        el.innerHTML = renderSegments(segments, i);
         if (i > 0) {
-            setTimeout(() => erase(text, i - 1, done), DELETE_MS);
+            setTimeout(() => erase(segments, total, i - 1, done), DELETE_MS);
         } else {
             done();
         }
     };
 
     const cycle = () => {
-        const role = roles[roleIndex];
-        type(role, 0, () => {
-            erase(role, role.length, () => {
+        const segments = parseRoleSegments(roles[roleIndex]);
+        const total = segments.reduce((sum, segment) => sum + segment.text.length, 0);
+        type(segments, total, 0, () => {
+            erase(segments, total, total, () => {
                 roleIndex = (roleIndex + 1) % roles.length;
                 cycle();
             });

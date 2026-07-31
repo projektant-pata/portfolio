@@ -9,7 +9,7 @@
             <p class="hero-suptitle">{{ \App\Models\Setting::text('hero_suptitle', $locale) }}</p>
             <h1>{!! \App\Models\Setting::text('hero_title', $locale) !!}</h1>
             <h4 class="underh1">
-                <span id="hero-rotator" data-roles='@json($heroRoles)' aria-live="polite">{{ $heroRoles[0] ?? '' }}</span><span class="hero-caret" aria-hidden="true"></span>
+                <span id="hero-rotator" data-roles='@json($heroRoles)' aria-live="polite">{!! $heroRoles[0] ?? '' !!}</span><span class="hero-caret" aria-hidden="true"></span>
             </h4>
         </article>
         <article class="hero-page-image">

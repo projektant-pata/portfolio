@@ -2,6 +2,7 @@
 
 use App\Models\Experience;
 use App\Models\Project;
+use App\Models\Setting;
 
 test('home page returns 200', function () {
     $this->get(route('home'))->assertOk();
@@ -59,4 +60,14 @@ test('experience links open in a new tab with rel noopener', function () {
 
     $this->get(route('home'))
         ->assertSee('target="_blank" rel="noopener noreferrer"', false);
+});
+
+test('hero_roles markup survives to the page unescaped', function () {
+    Setting::updateOrCreate(['key' => 'hero_roles'], [
+        'value' => ['en' => ['Full-stack <span>developer</span>'], 'cs' => ['Full-stack <span>vývojář</span>']],
+    ]);
+
+    $this->get(route('home'))
+        ->assertSee('Full-stack <span>developer</span>', false)
+        ->assertDontSee('Full-stack &lt;span&gt;developer&lt;/span&gt;', false);
 });

@@ -33,10 +33,18 @@
     margin-top: 1.2rem;
 }
 
-.underh1 span,
-#hero-rotator {
+.underh1 span {
     color: var(--c-primary);
     font-weight: var(--fw-semibold);
+}
+
+.underh1 > span#hero-rotator {
+    color: var(--c-fg);
+    font-weight: var(--fw-semibold);
+}
+
+#hero-rotator span {
+    color: var(--c-primary);
 }
 
 /* Blinking caret next to the rotating role text */
