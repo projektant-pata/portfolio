@@ -608,6 +608,33 @@ html:not(.dark) .exp-card--special {
     filter: drop-shadow(0 0 8px color-mix(in srgb, var(--c-primary) 70%, transparent));
 }
 
+/* Desktop: restore the pre-band card footer — aligned to the content column,
+   full border, rounded top corners. ≤992px keeps the full-bleed band. */
+@media (min-width: 993px) {
+    .portfolio-footer-band {
+        /* same centring maths as .portfolio-wrapper */
+        width: min(100% - var(--layout-padding) * 2, var(--layout-max));
+        margin-inline: auto;
+    }
+
+    .portfolio-footer {
+        border: var(--border-w) solid var(--c-primary-lt);
+        border-bottom: 0;
+        border-radius: var(--r-card) var(--r-card) 0 0;
+        /* skip the sidebar column so the card lines up under the content */
+        margin-left: calc(var(--sidebar-w) + var(--content-gap));
+    }
+
+    .portfolio-footer-inner {
+        max-width: none;
+        margin-inline: 0;
+    }
+
+    .portfolio-footer-watermark {
+        margin-left: calc(var(--sidebar-w) + var(--content-gap));
+    }
+}
+
 /* ── Responsive layout ── */
 @media (max-width: 992px) {
     .portfolio-wrapper {
