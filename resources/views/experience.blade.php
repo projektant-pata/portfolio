@@ -55,11 +55,16 @@
                             <img class="exp-card-img" src="{{ asset($exp->image_path) }}" alt="{{ $exp->getTranslation('title', $locale) }}">
                         @endif
                         <div class="exp-card-meta">
-                            <div style="display:flex;align-items:center;gap:0.5rem">
+                            <div class="exp-card-tags">
                                 @if ($exp->getTranslation('year', $locale))
                                     <span class="mini exp-card-year">{{ $exp->getTranslation('year', $locale) }}</span>
                                 @endif
                                 <span class="exp-card-type">{{ $exp->type }}</span>
+                                @foreach ($exp->badges as $badge)
+                                    <span class="exp-badge" style="--badge-color: {{ $badge->color }}">
+                                        {{ $badge->getTranslation('name', $locale) }}
+                                    </span>
+                                @endforeach
                             </div>
                             <h4 class="exp-card-title">{{ $exp->getTranslation('title', $locale) }}</h4>
                             @if ($exp->getTranslation('subtitle', $locale))
@@ -72,17 +77,6 @@
                     @php $content = $exp->getTranslation('content', $locale); @endphp
                     @if ($content)
                         <div class="exp-card-content">{!! Str::markdown($content) !!}</div>
-                    @endif
-
-                    {{-- Badges row --}}
-                    @if ($exp->badges->isNotEmpty())
-                        <div class="exp-card-badges">
-                            @foreach ($exp->badges as $badge)
-                                <span class="exp-badge" style="--badge-color: {{ $badge->color }}">
-                                    {{ $badge->getTranslation('name', $locale) }}
-                                </span>
-                            @endforeach
-                        </div>
                     @endif
 
                     {{-- Links row --}}
@@ -114,6 +108,7 @@
         const gridLine = document.getElementById('exp-grid-line');
         const searchInput = document.getElementById('exp-search');
         const allCards = Array.from(pool.querySelectorAll('.exp-card'));
+        allCards.forEach(function (card, i) { card.dataset.idx = i; });
         const activeFilters = new Set();
 
         function matchesFilters(card) {
@@ -172,8 +167,8 @@
             let leftH = 0;
             let rightH = 0;
             allCards.forEach(function (card) {
-                if (!matchesFilters(card)) { return; }
                 const clone = card.cloneNode(true);
+                clone.classList.toggle('is-dimmed', !matchesFilters(card));
                 if (leftH <= rightH) {
                     colLeft.appendChild(clone);
                     leftH += clone.offsetHeight;
@@ -185,21 +180,46 @@
             updateGridLine();
         }
 
+        // Filter/search changes only re-toggle .is-dimmed on the already-placed
+        // clones — no rebuild, so the dim transition animates and the grid never
+        // reflows while filtering.
+        function applyDim() {
+            [...colLeft.children, ...colRight.children].forEach(function (clone) {
+                clone.classList.toggle('is-dimmed', !matchesFilters(allCards[Number(clone.dataset.idx)]));
+            });
+        }
+
         document.querySelectorAll('.exp-filter').forEach(function (btn) {
             btn.addEventListener('click', function () {
                 const f = btn.dataset.filter;
-                if (activeFilters.has(f)) {
-                    activeFilters.delete(f);
-                    btn.classList.remove('active');
+                const isBadge = f.startsWith('badge:');
+
+                if (isBadge) {
+                    // Badge filters are multi-select — toggle independently.
+                    if (activeFilters.has(f)) {
+                        activeFilters.delete(f);
+                        btn.classList.remove('active');
+                    } else {
+                        activeFilters.add(f);
+                        btn.classList.add('active');
+                    }
                 } else {
-                    activeFilters.add(f);
-                    btn.classList.add('active');
+                    // Type filters (work/life) are single-select.
+                    const wasActive = activeFilters.has(f);
+                    document.querySelectorAll('.exp-filter:not(.exp-filter--badge).active').forEach(function (b) {
+                        activeFilters.delete(b.dataset.filter);
+                        b.classList.remove('active');
+                    });
+                    if (!wasActive) {
+                        activeFilters.add(f);
+                        btn.classList.add('active');
+                    }
                 }
-                layoutMasonry();
+                applyDim();
             });
         });
 
-        searchInput.addEventListener('input', layoutMasonry);
+        searchInput.addEventListener('input', applyDim);
 
         const searchWrap = document.getElementById('exp-search-wrap');
         const searchBtn = document.getElementById('exp-search-btn');
@@ -210,7 +230,7 @@
                 searchInput.focus();
             } else {
                 searchInput.value = '';
-                layoutMasonry();
+                applyDim();
             }
         });
 
@@ -218,8 +238,14 @@
             if (!searchWrap.contains(e.target)) {
                 searchWrap.classList.remove('open');
                 searchInput.value = '';
-                layoutMasonry();
+                applyDim();
             }
+        });
+
+        let resizeTimer;
+        window.addEventListener('resize', function () {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(layoutMasonry, 150);
         });
 
         layoutMasonry();

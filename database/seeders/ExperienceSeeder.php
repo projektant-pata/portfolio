@@ -134,6 +134,29 @@ class ExperienceSeeder extends Seeder
                 'links' => [['url' => 'https://www.ecdl.cz/', 'alt' => 'ECDL']],
                 'badges' => ['certificate'],
             ],
+            [
+                'type' => 'work',
+                'is_special' => false,
+                'sort_order' => 9,
+                'year' => ['en' => '2024', 'cs' => '2024'],
+                'title' => ['en' => 'AstroPi Hackathon 2024', 'cs' => 'AstroPi Hackathon 2024'],
+                'subtitle' => ['en' => 'Hackathon', 'cs' => 'Hackathon'],
+                'content' => ['en' => '', 'cs' => ''],
+                'links' => [['url' => 'https://www.spse.cz/clanky/2024-soutez-astropi-hackathon-pardubice', 'alt' => 'spse']],
+                'badges' => ['competition', 'it'],
+            ],
+            [
+                'type' => 'life',
+                'is_special' => false,
+                'sort_order' => 10,
+                'image_path' => 'storage/experiences/4SUoVWLWnEj9MKXeJCVrKfdADgVxUTkyBMlZ1ffV.png',
+                'year' => ['en' => '2026', 'cs' => '2026'],
+                'title' => ['en' => 'Regional chess competetion of schools', 'cs' => 'Krajský šachový turnaj škol'],
+                'subtitle' => ['en' => '1st place in chess competetion', 'cs' => '1. místo v šachovém turnaji'],
+                'content' => ['en' => '', 'cs' => ''],
+                'links' => [['url' => 'https://www.spse.cz/clanky/2026-regionalni-sampionat-skol-sachovy-turnaj', 'alt' => 'SPSE']],
+                'badges' => ['competition'],
+            ],
         ];
 
         foreach ($entries as $entry) {

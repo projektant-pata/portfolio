@@ -114,23 +114,28 @@
     {{-- Reviews --}}
     <section id="reviews" class="portfolio-section">
         <h2>{{ \App\Models\Setting::text('reviews_title', $locale) }}</h2>
-        <div class="reviews-carousel" data-reviews-carousel tabindex="0">
-            <button type="button" class="reviews-carousel-arrow reviews-carousel-arrow-prev" data-dir="-1" aria-label="{{ __('home/reviews.prev') }}">‹</button>
+        <div class="reviews-carousel" data-reviews-carousel>
             <div class="reviews-carousel-viewport">
                 <article class="reviews-row" role="list">
                     @foreach ($reviews as $review)
                         <div class="reviews-row-card" role="listitem">
-                            <p>{{ $review->getTranslation('text', $locale) }}</p>
-                            <div class="reviews-row-card-text">
-                                <span><p>{{ $review->name }}</p></span>
-                                <p class="mini"> - {{ $review->getTranslation('position', $locale) }}</p>
+                            <div class="reviews-row-card-mark" aria-hidden="true">&ldquo;</div>
+                            <p>{!! $review->highlightedText($locale) !!}</p>
+                            <div class="reviews-row-card-who">
+                                <div class="reviews-row-card-avatar" aria-hidden="true">{{ $review->initials() }}</div>
+                                <div class="reviews-row-card-text">
+                                    <p class="reviews-row-card-name">{{ $review->name }}</p>
+                                    <p class="mini">{{ $review->getTranslation('position', $locale) }}</p>
+                                </div>
+                                @if ($review->source)
+                                    <span class="reviews-row-card-badge" style="--badge-color: {{ $review->source_color ?? 'var(--c-primary)' }}">{{ $review->source }}</span>
+                                @endif
                             </div>
                         </div>
                     @endforeach
                 </article>
             </div>
-            <button type="button" class="reviews-carousel-arrow reviews-carousel-arrow-next" data-dir="1" aria-label="{{ __('home/reviews.next') }}">›</button>
-            <div class="reviews-carousel-dots" aria-hidden="true"></div>
+            <div class="reviews-carousel-dots"></div>
         </div>
     </section>
 

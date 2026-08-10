@@ -32,9 +32,15 @@ class Setting extends Model
      */
     public static function allKeyed(): array
     {
-        return Cache::rememberForever('settings.all', fn () => static::all()
+        $map = fn () => static::all()
             ->mapWithKeys(fn (Setting $s) => [$s->key => $s->value ?? []])
-            ->all());
+            ->all();
+
+        if (config('app.debug')) {
+            return $map();
+        }
+
+        return Cache::rememberForever('settings.all', $map);
     }
 
     /**

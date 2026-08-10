@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Badge;
 use App\Models\Experience;
 
 test('experience page returns 200', function () {
@@ -35,4 +36,17 @@ test('experience page shows experience title', function () {
     ]);
 
     $this->get(route('experience'))->assertSee('Senior Developer');
+});
+
+test('experience page lists a badge filter for every badge attached to an experience', function () {
+    $attached = Badge::factory()->create();
+    $unattached = Badge::factory()->create();
+    $experience = Experience::factory()->create();
+    $experience->badges()->attach($attached);
+
+    $response = $this->get(route('experience'));
+
+    $badges = $response->viewData('badges');
+    expect($badges->pluck('id'))->toContain($attached->id)
+        ->not->toContain($unattached->id);
 });

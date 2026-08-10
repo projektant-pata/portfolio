@@ -12,6 +12,9 @@ new #[Title('Manage Reviews')] class extends Component {
     public string $name = '';
     public array $position = ['en' => '', 'cs' => ''];
     public array $text = ['en' => '', 'cs' => ''];
+    public array $highlight = ['en' => '', 'cs' => ''];
+    public string $source = '';
+    public string $source_color = '';
 
     public ?string $deletingId = null;
 
@@ -64,6 +67,9 @@ new #[Title('Manage Reviews')] class extends Component {
         $this->name = $review->name;
         $this->position = array_merge(['en' => '', 'cs' => ''], $review->position ?? []);
         $this->text = array_merge(['en' => '', 'cs' => ''], $review->text ?? []);
+        $this->highlight = array_merge(['en' => '', 'cs' => ''], $review->highlight ?? []);
+        $this->source = $review->source ?? '';
+        $this->source_color = $review->source_color ?? '';
         $this->modal('form')->show();
     }
 
@@ -79,12 +85,20 @@ new #[Title('Manage Reviews')] class extends Component {
             'text' => ['required', 'array'],
             'text.en' => ['required', 'string', 'max:1000'],
             'text.cs' => ['nullable', 'string', 'max:1000'],
+            'highlight' => ['nullable', 'array'],
+            'highlight.en' => ['nullable', 'string', 'max:150'],
+            'highlight.cs' => ['nullable', 'string', 'max:150'],
+            'source' => ['nullable', 'string', 'max:60'],
+            'source_color' => ['nullable', 'string', 'regex:/^#[0-9A-Fa-f]{6}$/'],
         ]);
 
         $data = [
             'name' => $validated['name'],
             'position' => array_filter($validated['position'] ?? [], fn ($v) => filled($v)) ?: null,
             'text' => array_filter($validated['text'], fn ($v) => filled($v)),
+            'highlight' => array_filter($validated['highlight'] ?? [], fn ($v) => filled($v)) ?: null,
+            'source' => $validated['source'] ?: null,
+            'source_color' => $validated['source_color'] ?: null,
         ];
 
         if ($review) {
@@ -121,6 +135,9 @@ new #[Title('Manage Reviews')] class extends Component {
         $this->name = '';
         $this->position = ['en' => '', 'cs' => ''];
         $this->text = ['en' => '', 'cs' => ''];
+        $this->highlight = ['en' => '', 'cs' => ''];
+        $this->source = '';
+        $this->source_color = '';
         $this->resetValidation();
     }
 }; ?>
@@ -139,6 +156,7 @@ new #[Title('Manage Reviews')] class extends Component {
             <flux:table.column></flux:table.column>
             <flux:table.column>Name</flux:table.column>
             <flux:table.column>Position (EN)</flux:table.column>
+            <flux:table.column>Source</flux:table.column>
             <flux:table.column>Updated</flux:table.column>
             <flux:table.column></flux:table.column>
         </flux:table.columns>
@@ -151,6 +169,16 @@ new #[Title('Manage Reviews')] class extends Component {
                     </flux:table.cell>
                     <flux:table.cell variant="strong">{{ $review->name }}</flux:table.cell>
                     <flux:table.cell>{{ $review->position['en'] ?? '—' }}</flux:table.cell>
+                    <flux:table.cell>
+                        @if ($review->source)
+                            <span class="inline-flex items-center gap-2">
+                                <span class="inline-block w-3 h-3 rounded-full" style="background: {{ $review->source_color ?? 'var(--c-primary)' }}"></span>
+                                {{ $review->source }}
+                            </span>
+                        @else
+                            —
+                        @endif
+                    </flux:table.cell>
                     <flux:table.cell>{{ $review->updated_at->format('d.m.Y') }}</flux:table.cell>
                     <flux:table.cell wire:sort:ignore>
                         <div class="flex gap-2 justify-end">
@@ -160,7 +188,7 @@ new #[Title('Manage Reviews')] class extends Component {
                     </flux:table.cell>
                 </flux:table.row>
             @empty
-                <x-manage.empty-row colspan="5" message="No reviews found." />
+                <x-manage.empty-row colspan="6" message="No reviews found." />
             @endforelse
         </flux:table.rows>
     </flux:table>
@@ -190,6 +218,12 @@ new #[Title('Manage Reviews')] class extends Component {
                         <flux:textarea wire:model="text.en" placeholder="“Richard always delivers…”" rows="4" />
                         <flux:error name="text.en" />
                     </flux:field>
+                    <flux:field>
+                        <flux:label>Highlight</flux:label>
+                        <flux:input wire:model="highlight.en" placeholder="Exact phrase from the quote to accent" />
+                        <flux:description>Must match a substring of the quote above, or it's ignored.</flux:description>
+                        <flux:error name="highlight.en" />
+                    </flux:field>
                 </x-slot:en>
                 <x-slot:cs>
                     <flux:field>
@@ -202,8 +236,40 @@ new #[Title('Manage Reviews')] class extends Component {
                         <flux:textarea wire:model="text.cs" placeholder="„Richard vždy dodává…“" rows="4" />
                         <flux:error name="text.cs" />
                     </flux:field>
+                    <flux:field>
+                        <flux:label>Highlight</flux:label>
+                        <flux:input wire:model="highlight.cs" placeholder="Přesná fráze z citace k zvýraznění" />
+                        <flux:description>Musí být podřetězcem citace výše, jinak se ignoruje.</flux:description>
+                        <flux:error name="highlight.cs" />
+                    </flux:field>
                 </x-slot:cs>
             </x-manage.locale-tabs>
+
+            {{-- Non-translatable fields --}}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <flux:field>
+                    <flux:label>Source</flux:label>
+                    <flux:input wire:model="source" placeholder="e.g. LinkedIn" />
+                    <flux:error name="source" />
+                </flux:field>
+
+                <flux:field>
+                    <flux:label>Source badge color</flux:label>
+                    <flux:select wire:model="source_color">
+                        <flux:select.option value="">— none —</flux:select.option>
+                        <flux:select.option value="#EAB308">Gold</flux:select.option>
+                        <flux:select.option value="#F59E0B">Amber</flux:select.option>
+                        <flux:select.option value="#F97316">Orange</flux:select.option>
+                        <flux:select.option value="#34D399">Emerald</flux:select.option>
+                        <flux:select.option value="#2DD4BF">Teal</flux:select.option>
+                        <flux:select.option value="#38BDF8">Sky</flux:select.option>
+                        <flux:select.option value="#60A5FA">Blue</flux:select.option>
+                        <flux:select.option value="#818CF8">Indigo</flux:select.option>
+                        <flux:select.option value="#A78BFA">Violet</flux:select.option>
+                    </flux:select>
+                    <flux:error name="source_color" />
+                </flux:field>
+            </div>
 
             <x-manage.modal-footer :editing="(bool) $editingId" />
         </form>

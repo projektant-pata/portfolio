@@ -15,7 +15,7 @@ test('the home page teases projects straight from the database', function () {
     visit('/')->assertSee('Featured Project');
 });
 
-test('reviews carousel advances to the next page on arrow click', function () {
+test('reviews carousel auto-advances and is not user-scrollable', function () {
     Review::query()->delete();
     foreach (range(0, 4) as $i) {
         Review::factory()->create(['sort_order' => $i, 'name' => "Reviewer $i"]);
@@ -23,13 +23,87 @@ test('reviews carousel advances to the next page on arrow click', function () {
 
     $page = visit('/')->resize(1280, 900);
 
-    $before = $page->script("document.querySelector('.reviews-row').style.translate");
+    expect($page->script("getComputedStyle(document.querySelector('.reviews-carousel-viewport')).overflowX"))
+        ->toBe('hidden');
 
-    $page->click('.reviews-carousel-arrow-next')->wait(0.5);
+    // Autoplay moves it off page 0 on its own, then wraps back around.
+    $page->wait(6);
 
-    $after = $page->script("document.querySelector('.reviews-row').style.translate");
+    expect($page->script("document.querySelector('.reviews-carousel-viewport').scrollLeft"))
+        ->toBeGreaterThan(0);
+});
 
-    expect($after)->not->toBe($before);
+test('every reviews carousel step shows only whole cards', function () {
+    Review::query()->delete();
+    // 7 is not a multiple of the 3 cards per view — the case that used to cut
+    // the last card when the carousel paged by viewport width.
+    foreach (range(0, 6) as $i) {
+        Review::factory()->create(['sort_order' => $i, 'name' => "Reviewer $i"]);
+    }
+
+    $page = visit('/')->resize(1280, 900);
+
+    $noPartialCard = <<<'JS'
+        (() => {
+            const box = document.querySelector('.reviews-carousel-viewport').getBoundingClientRect();
+            return [...document.querySelectorAll('.reviews-row-card')].every((card) => {
+                const r = card.getBoundingClientRect();
+                const whollyInside = r.left >= box.left - 1 && r.right <= box.right + 1;
+                const whollyOutside = r.right <= box.left + 1 || r.left >= box.right - 1;
+                return whollyInside || whollyOutside;
+            });
+        })()
+    JS;
+
+    $stepCount = $page->script("document.querySelectorAll('.reviews-carousel-dot').length");
+
+    expect($stepCount)->toBeGreaterThan(1);
+
+    foreach (range(0, $stepCount - 1) as $step) {
+        $page->script("document.querySelectorAll('.reviews-carousel-dot')[{$step}].click()");
+        $page->wait(1);
+
+        expect($page->script($noPartialCard))->toBeTrue();
+    }
+});
+
+test('reviews carousel shows whole cards with a gap', function () {
+    Review::query()->delete();
+    foreach (range(0, 4) as $i) {
+        Review::factory()->create(['sort_order' => $i, 'name' => "Reviewer $i"]);
+    }
+
+    $page = visit('/')->resize(1280, 900);
+
+    // No arrows anymore.
+    expect($page->script("document.querySelectorAll('.reviews-carousel-arrow').length"))->toBe(0);
+
+    // Three whole cards fit the viewport, separated by the row gap.
+    $metrics = $page->script(<<<'JS'
+        (() => {
+            const viewport = document.querySelector('.reviews-carousel-viewport');
+            const cards = [...document.querySelectorAll('.reviews-row-card')];
+            const gap = parseFloat(getComputedStyle(document.querySelector('.reviews-row')).columnGap);
+            return {
+                overflowing: viewport.scrollWidth > viewport.clientWidth + 1,
+                thirdCardFits: Math.round(cards[2].getBoundingClientRect().right)
+                    <= Math.round(viewport.getBoundingClientRect().right),
+                gap,
+                between: Math.round(cards[1].getBoundingClientRect().left - cards[0].getBoundingClientRect().right),
+            };
+        })()
+    JS);
+
+    expect($metrics['overflowing'])->toBeTrue()
+        ->and($metrics['thirdCardFits'])->toBeTrue()
+        ->and($metrics['between'])->toBe((int) round($metrics['gap']));
+});
+
+test('renders the reviews carousel without JS errors', function () {
+    Review::query()->delete();
+    Review::factory()->create(['name' => 'Ada Lovelace']);
+
+    visit('/')->assertNoJavascriptErrors()->assertSee('Ada Lovelace');
 });
 
 test('footer renders as a card on desktop and a full-bleed band on mobile', function () {

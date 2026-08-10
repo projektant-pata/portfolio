@@ -235,62 +235,37 @@ html:not(.dark) .tool-github-light { display: block; }
 
 /* ── Reviews carousel ── */
 .reviews-carousel {
+    --reviews-gap: 1.25rem;
+    --reviews-per-view: 3;
     position: relative;
-    padding-inline: 3rem;
 }
 
+/* Auto-advancing only: no user scrolling, JS scrolls the viewport on a timer. */
 .reviews-carousel-viewport {
     overflow: hidden;
+    scroll-behavior: smooth;
 }
 
 .reviews-row {
     display: flex;
-    gap: 1.25rem;
-    /* JS sets an inline `translate: -{px} 0` per page; this is just the
-       measured-viewport-width base case (no JS / before first measurement). */
-    translate: 0;
-    transition: translate var(--t-base);
+    gap: var(--reviews-gap);
 }
 
 .reviews-row-card {
+    flex: 0 0 calc((100% - (var(--reviews-per-view) - 1) * var(--reviews-gap)) / var(--reviews-per-view));
+    min-width: 0;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    flex: 0 0 calc((100% - 2 * 1.25rem) / 3);
-    max-width: none;
     padding: var(--sp-card-pad);
+    border: var(--border-w) solid var(--c-primary-lt);
+    background-color: var(--c-surface);
     border-radius: var(--r-card-sm);
-    border: var(--border-w) solid var(--c-primary-lt);
-    background-color: var(--c-surface);
 }
 
-.reviews-carousel-arrow {
-    position: absolute;
-    top: 50%;
-    translate: 0 -50%;
-    width: 2.75rem;
-    height: 2.75rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    border: var(--border-w) solid var(--c-primary-lt);
-    background-color: var(--c-surface);
-    color: var(--c-primary);
-    font-size: 1.5rem;
-    line-height: 1;
-    cursor: pointer;
-    transition: translate var(--t-fast), box-shadow var(--t-fast);
-    z-index: 1;
+@media (prefers-reduced-motion: reduce) {
+    .reviews-carousel-viewport { scroll-behavior: auto; }
 }
-
-.reviews-carousel-arrow:hover {
-    translate: 0 calc(-50% - 4px);
-    box-shadow: 0 8px 16px -6px color-mix(in srgb, var(--c-primary) 45%, transparent);
-}
-
-.reviews-carousel-arrow-prev { left: 0; }
-.reviews-carousel-arrow-next { right: 0; }
 
 .reviews-carousel-dots {
     display: flex;
@@ -304,41 +279,32 @@ html:not(.dark) .tool-github-light { display: block; }
     height: 0.5rem;
     padding: 0;
     border: 0;
-    border-radius: 50%;
+    border-radius: 999px;
     background-color: var(--c-primary-lt);
     opacity: 0.4;
     cursor: pointer;
-    transition: opacity var(--t-fast), background-color var(--t-fast);
+    transition: opacity var(--t-fast), background-color var(--t-fast), width var(--t-fast);
 }
 
 .reviews-carousel-dot[aria-current="true"] {
+    width: 1.625rem;
     opacity: 1;
     background-color: var(--c-primary);
 }
 
-/* JS adds this once the track fits the viewport without paging (few reviews
-   or a very wide screen) — arrows/dots would otherwise be no-ops. */
-.reviews-carousel.is-static .reviews-carousel-arrow,
+/* JS adds this once the track fits the viewport without scrolling (few reviews
+   or a very wide screen) — dots would otherwise be no-ops. */
 .reviews-carousel.is-static .reviews-carousel-dots {
     display: none;
 }
 
-@media (prefers-reduced-motion: reduce) {
-    .reviews-row { transition: none; }
-}
-
-/* ── Scroll reveal (fade-up) + hover lift — tools + reviews grid items ──
-   `translate`/`scale` are used instead of `transform` so the entrance
-   stagger and the hover lift animate independent properties and never
-   fight over a shared shorthand. */
+/* ── Scroll reveal (fade-up) — tools + reviews grid items ── */
 .tools-row-card,
 .reviews-row-card {
     opacity: 0;
     translate: 0 24px;
     transition: opacity var(--t-base) calc(var(--i, 0) * 0.06s),
-                translate var(--t-fast),
-                scale var(--t-fast),
-                box-shadow var(--t-fast);
+                translate var(--t-fast);
 }
 
 .tools-row-card.is-visible,
@@ -348,26 +314,63 @@ html:not(.dark) .tool-github-light { display: block; }
     transition-delay: calc(var(--i, 0) * 0.06s);
 }
 
-.reviews-row-card:hover {
-    translate: 0 -6px;
-    box-shadow: 0 12px 24px -10px color-mix(in srgb, var(--c-primary) 35%, transparent);
-}
-
 .reviews-row-card p {
     font-weight: var(--fw-regular);
     text-align: justify;
 }
 
-.reviews-row-card-text {
-    margin-top: 20px;
-    display: flex;
-    align-items: center;
+.reviews-row-card-mark {
+    font-family: var(--font-display);
+    font-size: 2.4rem;
+    font-weight: var(--fw-bold);
+    line-height: 0.7;
+    color: var(--c-primary);
+    margin-bottom: 0.5rem;
 }
 
-.reviews-row-card-text span p {
+.reviews-row-card-who {
+    margin-top: 20px;
+    padding-top: 1rem;
+    border-top: 1px solid var(--c-primary-fade);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.reviews-row-card-avatar {
+    width: 2.75rem;
+    height: 2.75rem;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--c-primary), var(--c-primary-fade));
+    color: #1C1B17;
+    font-family: var(--font-display);
+    font-weight: var(--fw-bold);
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.reviews-row-card-text {
+    min-width: 0;
+}
+
+.reviews-row-card-name {
     color: var(--c-primary);
     font-weight: var(--fw-regular);
-    margin-right: 5px;
+}
+
+.reviews-row-card-badge {
+    margin-left: auto;
+    flex-shrink: 0;
+    font-size: var(--fs-mini);
+    line-height: 1;
+    padding: 0.3rem 0.75rem;
+    border-radius: 999px;
+    border: 1px solid color-mix(in srgb, var(--badge-color, var(--c-primary)) 45%, transparent);
+    color: var(--badge-color, var(--c-primary));
+    background: color-mix(in srgb, var(--badge-color, var(--c-primary)) 12%, transparent);
 }
 
 /* ── Responsive ── */
@@ -404,8 +407,7 @@ html:not(.dark) .tool-github-light { display: block; }
     .projects-row > img { height: 220px; max-width: 300px; }
 
     /* 2 reviews per view */
-    .reviews-row-card  { flex-basis: calc((100% - 1.25rem) / 2); }
-    .reviews-carousel  { padding-inline: 2.5rem; }
+    .reviews-carousel { --reviews-per-view: 2; }
 }
 
 @media (max-width: 576px) {
@@ -422,6 +424,5 @@ html:not(.dark) .tool-github-light { display: block; }
     .tools-row-card { width: auto; }
 
     /* 1 review per view */
-    .reviews-row-card { flex-basis: 100%; }
-    .reviews-carousel { padding-inline: 2.25rem; }
+    .reviews-carousel { --reviews-per-view: 1; }
 }

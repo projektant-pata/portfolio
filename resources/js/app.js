@@ -1,3 +1,4 @@
+
 // ── Mobile nav ──────────────────────────────────────────────
 
 function setCookie(name, value, days) {
@@ -446,36 +447,58 @@ function fetchGithubRepos() {
 
 // ── Reviews carousel ──────────────────────────────────────────
 
+/**
+ * Reviews carousel: the viewport is not user-scrollable (overflow: hidden);
+ * a timer advances it one step at a time and wraps back to the start.
+ * Steps are card-aligned (each card's own offset, clamped to the maximum
+ * scroll) so every visible card is always whole — paging by viewport width
+ * would cut the last card whenever the card count isn't a multiple of the
+ * cards-per-view. Dots stay clickable and track the current step.
+ */
 function initReviewsCarousel() {
+    const AUTOPLAY_DELAY = 5000;
+
     const carousel = document.querySelector('[data-reviews-carousel]');
     const viewport = carousel?.querySelector('.reviews-carousel-viewport');
-    const track = carousel?.querySelector('.reviews-row');
-    const prevBtn = carousel?.querySelector('.reviews-carousel-arrow-prev');
-    const nextBtn = carousel?.querySelector('.reviews-carousel-arrow-next');
+    const row = carousel?.querySelector('.reviews-row');
     const dotsWrap = carousel?.querySelector('.reviews-carousel-dots');
-    const cards = track ? [...track.children] : [];
 
-    if (!carousel || !viewport || !track || !prevBtn || !nextBtn || !dotsWrap || cards.length < 2) {
+    if (!carousel || !viewport || !row || !dotsWrap) {
         return;
     }
 
-    const AUTOPLAY_MS = 6000;
-    const SWIPE_THRESHOLD = 40;
-    let pageCount = 1;
-    let index = 0;
-    let autoplayTimer = null;
-    let touchStartX = null;
+    /** @type {number[]} scroll offsets, one per reachable card-aligned step */
+    let steps = [0];
 
-    const getPerView = () => {
-        if (window.matchMedia('(min-width: 993px)').matches) {
-            return 3;
-        }
-        return window.matchMedia('(min-width: 577px)').matches ? 2 : 1;
+    const measureSteps = () => {
+        const maxScroll = Math.max(0, viewport.scrollWidth - viewport.clientWidth);
+        const rowLeft = row.getBoundingClientRect().left + viewport.scrollLeft;
+
+        const offsets = [...row.children].map(
+            (card) => Math.min(Math.round(card.getBoundingClientRect().left + viewport.scrollLeft - rowLeft), maxScroll)
+        );
+
+        // Cards past the last full page all clamp to maxScroll — keep one step.
+        steps = [...new Set(offsets)];
     };
 
-    const updateDots = () => {
+    const pageCount = () => steps.length;
+
+    const currentPage = () => {
+        let closest = 0;
+        steps.forEach((offset, i) => {
+            if (Math.abs(offset - viewport.scrollLeft) < Math.abs(steps[closest] - viewport.scrollLeft)) {
+                closest = i;
+            }
+        });
+
+        return closest;
+    };
+
+    const syncDots = () => {
+        const active = currentPage();
         [...dotsWrap.children].forEach((dot, i) => {
-            if (i === index) {
+            if (i === active) {
                 dot.setAttribute('aria-current', 'true');
             } else {
                 dot.removeAttribute('aria-current');
@@ -483,106 +506,74 @@ function initReviewsCarousel() {
         });
     };
 
-    const render = (animate) => {
-        if (!animate) {
-            track.style.transition = 'none';
-        }
-        track.style.translate = `${-index * viewport.clientWidth}px 0`;
-        if (!animate) {
-            void track.offsetWidth; // force reflow so the transition re-enables cleanly
-            track.style.transition = '';
-        }
-        updateDots();
+    const goToPage = (index) => {
+        viewport.scrollTo({
+            left: steps[index] ?? 0,
+            behavior: prefersReducedMotion() ? 'auto' : 'smooth',
+        });
     };
 
-    const stopAutoplay = () => {
-        if (autoplayTimer) {
-            clearInterval(autoplayTimer);
-            autoplayTimer = null;
+    const buildDots = () => {
+        measureSteps();
+        const pages = pageCount();
+        carousel.classList.toggle('is-static', pages <= 1);
+
+        dotsWrap.replaceChildren();
+        for (let i = 0; i < pages; i++) {
+            const dot = document.createElement('button');
+            dot.type = 'button';
+            dot.className = 'reviews-carousel-dot';
+            dot.setAttribute('aria-label', `${i + 1}`);
+            dot.addEventListener('click', () => {
+                goToPage(i);
+                restartAutoplay();
+            });
+            dotsWrap.appendChild(dot);
         }
+        syncDots();
+    };
+
+    let timer = null;
+
+    const stopAutoplay = () => {
+        clearInterval(timer);
+        timer = null;
     };
 
     const startAutoplay = () => {
         stopAutoplay();
-        if (prefersReducedMotion() || pageCount <= 1 || document.hidden) {
+        if (pageCount() <= 1) {
             return;
         }
-        autoplayTimer = setInterval(() => goTo(index + 1), AUTOPLAY_MS);
+        timer = setInterval(() => {
+            goToPage((currentPage() + 1) % pageCount());
+        }, AUTOPLAY_DELAY);
     };
 
-    const goTo = (i, animate = true) => {
-        index = ((i % pageCount) + pageCount) % pageCount;
-        render(animate);
-        startAutoplay();
-    };
-
-    const buildDots = () => {
-        dotsWrap.innerHTML = '';
-        for (let i = 0; i < pageCount; i++) {
-            const dot = document.createElement('button');
-            dot.type = 'button';
-            dot.className = 'reviews-carousel-dot';
-            dot.setAttribute('aria-label', `Review page ${i + 1}`);
-            dot.addEventListener('click', () => goTo(i));
-            dotsWrap.appendChild(dot);
+    const restartAutoplay = () => {
+        if (timer) {
+            startAutoplay();
         }
     };
 
-    const recalc = () => {
-        pageCount = Math.max(1, Math.ceil(cards.length / getPerView()));
-        carousel.classList.toggle('is-static', pageCount <= 1);
-        index = Math.min(index, pageCount - 1);
+    viewport.addEventListener('scroll', syncDots, { passive: true });
+
+    new ResizeObserver(() => {
         buildDots();
-        render(false);
         startAutoplay();
-    };
+    }).observe(viewport);
 
-    prevBtn.addEventListener('click', () => goTo(index - 1));
-    nextBtn.addEventListener('click', () => goTo(index + 1));
-
-    carousel.addEventListener('keydown', (e) => {
-        if (e.key === 'ArrowLeft') {
-            goTo(index - 1);
-        } else if (e.key === 'ArrowRight') {
-            goTo(index + 1);
-        }
-    });
-
+    // Pause while the visitor is reading (hover/focus) or the tab is hidden.
     carousel.addEventListener('pointerenter', stopAutoplay);
     carousel.addEventListener('pointerleave', startAutoplay);
     carousel.addEventListener('focusin', stopAutoplay);
-    carousel.addEventListener('focusout', (e) => {
-        if (!carousel.contains(e.relatedTarget)) {
-            startAutoplay();
-        }
-    });
+    carousel.addEventListener('focusout', startAutoplay);
     document.addEventListener('visibilitychange', () => {
         document.hidden ? stopAutoplay() : startAutoplay();
     });
 
-    viewport.addEventListener('pointerdown', (e) => {
-        touchStartX = e.clientX;
-    });
-    viewport.addEventListener('pointerup', (e) => {
-        if (touchStartX === null) {
-            return;
-        }
-        const delta = e.clientX - touchStartX;
-        touchStartX = null;
-        if (delta > SWIPE_THRESHOLD) {
-            goTo(index - 1);
-        } else if (delta < -SWIPE_THRESHOLD) {
-            goTo(index + 1);
-        }
-    });
-
-    let resizeTimer = null;
-    window.addEventListener('resize', () => {
-        clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(recalc, 150);
-    });
-
-    recalc();
+    buildDots();
+    startAutoplay();
 }
 
 // wire:navigate morphs <html> to match the freshly-fetched page's raw markup,
