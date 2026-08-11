@@ -50,3 +50,19 @@ test('experience page lists a badge filter for every badge attached to an experi
     expect($badges->pluck('id'))->toContain($attached->id)
         ->not->toContain($unattached->id);
 });
+
+test('only special experiences render the animated frame and its glow', function () {
+    Experience::factory()->create(['is_special' => true]);
+    Experience::factory()->count(3)->create(['is_special' => false]);
+
+    $html = $this->get(route('experience'))->getContent();
+
+    expect(substr_count($html, 'exp-card--special'))->toBe(1)
+        ->and(substr_count($html, '<span class="exp-card-glow" aria-hidden="true"></span>'))->toBe(1);
+});
+
+test('ordinary experiences render no glow element', function () {
+    Experience::factory()->create(['is_special' => false]);
+
+    $this->get(route('experience'))->assertDontSee('exp-card-glow', false);
+});

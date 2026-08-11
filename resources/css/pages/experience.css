@@ -141,6 +141,9 @@
     align-items: flex-start;
     gap: 0;
     overflow-x: clip;
+    /* Stacking context for the special cards' z-index:-1 glow — without it the
+       glow would paint underneath the page background instead of over it. */
+    isolation: isolate;
 }
 
 #exp-grid-line {
@@ -194,11 +197,15 @@
     }
 }
 
-/* Special cards: animated bilateral border via @property + conic-gradient.
-   No overflow:hidden → no browser corner-clipping bugs.
-   border-color: transparent lets the background-clip:border-box conic
-   gradient fill the 1px border area. Base color = var(--c-primary-lt) so
-   the card always looks framed; two white sweeps 180° apart = bilateral. */
+/* ── Special cards: animated gradient frame ──
+   A conic gradient rotates through the border area, and a blurred copy of it
+   sits behind the card as an outer glow. No overflow: hidden → no browser
+   corner-clipping bugs; the transparent border lets the
+   background-clip: border-box gradient fill the border area.
+
+   The gradient is full gold with two white sweeps 180° apart (bilateral),
+   turning once every 5.5s. Everything tunable lives in custom properties so
+   the light theme (app.css) only has to redeclare colors. */
 
 @property --exp-border-angle {
     syntax: '<angle>';
@@ -207,28 +214,59 @@
 }
 
 .exp-card--special {
+    --exp-frame-stops:
+        var(--c-primary)  0%,
+        #FFFFFF          12%,
+        var(--c-primary) 18%,
+        var(--c-primary) 62%,
+        #FFFFFF          68%,
+        var(--c-primary) 75%,
+        var(--c-primary) 100%;
+    --exp-frame-spin: 5.5s;
+    --exp-glow-opacity: 0.3;
+    --exp-glow-blur: 15px;
+    --exp-glow-inset: -4px;
+
+    /* The global reset gives every element z-index: 1, which would make the
+       card a stacking context and trap the glow above its own background.
+       z-index: auto pushes the glow out to #exp-grid, i.e. behind the card. */
+    z-index: auto;
     border-color: transparent;
     background:
         linear-gradient(var(--c-surface), var(--c-surface)) padding-box,
-        conic-gradient(
-            from var(--exp-border-angle),
-            var(--c-primary-lt)  0%,
-            #ffffff              12%,
-            var(--c-primary-lt)  18%,
-            var(--c-primary-lt)  62%,
-            #ffffff              68%,
-            var(--c-primary-lt)  75%,
-            var(--c-primary-lt)  100%
-        ) border-box;
-    animation: exp-border-rotate 4s linear infinite;
+        conic-gradient(from var(--exp-border-angle), var(--exp-frame-stops)) border-box;
+    animation: exp-border-rotate var(--exp-frame-spin) linear infinite;
 }
 
 @keyframes exp-border-rotate {
     to { --exp-border-angle: 360deg; }
 }
 
+/* Outer glow: a real element, because .exp-card's ::before/::after already
+   draw the timeline connector. z-index: -1 on a card that is not itself a
+   stacking context makes it paint *behind* the card background, so only the
+   blurred halo spills past the border. */
+.exp-card-glow {
+    position: absolute;
+    inset: var(--exp-glow-inset);
+    z-index: -1;
+    border-radius: inherit;
+    background: conic-gradient(from var(--exp-border-angle), var(--exp-frame-stops));
+    filter: blur(var(--exp-glow-blur));
+    opacity: var(--exp-glow-opacity);
+    pointer-events: none;
+    animation: exp-border-rotate var(--exp-frame-spin) linear infinite;
+}
+
+/* A dimmed card gets opacity + filter, which makes it a stacking context —
+   the glow would then paint over the card face instead of behind it. */
+.exp-card.is-dimmed .exp-card-glow {
+    display: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
-    .exp-card--special {
+    .exp-card--special,
+    .exp-card-glow {
         animation: none;
     }
 }

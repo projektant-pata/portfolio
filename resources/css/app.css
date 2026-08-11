@@ -223,20 +223,19 @@ html:not(.dark) .portfolio-page h2 {
     -webkit-text-stroke: 0;
 }
 
-/* Special card shimmer: swap white sweeps for parchment bg so they read on amber border */
+/* Special card frame: the white sweeps vanish on a white card face, so light
+   mode sweeps through amber-400 instead and dims the glow.
+   See pages/experience.css for the rest. */
 html:not(.dark) .exp-card--special {
-    background:
-        linear-gradient(var(--c-surface), var(--c-surface)) padding-box,
-        conic-gradient(
-            from var(--exp-border-angle),
-            var(--c-primary-lt)  0%,
-            var(--c-bg)          12%,
-            var(--c-primary-lt)  18%,
-            var(--c-primary-lt)  62%,
-            var(--c-bg)          68%,
-            var(--c-primary-lt)  75%,
-            var(--c-primary-lt)  100%
-        ) border-box;
+    --exp-frame-stops:
+        var(--c-primary)      0%,
+        var(--c-primary-lt)  12%,
+        var(--c-primary)     18%,
+        var(--c-primary)     62%,
+        var(--c-primary-lt)  68%,
+        var(--c-primary)     75%,
+        var(--c-primary)    100%;
+    --exp-glow-opacity: 0.22;
 }
 
 

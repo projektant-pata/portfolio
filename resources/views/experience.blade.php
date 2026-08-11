@@ -49,6 +49,12 @@
                     data-type="{{ $exp->type }}"
                     data-badges='@json($badgeSlugs)'
                 >
+                    @if ($exp->is_special)
+                        {{-- Blurred copy of the border gradient; both pseudo-elements
+                             are already taken by the timeline connector line + dot. --}}
+                        <span class="exp-card-glow" aria-hidden="true"></span>
+                    @endif
+
                     {{-- Top row: image, year, title, subtitle --}}
                     <div class="exp-card-header">
                         @if ($exp->image_path)
