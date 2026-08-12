@@ -22,4 +22,22 @@ return [
         'chess' => 'https://www.chess.com/member/obviouscommander',
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Hero artwork
+    |--------------------------------------------------------------------------
+    |
+    | One image per public page hero. All four point at the same portrait
+    | until page-specific artwork exists — swapping one in later is a
+    | one-line change here, with no template edit.
+    |
+    */
+
+    'hero_images' => [
+        'home' => 'images/id-photo-portrait-businessman-suit-260nw-1505360618 1.png',
+        'about' => 'images/id-photo-portrait-businessman-suit-260nw-1505360618 1.png',
+        'experience' => 'images/id-photo-portrait-businessman-suit-260nw-1505360618 1.png',
+        'projects' => 'images/id-photo-portrait-businessman-suit-260nw-1505360618 1.png',
+    ],
+
 ];

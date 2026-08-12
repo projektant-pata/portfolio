@@ -79,7 +79,10 @@ test('home page renders every seeded review inside the carousel track', function
 
 test('hero_roles markup survives to the page unescaped', function () {
     Setting::updateOrCreate(['key' => 'hero_roles'], [
-        'value' => ['en' => ['Full-stack <span>developer</span>'], 'cs' => ['Full-stack <span>vývojář</span>']],
+        'value' => [
+            'en' => ['Full-stack <span>developer</span>', 'Chess <span>player</span>'],
+            'cs' => ['Full-stack <span>vývojář</span>', '<span>Šachista</span>'],
+        ],
     ]);
 
     $this->get(route('home'))

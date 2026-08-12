@@ -4,18 +4,14 @@
     @php $heroRoles = \App\Models\Setting::list('hero_roles', $locale); @endphp
 
     {{-- Hero --}}
-    <section class="hero-page hero-page--full portfolio-section">
-        <article class="hero-page-text">
-            <p class="hero-suptitle">{{ \App\Models\Setting::text('hero_suptitle', $locale) }}</p>
-            <h1>{!! \App\Models\Setting::text('hero_title', $locale) !!}</h1>
-            <h4 class="underh1">
-                <span id="hero-rotator" data-roles='@json($heroRoles)' aria-live="polite">{!! $heroRoles[0] ?? '' !!}</span><span class="hero-caret" aria-hidden="true"></span>
-            </h4>
-        </article>
-        <article class="hero-page-image">
-            <img src="{{ asset('images/id-photo-portrait-businessman-suit-260nw-1505360618 1.png') }}" alt="hero">
-        </article>
-    </section>
+    <x-portfolio.page-hero
+        full
+        :eyebrow="\App\Models\Setting::text('hero_suptitle', $locale)"
+        :title="\App\Models\Setting::text('hero_title', $locale)"
+        :roles="$heroRoles"
+        :image="config('portfolio.hero_images.home')"
+        image-alt=""
+    />
 
     {{-- Stats --}}
     <section id="stats" class="portfolio-section">
