@@ -4,7 +4,7 @@
     @php $heroRoles = \App\Models\Setting::list('hero_roles', $locale); @endphp
 
     {{-- Hero --}}
-    <section class="hero-page portfolio-section">
+    <section class="hero-page hero-page--full portfolio-section">
         <article class="hero-page-text">
             <p class="hero-suptitle">{{ \App\Models\Setting::text('hero_suptitle', $locale) }}</p>
             <h1>{!! \App\Models\Setting::text('hero_title', $locale) !!}</h1>

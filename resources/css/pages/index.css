@@ -1,87 +1,10 @@
 @import '../components/project-row.css';
+@import '../components/page-hero.css';
 
 /* ================================================================
    INDEX (HOME) PAGE STYLES
    ================================================================ */
 
-
-/* ── Hero ── */
-.hero-page {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 100vh;
-    width: 100%;
-}
-
-.hero-page-text .hero-suptitle {
-    font-size: var(--fs-base);
-    font-weight: var(--fw-regular);
-    color: var(--c-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    margin-bottom: 1.8rem;
-}
-
-/* Hero subtitle below h1 — small, muted, with gold accent on span */
-.underh1 {
-    font-size: var(--fs-h4);
-    font-weight: var(--fw-light);
-    color: var(--c-muted);
-    letter-spacing: 0.04em;
-    line-height: 1.1;
-    margin-top: 1.2rem;
-}
-
-.underh1 span {
-    color: var(--c-primary);
-    font-weight: var(--fw-semibold);
-}
-
-.underh1 > span#hero-rotator {
-    color: var(--c-fg);
-    font-weight: var(--fw-semibold);
-}
-
-#hero-rotator span {
-    color: var(--c-primary);
-}
-
-/* Blinking caret next to the rotating role text */
-.hero-caret {
-    display: inline-block;
-    width: 2px;
-    height: 0.9em;
-    margin-left: 2px;
-    background-color: var(--c-primary);
-    vertical-align: text-bottom;
-    animation: caret-blink 1s step-end infinite;
-}
-
-@keyframes caret-blink {
-    50% { opacity: 0; }
-}
-
-.hero-page-image img { width: 400px; }
-
-/* ── Hero entrance (staggered fade-up on load) ── */
-.hero-page-text > *,
-.hero-page-image {
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity var(--t-base), transform var(--t-base);
-}
-
-.hero-page.hero-loaded .hero-suptitle    { transition-delay: 0.05s; }
-.hero-page.hero-loaded h1                { transition-delay: 0.15s; }
-.hero-page.hero-loaded .underh1          { transition-delay: 0.25s; }
-.hero-page.hero-loaded .hero-page-image  { transition-delay: 0.35s; }
-
-.hero-page.hero-loaded .hero-page-text > *,
-.hero-page.hero-loaded .hero-page-image {
-    opacity: 1;
-    transform: none;
-}
 
 /* ── Stats ── */
 .stats-cards {
@@ -385,20 +308,10 @@ html:not(.dark) .tool-github-light { display: block; }
     .projects-row       { height: 300px; }
     .projects-row > img { width: clamp(300px, 40%, 500px); }
     .projects-row-text  { min-width: 260px; }
-
-    .hero-page-image img { width: 340px; }
 }
 
 /* Tablet + mobile: single-column, slide-in phone nav */
 @media (max-width: 992px) {
-    .hero-page {
-        flex-direction: column;
-        height: auto;
-        margin-top: 10vh;
-        margin-bottom: var(--sp-section);
-    }
-    .hero-page img { margin-top: 50px; }
-
     .stats-cards { grid-template-columns: repeat(2, 1fr); }
 
     .tools-row { grid-template-columns: repeat(4, 1fr); }

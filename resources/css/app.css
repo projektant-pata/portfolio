@@ -162,6 +162,11 @@ select:focus[data-flux-control] {
     --sp-section:   6.25rem;  /* gap between page sections (~100px)*/
     --sp-card-pad:  1.5rem;   /* inner padding for cards           */
 
+    /* ── Hero ───────────────────────────────────────────────────
+       How much of the next section stays visible under a subpage
+       hero — the sliver that invites the scroll. Fluid, no px.    */
+    --hero-peek: clamp(4rem, 11svh, 8rem);
+
     /* ── Radii ──────────────────────────────────────────────────*/
     --r-card:   1.875rem;  /* large card corner radius (~30px)     */
     --r-card-sm: 1.25rem;  /* smaller card corner radius (~20px)   */
