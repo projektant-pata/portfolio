@@ -1,7 +1,16 @@
 <x-portfolio-layout :title="__('layout/header.projects_title')" :description="__('layout/header.projects_desc')" :styles="['resources/css/pages/projects.css']">
 
     @php $locale = app()->getLocale(); @endphp
-    <section id="projects" class="portfolio-section" style="padding-top: var(--sp-section)">
+    {{-- Hero --}}
+    <x-portfolio.page-hero
+        :eyebrow="\App\Models\Setting::text('projects_hero_suptitle', $locale)"
+        :title="\App\Models\Setting::text('projects_hero_title', $locale)"
+        :roles="\App\Models\Setting::list('projects_hero_roles', $locale)"
+        :image="config('portfolio.hero_images.projects')"
+        image-alt=""
+    />
+
+    <section id="projects" class="portfolio-section">
         @forelse ($projects as $year => $yearProjects)
             <article class="projects-year-group">
                 <h2 class="projects-year-label">{{ $year }}</h2>

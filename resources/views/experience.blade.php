@@ -2,7 +2,16 @@
 
     @php $locale = app()->getLocale(); @endphp
 
-    <section id="experience" class="portfolio-section" style="padding-top: var(--sp-section)">
+    {{-- Hero --}}
+    <x-portfolio.page-hero
+        :eyebrow="\App\Models\Setting::text('experience_hero_suptitle', $locale)"
+        :title="\App\Models\Setting::text('experience_hero_title', $locale)"
+        :roles="\App\Models\Setting::list('experience_hero_roles', $locale)"
+        :image="config('portfolio.hero_images.experience')"
+        image-alt=""
+    />
+
+    <section id="experience" class="portfolio-section">
         <h2>{{ __('home/experience.title') }}</h2>
 
         {{-- Filter tabs --}}
