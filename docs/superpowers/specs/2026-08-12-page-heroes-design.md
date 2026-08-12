@@ -1,7 +1,7 @@
 # Page Heroes for the Public Subpages — Design
 
 **Date:** 2026-08-12
-**Status:** approved (design), implementation plan pending
+**Status:** implemented — see `docs/superpowers/plans/2026-08-12-page-heroes.md`
 
 ## Problem
 
