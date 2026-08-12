@@ -18,6 +18,16 @@ pest()->extend(TestCase::class)
     ->in('Feature', 'Browser');
 
 /*
+| The plugin's 5s default covers the whole first visit — booting the
+| Playwright server, launching chromium and starting `artisan serve` —
+| which alone costs ~17s in the container, so every browser test failed
+| with "Timeout 5000ms exceeded" before reaching its assertions.
+*/
+pest()->beforeEach(function () {
+    Pest\Browser\Playwright\Playwright::setTimeout(30_000);
+})->in('Browser');
+
+/*
 |--------------------------------------------------------------------------
 | Expectations
 |--------------------------------------------------------------------------
