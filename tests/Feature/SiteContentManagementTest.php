@@ -22,7 +22,7 @@ test('can create a static stat', function () {
         ->assertHasNoErrors();
 
     $stat = Stat::first();
-    expect($stat->value)->toBe(['en' => '5+', 'cs' => '5+'])
+    expect($stat->value)->toEqual(['en' => '5+', 'cs' => '5+'])
         ->and($stat->text['en'])->toBe('Projects Completed');
 });
 
@@ -72,7 +72,7 @@ test('can create an about card', function () {
     expect(AboutCard::first()->title['en'])->toBe('About me');
 });
 
-test('site content editor persists settings and rotating roles', function () {
+test('site content editor persists settings and every rotating role list', function () {
     Livewire::actingAs(User::factory()->create())
         ->test('pages::manage.site-content')
         ->set('texts.hero_suptitle', ['en' => 'Hello', 'cs' => 'Ahoj'])
@@ -81,14 +81,48 @@ test('site content editor persists settings and rotating roles', function () {
         ->set('texts.tools_title', ['en' => 'Tools', 'cs' => 'Nástroje'])
         ->set('texts.reviews_title', ['en' => 'Reviews', 'cs' => 'Reference'])
         ->set('texts.about_title', ['en' => 'About', 'cs' => 'O mně'])
-        ->set('roles.en', "Developer\nChess player")
-        ->set('roles.cs', "Vývojář\nŠachista")
+        ->set('texts.about_hero_suptitle', ['en' => 'whoami', 'cs' => 'whoami'])
+        ->set('texts.about_hero_title', ['en' => 'About me', 'cs' => 'O mně'])
+        ->set('texts.experience_hero_suptitle', ['en' => 'Where', 'cs' => 'Kudy'])
+        ->set('texts.experience_hero_title', ['en' => 'My journey', 'cs' => 'Moje cesta'])
+        ->set('texts.projects_hero_suptitle', ['en' => 'Built', 'cs' => 'Postaveno'])
+        ->set('texts.projects_hero_title', ['en' => 'Shipped', 'cs' => 'Vydáno'])
+        ->set('roleLists.hero_roles', ['en' => "Developer\nChess player", 'cs' => "Vývojář\nŠachista"])
+        ->set('roleLists.about_hero_roles', ['en' => "Student\nFreelancer", 'cs' => "Student\nFreelancer"])
+        ->set('roleLists.experience_hero_roles', ['en' => "Certificates\nWork", 'cs' => "Certifikáty\nPráce"])
+        ->set('roleLists.projects_hero_roles', ['en' => "Laravel\nSpring Boot", 'cs' => "Laravel\nSpring Boot"])
         ->call('save')
         ->assertHasNoErrors();
 
     expect(Setting::text('hero_suptitle', 'cs'))->toBe('Ahoj')
+        ->and(Setting::text('projects_hero_title', 'cs'))->toBe('Vydáno')
         ->and(Setting::list('hero_roles', 'en'))->toBe(['Developer', 'Chess player'])
-        ->and(Setting::list('hero_roles', 'cs'))->toBe(['Vývojář', 'Šachista']);
+        ->and(Setting::list('about_hero_roles', 'cs'))->toBe(['Student', 'Freelancer'])
+        ->and(Setting::list('experience_hero_roles', 'en'))->toBe(['Certificates', 'Work'])
+        ->and(Setting::list('projects_hero_roles', 'cs'))->toBe(['Laravel', 'Spring Boot']);
+});
+
+test('the czech hero copy falls back to english when left blank', function () {
+    $this->seed(\Database\Seeders\SettingSeeder::class);
+
+    Livewire::actingAs(User::factory()->create())
+        ->test('pages::manage.site-content')
+        ->set('texts.about_hero_title', ['en' => 'About me', 'cs' => ''])
+        ->set('roleLists.about_hero_roles', ['en' => "Student\nFreelancer", 'cs' => ''])
+        ->call('save')
+        ->assertHasNoErrors();
+
+    expect(Setting::text('about_hero_title', 'cs'))->toBe('About me')
+        ->and(Setting::list('about_hero_roles', 'cs'))->toBe(['Student', 'Freelancer']);
+});
+
+test('every english hero field is required', function () {
+    Livewire::actingAs(User::factory()->create())
+        ->test('pages::manage.site-content')
+        ->set('texts.about_hero_title', ['en' => '', 'cs' => ''])
+        ->set('roleLists.projects_hero_roles', ['en' => '', 'cs' => ''])
+        ->call('save')
+        ->assertHasErrors(['texts.about_hero_title.en', 'roleLists.projects_hero_roles.en']);
 });
 
 test('non-admins cannot reach content manage pages', function () {
