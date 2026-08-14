@@ -4,12 +4,24 @@
 
 **Goal:** Replace the shared page hero on the Experience page with the design handoff's three-column bordered composition (dock / copy / photo), built as a reusable `<x-portfolio.dock-hero>` component.
 
-**Architecture:** A new Blade component plus one new CSS partial, imported by `resources/css/pages/experience.css`. Copy stays in the existing `Setting` model and the `⚡site-content` admin page; two structural words (wordmark, dock label) move into a new lang file. The rotator/caret CSS shared by the old and new hero is extracted into its own partial so both import one definition. No new JS, no migrations, no new dependencies.
+**Architecture:** A new Blade component plus one new CSS partial, imported by `resources/css/pages/experience.css`. The hero ships **visible first** — Task 1 puts it on `/experience` fed by the settings that already exist plus a new lang file, so the owner can look at it and comment before any admin work happens. Only after the look does Task 4 promote the two new copy fields (tags, photo caption) into the `Setting` model and the `⚡site-content` admin page. No new JS, no migrations, no new dependencies.
 
-**Tech Stack:** Laravel 13, Blade components, Tailwind v4 + hand-written CSS partials, Livewire 4 (admin page only), Pest 4 (feature + browser tests), Vite, Docker.
+**Tech Stack:** Laravel 13, Blade components, Tailwind v4 + hand-written CSS partials, Livewire 4 (admin page, Task 4 only), Pest 4 (feature + browser tests), Vite, Docker.
 
 **Source spec:** `docs/superpowers/specs/2026-08-14-experience-dock-hero-design.md`
 **Design handoff:** `projektant-pata Design System.zip` → `design_handoff_experience_hero/`
+
+## Task order and review gates
+
+| Task | Deliverable | Owner reviews? |
+| --- | --- | --- |
+| 1 | Hero live on `/experience`, desktop | **yes — stop and show screenshots** |
+| 2 | Responsive stacking + browser tests | **yes — stop and show screenshots** |
+| 3 | Crop/seam tuning from the owner's comments | yes |
+| 4 | Tags + caption move into Settings and the admin form | no |
+| 5 | Whole-suite verification and handoff notes | no |
+
+Tasks 1 and 2 end with a hard stop: publish the screenshots, wait for comments, and fold them into Task 3. Do not start Task 4 before Task 3 closes — the admin form's field list should describe copy that is already known to be right.
 
 ## Global Constraints
 
@@ -26,368 +38,34 @@
 
 ---
 
-### Task 1: Extract the rotator CSS into its own partial
+### Task 1: Put the hero on screen (desktop)
 
-Pure refactor. The blinking-caret and rotator rules currently live inside `components/page-hero.css`; the new hero needs them too. Move them once so there is a single definition.
+The biggest task, and deliberately so: it ends with something to look at. Extracts the shared rotator CSS, builds the component and its desktop stylesheet, swaps it into the Experience page, and retires the shared hero's claim on that page.
+
+Copy sources in this task: eyebrow / title / roles come from the settings that already exist; wordmark, dock label and tag chips come from a new lang file. The photo caption is not rendered yet (Task 4 gives it a home in the admin).
 
 **Files:**
 - Create: `resources/css/components/hero-rotator.css`
-- Modify: `resources/css/components/page-hero.css:57-74`
-- Test: `tests/Browser/PageHeroTest.php` (existing, unchanged — it is the regression net)
-
-**Interfaces:**
-- Consumes: nothing.
-- Produces: `resources/css/components/hero-rotator.css`, holding `#hero-rotator span`, `.hero-caret`, `@keyframes caret-blink`. Task 3 imports it from `dock-hero.css`.
-
-- [ ] **Step 1: Create the new partial**
-
-Create `resources/css/components/hero-rotator.css`:
-
-```css
-/* ================================================================
-   HERO ROTATOR
-   ================================================================
-   The rotating role line and its blinking caret, shared by the
-   full-width page hero and the Experience dock hero. Imported by
-   both component stylesheets; the JS that drives it lives in
-   resources/js/app.js (initHeroRotator).
-   ================================================================ */
-
-#hero-rotator span {
-    color: var(--c-primary);
-}
-
-/* Blinking caret next to the rotating role text */
-.hero-caret {
-    display: inline-block;
-    width: 2px;
-    height: 0.9em;
-    margin-left: 2px;
-    background-color: var(--c-primary);
-    vertical-align: text-bottom;
-    animation: caret-blink 1s step-end infinite;
-}
-
-@keyframes caret-blink {
-    50% { opacity: 0; }
-}
-```
-
-- [ ] **Step 2: Remove the moved rules from `page-hero.css` and import the partial**
-
-In `resources/css/components/page-hero.css`, delete exactly these blocks (lines 57-74 in the current file):
-
-```css
-#hero-rotator span {
-    color: var(--c-primary);
-}
-
-/* Blinking caret next to the rotating role text */
-.hero-caret {
-    display: inline-block;
-    width: 2px;
-    height: 0.9em;
-    margin-left: 2px;
-    background-color: var(--c-primary);
-    vertical-align: text-bottom;
-    animation: caret-blink 1s step-end infinite;
-}
-
-@keyframes caret-blink {
-    50% { opacity: 0; }
-}
-```
-
-Keep `.underh1`, `.underh1 span` and `.underh1 > span#hero-rotator` where they are — they style the old hero's layout, not the rotator itself.
-
-Add this as the **first line** of `resources/css/components/page-hero.css`:
-
-```css
-@import './hero-rotator.css';
-```
-
-- [ ] **Step 3: Rebuild assets and verify the caret still animates**
-
-Run on the **host** (not in Docker):
-
-```bash
-npm run build
-```
-
-Expected: build succeeds, no "Failed to resolve import" for `hero-rotator.css`.
-
-- [ ] **Step 4: Run the browser hero tests**
-
-```bash
-docker exec portfolio-app-1 php artisan test --compact --filter=PageHeroTest
-```
-
-Expected: PASS — same test count as before this task. The rotator tests ("the home hero rotator cycles its roles", "a subpage hero rotator cycles its roles") prove the extracted CSS is still loaded.
-
-- [ ] **Step 5: Commit**
-
-```bash
-git add resources/css/components/hero-rotator.css resources/css/components/page-hero.css
-git commit -m "refactor(css): extract the hero rotator rules into their own partial"
-```
-
----
-
-### Task 2: Settings, seeder and admin fields for the new hero copy
-
-Adds the two new setting keys the dock hero needs (`experience_hero_tags`, `experience_hero_photo_caption`) and the lang file for the two structural words. Both new keys are **optional** — the hero must render with them empty — so the admin page grows a notion of optional fields, which it does not have today.
-
-**Files:**
-- Modify: `database/seeders/SettingSeeder.php:12-42`
-- Modify: `resources/views/pages/manage/⚡site-content.blade.php`
+- Create: `resources/css/components/dock-hero.css`
+- Create: `resources/views/components/portfolio/dock-hero.blade.php`
 - Create: `resources/lang/en/pages/experience.php`
 - Create: `resources/lang/cs/pages/experience.php`
-- Test: `tests/Feature/SiteContentDockHeroTest.php` (create)
-
-**Interfaces:**
-- Consumes: `App\Models\Setting::text()`, `Setting::list()` (existing static helpers).
-- Produces:
-  - `Setting` key `experience_hero_tags` → `['en' => string[], 'cs' => string[]]`, read with `Setting::list('experience_hero_tags', $locale)`.
-  - `Setting` key `experience_hero_photo_caption` → `['en' => string, 'cs' => string]`, read with `Setting::text('experience_hero_photo_caption', $locale)`; may be `''`.
-  - Lang keys `pages/experience.hero_wordmark` and `pages/experience.hero_dock_label`.
-  - Livewire public property `array $optionalKeys` on the site-content component.
-
-- [ ] **Step 1: Write the failing test**
-
-Create `tests/Feature/SiteContentDockHeroTest.php`:
-
-```php
-<?php
-
-use App\Models\Setting;
-use App\Models\User;
-use Livewire\Volt\Volt;
-
-test('the seeder provides the dock hero tags and an empty photo caption', function () {
-    $this->seed(\Database\Seeders\SettingSeeder::class);
-
-    expect(Setting::list('experience_hero_tags', 'en'))->toHaveCount(5)
-        ->and(Setting::list('experience_hero_tags', 'cs'))->toHaveCount(5)
-        ->and(Setting::text('experience_hero_photo_caption', 'en'))->toBe('')
-        ->and(Setting::where('key', 'experience_hero_roles')->exists())->toBeTrue();
-});
-
-test('the site content page saves the dock hero fields', function () {
-    $this->seed(\Database\Seeders\SettingSeeder::class);
-
-    $this->actingAs(User::factory()->create());
-
-    Volt::test('pages.manage.site-content')
-        ->set('roleLists.experience_hero_tags.en', "Backend\nHardware")
-        ->set('roleLists.experience_hero_tags.cs', "Backend\nHardware")
-        ->set('texts.experience_hero_photo_caption.en', '<b>Tour de App, 2024</b>Regional finals.')
-        ->set('texts.experience_hero_photo_caption.cs', '<b>Tour de App, 2024</b>Krajské finále.')
-        ->call('save')
-        ->assertHasNoErrors();
-
-    expect(Setting::list('experience_hero_tags', 'en'))->toEqual(['Backend', 'Hardware'])
-        ->and(Setting::text('experience_hero_photo_caption', 'cs'))->toBe('<b>Tour de App, 2024</b>Krajské finále.');
-});
-
-test('the optional dock hero fields may be saved empty', function () {
-    $this->seed(\Database\Seeders\SettingSeeder::class);
-
-    $this->actingAs(User::factory()->create());
-
-    Volt::test('pages.manage.site-content')
-        ->set('texts.experience_hero_photo_caption.en', '')
-        ->set('texts.experience_hero_photo_caption.cs', '')
-        ->set('roleLists.experience_hero_tags.en', '')
-        ->set('roleLists.experience_hero_tags.cs', '')
-        ->call('save')
-        ->assertHasNoErrors();
-
-    expect(Setting::text('experience_hero_photo_caption', 'en'))->toBe('')
-        ->and(Setting::list('experience_hero_tags', 'en'))->toEqual([]);
-});
-
-test('the required hero fields still reject an empty english value', function () {
-    $this->seed(\Database\Seeders\SettingSeeder::class);
-
-    $this->actingAs(User::factory()->create());
-
-    Volt::test('pages.manage.site-content')
-        ->set('texts.experience_hero_title.en', '')
-        ->call('save')
-        ->assertHasErrors('texts.experience_hero_title.en');
-});
-
-test('the experience lang file carries the wordmark and dock label in both locales', function () {
-    expect(__('pages/experience.hero_wordmark', [], 'en'))->toBe('Experience')
-        ->and(__('pages/experience.hero_wordmark', [], 'cs'))->toBe('Zkušenosti')
-        ->and(__('pages/experience.hero_dock_label', [], 'en'))->toBe('Navigate')
-        ->and(__('pages/experience.hero_dock_label', [], 'cs'))->toBe('Navigace');
-});
-```
-
-Note on the Volt component name: the manage pages are registered in `routes/web.php`; if `Volt::test('pages.manage.site-content')` cannot resolve the component, check how the sibling tests in `tests/Feature/` address other `⚡` pages and copy that exact string.
-
-- [ ] **Step 2: Run it to make sure it fails**
-
-```bash
-docker exec portfolio-app-1 php artisan test --compact --filter=SiteContentDockHeroTest
-```
-
-Expected: FAIL — the tags/caption keys do not exist, `pages/experience` lang file is missing.
-
-- [ ] **Step 3: Add the new keys to the seeder**
-
-In `database/seeders/SettingSeeder.php`, inside `$settings`, directly after the `experience_hero_roles` entry, add:
-
-```php
-            'experience_hero_tags' => [
-                'en' => ['Backend', 'Hardware', 'Competitions', 'Erasmus', 'Speaking'],
-                'cs' => ['Backend', 'Hardware', 'Soutěže', 'Erasmus', 'Přednášky'],
-            ],
-            'experience_hero_photo_caption' => ['en' => '', 'cs' => ''],
-```
-
-- [ ] **Step 4: Create the lang files**
-
-Create `resources/lang/en/pages/experience.php`:
-
-```php
-<?php
-
-return [
-    'hero_wordmark' => 'Experience',
-    'hero_dock_label' => 'Navigate',
-];
-```
-
-Create `resources/lang/cs/pages/experience.php`:
-
-```php
-<?php
-
-return [
-    'hero_wordmark' => 'Zkušenosti',
-    'hero_dock_label' => 'Navigace',
-];
-```
-
-- [ ] **Step 5: Teach the admin page about optional fields**
-
-In `resources/views/pages/manage/⚡site-content.blade.php`:
-
-Add `'experience_hero_photo_caption'` to the end of the `$textKeys` array, and `'experience_hero_tags'` to the end of the `$roleListKeys` array.
-
-Add this property directly below `$roleListKeys`:
-
-```php
-    /**
-     * Keys whose English value may be left blank. Everything else is
-     * required — an empty hero title would render a hole on the site.
-     *
-     * @var array<int, string>
-     */
-    public array $optionalKeys = [
-        'experience_hero_tags',
-        'experience_hero_photo_caption',
-    ];
-```
-
-Change the `Experience hero` group to:
-
-```php
-        'Experience hero' => ['experience_hero_suptitle', 'experience_hero_title', 'experience_hero_roles', 'experience_hero_tags', 'experience_hero_photo_caption'],
-```
-
-In `save()`, replace the two rule-building loops with:
-
-```php
-        foreach ($this->textKeys as $key) {
-            $required = $this->isOptional($key) ? 'nullable' : 'required';
-            $rules["texts.{$key}.en"] = [$required, 'string', 'max:2000'];
-            $rules["texts.{$key}.cs"] = ['nullable', 'string', 'max:2000'];
-        }
-
-        foreach ($this->roleListKeys as $key) {
-            $rules["roleLists.{$key}.en"] = [$this->isOptional($key) ? 'nullable' : 'required', 'string'];
-            $rules["roleLists.{$key}.cs"] = ['nullable', 'string'];
-        }
-```
-
-Add the helper next to `isRoleList()`:
-
-```php
-    /** True when a key may be saved with an empty English value. */
-    public function isOptional(string $key): bool
-    {
-        return in_array($key, $this->optionalKeys, true);
-    }
-```
-
-In the Blade half, in the **`en` slot only**, replace the label line:
-
-```blade
-                            <flux:label>{{ $this->label($key) }} <flux:badge size="sm" color="yellow" inset="top bottom">Required</flux:badge></flux:label>
-```
-
-with:
-
-```blade
-                            <flux:label>
-                                {{ $this->label($key) }}
-                                @unless ($this->isOptional($key))
-                                    <flux:badge size="sm" color="yellow" inset="top bottom">Required</flux:badge>
-                                @endunless
-                            </flux:label>
-```
-
-The `cs` slot's label line already carries no badge — leave it alone.
-
-Nothing else changes: `save()`'s existing `?:` fallback (`cs` falls back to `en`) is correct for the optional keys too, since both being empty yields empty.
-
-- [ ] **Step 6: Run the tests**
-
-```bash
-docker exec portfolio-app-1 php artisan test --compact --filter=SiteContentDockHeroTest
-```
-
-Expected: PASS, 5 tests.
-
-- [ ] **Step 7: Seed the dev database and format**
-
-```bash
-docker exec portfolio-app-1 php artisan db:seed --class=SettingSeeder --no-interaction
-docker exec portfolio-app-1 vendor/bin/pint --dirty --format agent
-```
-
-- [ ] **Step 8: Commit**
-
-```bash
-git add database/seeders/SettingSeeder.php "resources/views/pages/manage/⚡site-content.blade.php" resources/lang/en/pages/experience.php resources/lang/cs/pages/experience.php tests/Feature/SiteContentDockHeroTest.php
-git commit -m "feat(settings): add the dock hero tags and photo caption fields"
-```
-
----
-
-### Task 3: The dock hero component, its desktop CSS, and the Experience page swap
-
-The deliverable: `/experience` opens with the new three-column hero instead of `<x-portfolio.page-hero>`. Desktop layout only — Task 4 handles the breakpoints.
-
-**Files:**
-- Create: `resources/views/components/portfolio/dock-hero.blade.php`
-- Create: `resources/css/components/dock-hero.css`
+- Modify: `resources/css/components/page-hero.css:57-74`
 - Modify: `resources/css/pages/experience.css:1`
 - Modify: `resources/views/experience.blade.php:5-12`
 - Modify: `config/portfolio.php:37-42`
 - Modify: `tests/Feature/PageHeroTest.php` (datasets + one assertion)
-- Modify: `tests/Browser/PageHeroTest.php` (datasets)
+- Modify: `tests/Browser/PageHeroTest.php` (four datasets)
 - Test: `tests/Feature/DockHeroTest.php` (create)
 
 **Interfaces:**
-- Consumes: `experience_hero_suptitle`, `experience_hero_title`, `experience_hero_roles`, `experience_hero_tags`, `experience_hero_photo_caption` settings and the `pages/experience` lang keys from Task 2; `hero-rotator.css` from Task 1.
+- Consumes: `App\Models\Setting::text()` / `::list()` (existing static helpers); settings `experience_hero_suptitle`, `experience_hero_title`, `experience_hero_roles` (all already seeded).
 - Produces:
-  - Blade component `<x-portfolio.dock-hero>` with props `title`, `eyebrow`, `roles`, `tags`, `wordmark`, `dockLabel`, `dockImage`, `dockImageAlt`, `photo`, `photoAlt`, `caption` (all strings except `roles`/`tags`, which are arrays; all optional except `title`).
+  - Blade component `<x-portfolio.dock-hero>`, props `title` (required), `eyebrow`, `roles` (array), `tags` (array), `wordmark`, `dockLabel`, `dockImage`, `dockImageAlt`, `photo`, `photoAlt`, `caption` — all optional except `title`, all strings except the two arrays.
+  - CSS classes `.dock-hero`, `-dock`, `-dock-label`, `-copy`, `-ghost`, `-eyebrow`, `-title`, `-roles`, `-tags`, `-tag`, `-photo`, `-cap`. Task 2 adds media queries over these exact names.
+  - `resources/css/components/hero-rotator.css` holding `#hero-rotator span`, `.hero-caret`, `@keyframes caret-blink`.
   - Config key `portfolio.hero_images.experience_dock` (string, `''` until the asset exists).
-  - CSS classes `.dock-hero`, `-dock`, `-dock-label`, `-copy`, `-ghost`, `-eyebrow`, `-title`, `-roles`, `-tags`, `-tag`, `-photo`, `-cap`. Task 4 adds media queries for these exact names.
+  - Lang keys `pages/experience.hero_wordmark`, `.hero_dock_label`, `.hero_tags` (array of 5 strings).
 
 - [ ] **Step 1: Write the failing test**
 
@@ -412,29 +90,33 @@ test('the experience page opens with the dock hero, not the shared page hero', f
 test('the dock hero renders its settings copy', function () {
     Setting::updateOrCreate(['key' => 'experience_hero_suptitle'], ['value' => ['en' => '🗓️ Where I have been', 'cs' => '🗓️ Kudy jsem prošel']]);
     Setting::updateOrCreate(['key' => 'experience_hero_title'], ['value' => ['en' => 'My <span>journey</span>,', 'cs' => 'Moje <span>cesta</span>,']]);
-    Setting::updateOrCreate(['key' => 'experience_hero_tags'], ['value' => [
-        'en' => ['Backend', 'Erasmus'],
-        'cs' => ['Backend', 'Erasmus'],
-    ]]);
 
     $this->get(route('experience'))
         ->assertSee('🗓️ Where I have been')
         ->assertSee('<h1 class="dock-hero-title">My <span>journey</span>,</h1>', false)
-        ->assertSee('>Backend</li>', false)
-        ->assertSee('>Erasmus</li>', false)
         ->assertSee('id="hero-rotator"', false)
         ->assertSee('data-roles=', false);
 });
 
-test('the dock hero renders the wordmark and the dock label from the lang files', function () {
+test('the dock hero renders the wordmark, dock label and tags from the lang files', function () {
     $this->get(route('experience'))
         ->assertSee('aria-hidden="true">Experience<', false)
-        ->assertSee('Navigate');
+        ->assertSee('Navigate')
+        ->assertSee('>Backend</li>', false)
+        ->assertSee('>Erasmus</li>', false);
 
     $this->withSession(['locale' => 'cs'])
         ->get(route('experience'))
         ->assertSee('aria-hidden="true">Zkušenosti<', false)
-        ->assertSee('Navigace');
+        ->assertSee('Navigace')
+        ->assertSee('>Soutěže</li>', false);
+});
+
+test('the dock hero renders the czech title under the cs locale', function () {
+    $this->withSession(['locale' => 'cs'])
+        ->get(route('experience'))
+        ->assertSee('Moje <span>cesta</span>,', false)
+        ->assertDontSee('My <span>journey</span>,', false);
 });
 
 test('the experience page still renders exactly one h1 and one rotator', function () {
@@ -444,28 +126,17 @@ test('the experience page still renders exactly one h1 and one rotator', functio
         ->and(substr_count($html, 'id="hero-rotator"'))->toBe(1);
 });
 
-test('the dock hero omits the caption markup when the setting is empty', function () {
+test('the dock hero omits the caption markup when no caption is passed', function () {
     $this->get(route('experience'))
         ->assertDontSee('dock-hero-cap', false);
-
-    Setting::updateOrCreate(['key' => 'experience_hero_photo_caption'], ['value' => [
-        'en' => '<b>Tour de App, 2024</b>Regional finals jury.',
-        'cs' => '<b>Tour de App, 2024</b>Krajské finále.',
-    ]]);
-
-    $this->get(route('experience'))
-        ->assertSee('dock-hero-cap', false)
-        ->assertSee('<b>Tour de App, 2024</b>Regional finals jury.', false);
 });
 
 test('the dock column renders label-only while the dock asset is missing', function () {
     config()->set('portfolio.hero_images.experience_dock', '');
 
-    $html = $this->get(route('experience'))->assertOk()->getContent();
-
-    $dock = str($html)->between('<div class="dock-hero-dock">', '</div>')->toString();
-
-    expect($dock)->not->toContain('<img');
+    $this->get(route('experience'))
+        ->assertOk()
+        ->assertDontSee('experience-dock', false);
 });
 
 test('the dock column renders the image once the asset is configured', function () {
@@ -473,14 +144,6 @@ test('the dock column renders the image once the asset is configured', function 
 
     $this->get(route('experience'))
         ->assertSee('images/experience-dock.webp', false);
-});
-
-test('the dock hero omits the tag row when the tags setting is empty', function () {
-    Setting::updateOrCreate(['key' => 'experience_hero_tags'], ['value' => ['en' => [], 'cs' => []]]);
-
-    $this->get(route('experience'))
-        ->assertOk()
-        ->assertDontSee('dock-hero-tags', false);
 });
 ```
 
@@ -492,7 +155,96 @@ docker exec portfolio-app-1 php artisan test --compact --filter=DockHeroTest
 
 Expected: FAIL — `class="dock-hero"` is not in the page.
 
-- [ ] **Step 3: Create the Blade component**
+- [ ] **Step 3: Extract the rotator CSS**
+
+Create `resources/css/components/hero-rotator.css`:
+
+```css
+/* ================================================================
+   HERO ROTATOR
+   ================================================================
+   The rotating role line and its blinking caret, shared by the
+   full-width page hero and the Experience dock hero. Imported by
+   both component stylesheets; the JS that drives it lives in
+   resources/js/app.js.
+   ================================================================ */
+
+#hero-rotator span {
+    color: var(--c-primary);
+}
+
+/* Blinking caret next to the rotating role text */
+.hero-caret {
+    display: inline-block;
+    width: 2px;
+    height: 0.9em;
+    margin-left: 2px;
+    background-color: var(--c-primary);
+    vertical-align: text-bottom;
+    animation: caret-blink 1s step-end infinite;
+}
+
+@keyframes caret-blink {
+    50% { opacity: 0; }
+}
+```
+
+In `resources/css/components/page-hero.css`, delete exactly these blocks (lines 57-74):
+
+```css
+#hero-rotator span {
+    color: var(--c-primary);
+}
+
+/* Blinking caret next to the rotating role text */
+.hero-caret {
+    display: inline-block;
+    width: 2px;
+    height: 0.9em;
+    margin-left: 2px;
+    background-color: var(--c-primary);
+    vertical-align: text-bottom;
+    animation: caret-blink 1s step-end infinite;
+}
+
+@keyframes caret-blink {
+    50% { opacity: 0; }
+}
+```
+
+Keep `.underh1`, `.underh1 span` and `.underh1 > span#hero-rotator` — they style the old hero's layout, not the rotator itself. Add as the **first line** of `page-hero.css`:
+
+```css
+@import './hero-rotator.css';
+```
+
+- [ ] **Step 4: Create the lang files**
+
+Create `resources/lang/en/pages/experience.php`:
+
+```php
+<?php
+
+return [
+    'hero_wordmark' => 'Experience',
+    'hero_dock_label' => 'Navigate',
+    'hero_tags' => ['Backend', 'Hardware', 'Competitions', 'Erasmus', 'Speaking'],
+];
+```
+
+Create `resources/lang/cs/pages/experience.php`:
+
+```php
+<?php
+
+return [
+    'hero_wordmark' => 'Zkušenosti',
+    'hero_dock_label' => 'Navigace',
+    'hero_tags' => ['Backend', 'Hardware', 'Soutěže', 'Erasmus', 'Přednášky'],
+];
+```
+
+- [ ] **Step 5: Create the Blade component**
 
 Create `resources/views/components/portfolio/dock-hero.blade.php`:
 
@@ -564,7 +316,7 @@ Create `resources/views/components/portfolio/dock-hero.blade.php`:
 </section>
 ```
 
-- [ ] **Step 4: Create the desktop CSS**
+- [ ] **Step 6: Create the desktop CSS**
 
 Create `resources/css/components/dock-hero.css`. Values are the handoff's, verbatim, minus the metric strip; `min-height` is 640px because the strip is gone.
 
@@ -778,7 +530,7 @@ Create `resources/css/components/dock-hero.css`. Values are the handoff's, verba
 }
 ```
 
-- [ ] **Step 5: Swap the imports and the page markup**
+- [ ] **Step 7: Swap the imports and the page markup**
 
 In `resources/css/pages/experience.css`, replace line 1:
 
@@ -807,8 +559,7 @@ In `resources/views/experience.blade.php`, replace the whole `<x-portfolio.page-
         :eyebrow="\App\Models\Setting::text('experience_hero_suptitle', $locale)"
         :title="\App\Models\Setting::text('experience_hero_title', $locale)"
         :roles="\App\Models\Setting::list('experience_hero_roles', $locale)"
-        :tags="\App\Models\Setting::list('experience_hero_tags', $locale)"
-        :caption="\App\Models\Setting::text('experience_hero_photo_caption', $locale)"
+        :tags="__('pages/experience.hero_tags')"
         :wordmark="__('pages/experience.hero_wordmark')"
         :dock-label="__('pages/experience.hero_dock_label')"
         :dock-image="config('portfolio.hero_images.experience_dock')"
@@ -818,23 +569,23 @@ In `resources/views/experience.blade.php`, replace the whole `<x-portfolio.page-
     />
 ```
 
-Both images are decorative next to the copy that names them, so both alts stay empty.
+Both images are decorative next to the copy that names them, so both alts stay empty. Task 4 moves `:tags` onto a setting and adds `:caption`.
 
-- [ ] **Step 6: Update the shared-hero tests to stop expecting a page hero on Experience**
+- [ ] **Step 8: Update the shared-hero tests to stop expecting a page hero on Experience**
 
 In `tests/Feature/PageHeroTest.php`:
 
 - In `'every public subpage renders exactly one h1'`, change the dataset from `['about-me', 'experience', 'projects']` to `['about-me', 'projects']`.
-- In `'the subpage heroes render the czech copy under the cs locale'`, delete the `experience` block (the `Setting::updateOrCreate` for `experience_hero_title` and the `route('experience')` request), keeping the `projects` half. The cs coverage for Experience now lives in `DockHeroTest`.
+- In `'the subpage heroes render the czech copy under the cs locale'`, delete the `experience` half (its `Setting::updateOrCreate` line and its `route('experience')` request), keeping `projects`. Experience's cs coverage now lives in `DockHeroTest`.
 
-In `tests/Browser/PageHeroTest.php`, change all four `->with([...])` datasets that list `/experience` to drop it:
+In `tests/Browser/PageHeroTest.php`, drop `/experience` from all four datasets:
 
 - `'a subpage hero fills the first screen and still lets the next section peek in'` → `['/about-me', '/projects']`
 - `'a subpage hero fills the first screen and still lets the next section peek in on mobile'` → `['/about-me', '/projects']`
 - `'every hero centres its text on the same line as the home hero'` → `['/', '/about-me', '/projects']`
 - `'the section after a subpage hero fades in on scroll like every other section'` → `['/about-me', '/projects']`
 
-- [ ] **Step 7: Build and run the tests**
+- [ ] **Step 9: Build and run the tests**
 
 Host:
 
@@ -849,28 +600,61 @@ docker exec portfolio-app-1 php artisan test --compact --filter=DockHeroTest
 docker exec portfolio-app-1 php artisan test --compact --filter=PageHeroTest
 ```
 
-Expected: both PASS. If `DockHeroTest`'s "renders label-only" test is brittle because `str()->between()` catches a different `</div>`, assert on the absence of `experience-dock` in the page HTML instead — the intent is "no dock `<img>` while the config value is empty".
+Expected: both PASS.
 
-- [ ] **Step 8: Format and commit**
+- [ ] **Step 10: Commit**
 
 ```bash
 docker exec portfolio-app-1 vendor/bin/pint --dirty --format agent
-git add resources/views/components/portfolio/dock-hero.blade.php resources/css/components/dock-hero.css resources/css/pages/experience.css resources/views/experience.blade.php config/portfolio.php tests/Feature/DockHeroTest.php tests/Feature/PageHeroTest.php tests/Browser/PageHeroTest.php
+git add resources/views/components/portfolio/dock-hero.blade.php resources/css/components/dock-hero.css resources/css/components/hero-rotator.css resources/css/components/page-hero.css resources/css/pages/experience.css resources/views/experience.blade.php config/portfolio.php resources/lang/en/pages/experience.php resources/lang/cs/pages/experience.php tests/Feature/DockHeroTest.php tests/Feature/PageHeroTest.php tests/Browser/PageHeroTest.php
 git commit -m "feat(experience): open the page with the dock hero"
 ```
 
+- [ ] **Step 11: Screenshot desktop, both themes, and STOP**
+
+Confirm the app serves the page:
+
+```bash
+curl -s -o /dev/null -w '%{http_code}\n' http://localhost:8008/experience
+```
+
+Expected `200`; a 500 means the Vite manifest is stale — re-run `npm run build` on the host.
+
+Write this to the session scratchpad as `shots.mjs` and run `node shots.mjs` there:
+
+```js
+import { chromium } from 'playwright';
+
+const browser = await chromium.launch();
+
+for (const theme of ['dark', 'light']) {
+    const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+    await page.goto('http://localhost:8008/experience', { waitUntil: 'networkidle' });
+    await page.evaluate((t) => {
+        document.documentElement.classList.toggle('dark', t === 'dark');
+    }, theme);
+    await page.waitForTimeout(400);
+    await page.screenshot({ path: `hero-1440-${theme}.png` });
+    await page.close();
+}
+
+await browser.close();
+```
+
+If `playwright` does not resolve from the scratchpad, run node from the repo root — the package lives in the bind-mounted `node_modules` there.
+
+**Send both screenshots to the owner and stop.** Collect their comments before Task 2; anything about proportions, crop, colour or copy belongs in Task 3.
+
 ---
 
-### Task 4: Responsive breakpoints and light theme
-
-Desktop is done; this task makes the hero stack and verifies both themes.
+### Task 2: Responsive stacking
 
 **Files:**
 - Modify: `resources/css/components/dock-hero.css` (append media queries)
 - Test: `tests/Browser/DockHeroTest.php` (create)
 
 **Interfaces:**
-- Consumes: every `.dock-hero*` class from Task 3.
+- Consumes: every `.dock-hero*` class from Task 1.
 - Produces: no new names — only media queries over the existing ones.
 
 - [ ] **Step 1: Write the failing test**
@@ -934,7 +718,7 @@ test('the wordmark stays inside the hero at every width', function (int $width) 
     expect($page->script($fits))->toBeTrue();
 })->with([1440, 1100, 520]);
 
-test('the hero hands off directly to the filter bar', function () {
+test('the hero hands off to the filter bar below it', function () {
     $page = visit('/experience')->resize(1440, 900);
 
     $gap = <<<'JS'
@@ -945,7 +729,6 @@ test('the hero hands off directly to the filter bar', function () {
         })()
     JS;
 
-    // 2.25rem = 36px, plus whatever the section heading above the bar occupies.
     expect($page->script($gap))->toBeGreaterThan(0);
 });
 
@@ -979,7 +762,7 @@ test('the dock hero border thickens in the light theme', function () {
 docker exec portfolio-app-1 php artisan test --compact --filter=DockHeroTest
 ```
 
-Expected: the desktop, wordmark-at-1440, handoff, rotator and light-theme tests PASS (Task 3 delivered those); the stacking test and the wordmark tests at 1100/520 FAIL — no media queries yet.
+Expected: the desktop, wordmark-at-1440, handoff, rotator and light-theme tests PASS (Task 1 delivered those); the stacking test and the wordmark tests at 1100/520 FAIL — no media queries yet.
 
 If the very first `visit()` times out, that is the known ~17s first-visit cost: re-run once the app is warm.
 
@@ -1066,7 +849,7 @@ Then:
 docker exec portfolio-app-1 php artisan test --compact --filter=DockHeroTest
 ```
 
-Expected: PASS, all tests in both `tests/Feature/DockHeroTest.php` and `tests/Browser/DockHeroTest.php`.
+Expected: PASS, every test in both `tests/Feature/DockHeroTest.php` and `tests/Browser/DockHeroTest.php`.
 
 - [ ] **Step 5: Commit**
 
@@ -1075,89 +858,332 @@ git add resources/css/components/dock-hero.css tests/Browser/DockHeroTest.php
 git commit -m "feat(experience): stack the dock hero below 1200px"
 ```
 
+- [ ] **Step 6: Screenshot the narrow widths and STOP**
+
+Re-run the `shots.mjs` script from Task 1 with the viewport list `[[1100, 900], [390, 844]]` instead of the single 1440 size, then send those four images (two widths × two themes) to the owner and wait for comments before Task 3.
+
 ---
 
-### Task 5: Visual verification and crop tuning
+### Task 3: Fold in the owner's comments
 
-The tests prove geometry, not looks. This task looks at the thing in both themes and tunes the one value that cannot be decided from a spec: how the reused portrait crops inside the 470px photo column.
+Everything the owner asked for after Tasks 1 and 2, plus the one value that can only be judged by eye: how the reused portrait crops inside the photo column.
 
 **Files:**
-- Modify: `resources/css/components/dock-hero.css` (`object-position` only, if the crop is wrong)
-- Screenshots: write to the session scratchpad, not the repo
+- Modify: `resources/css/components/dock-hero.css`
+- Modify: whichever of `resources/views/components/portfolio/dock-hero.blade.php`, `resources/lang/{en,cs}/pages/experience.php` the comments touch
+- Test: `tests/Feature/DockHeroTest.php`, `tests/Browser/DockHeroTest.php` (update only if behaviour changed)
 
 **Interfaces:**
-- Consumes: everything from Tasks 1-4.
-- Produces: nothing new.
+- Consumes: Tasks 1 and 2.
+- Produces: nothing new. If a comment demands a new prop, add it to the `@props` list with a safe default and note it here so Task 4 knows.
 
-- [ ] **Step 1: Confirm the app serves the page**
+- [ ] **Step 1: List the comments as concrete changes**
 
-```bash
-curl -s -o /dev/null -w '%{http_code}\n' http://localhost:8008/experience
-```
+Write each comment down as a file + value change before touching anything. If a comment is ambiguous ("the photo feels heavy"), ask which of the two readings is meant rather than guessing.
 
-Expected: `200`. A 500 usually means the Vite manifest is stale — run `npm run build` on the host.
+- [ ] **Step 2: Judge the crop and the seam**
 
-- [ ] **Step 2: Screenshot both themes at three widths**
-
-Drive Playwright from the **host** — faster than a browser test for a look-see. Write this to the session scratchpad as `shots.mjs` and run it there with `node shots.mjs`:
-
-```js
-import { chromium } from 'playwright';
-
-const sizes = [[1440, 900], [1100, 900], [390, 844]];
-const browser = await chromium.launch();
-
-for (const [w, h] of sizes) {
-    for (const theme of ['dark', 'light']) {
-        const page = await browser.newPage({ viewport: { width: w, height: h } });
-        await page.goto('http://localhost:8008/experience', { waitUntil: 'networkidle' });
-        await page.evaluate((t) => {
-            document.documentElement.classList.toggle('dark', t === 'dark');
-        }, theme);
-        await page.waitForTimeout(400);
-        await page.screenshot({ path: `hero-${w}-${theme}.png` });
-        await page.close();
-    }
-}
-
-await browser.close();
-```
-
-If `playwright` does not resolve from the scratchpad, run node from the repo root instead — the package lives in the bind-mounted `node_modules` there.
-
-- [ ] **Step 3: Judge the crop and the seam**
-
-Look for three things:
-1. The portrait's subject inside the photo column — if the head is cut or drifts off-centre, change `object-position: 52% 22%` in `.dock-hero-photo img` and re-shoot. This is the only value in the file meant to be tuned by eye.
-2. The left gradient wash where the photo meets the copy column: it should soften the seam, not wash the picture out. In the light theme it uses `--c-bg` (`#F3F1EC`), so verify it does not look like a white smear.
+Three things to check against the screenshots:
+1. The portrait's subject inside the photo column — if the head is cut or drifts off-centre, change `object-position: 52% 22%` in `.dock-hero-photo img`. This is the only value in the file meant to be tuned by eye.
+2. The left gradient wash where the photo meets the copy column: it should soften the seam, not wash the picture out. In the light theme it uses `--c-bg` (`#F3F1EC`) — check it does not read as a white smear.
 3. The wordmark stroke against `--c-bg` in the light theme — `--c-primary-fade` is `#FDE68A` there and must still be visible without shouting.
 
-- [ ] **Step 4: Run the whole suite**
+- [ ] **Step 3: Apply the changes and rebuild**
+
+Host: `npm run build`.
+
+- [ ] **Step 4: Re-shoot and re-run**
+
+```bash
+docker exec portfolio-app-1 php artisan test --compact --filter=DockHeroTest
+```
+
+Expected: PASS. Re-run `shots.mjs` at all three widths and send the images.
+
+- [ ] **Step 5: Commit**
+
+```bash
+docker exec portfolio-app-1 vendor/bin/pint --dirty --format agent
+git add -A resources docs
+git commit -m "fix(experience): tune the dock hero from review"
+```
+
+Skip if nothing changed.
+
+---
+
+### Task 4: Move the tags and add the photo caption to the admin
+
+Now that the hero is agreed, its two hero-specific copy fields become editable. `experience_hero_tags` takes over from the lang array; `experience_hero_photo_caption` is new and starts empty. Both are **optional** — the hero must render without them — which the admin page has no notion of today.
+
+**Files:**
+- Modify: `database/seeders/SettingSeeder.php:12-42`
+- Modify: `resources/views/pages/manage/⚡site-content.blade.php`
+- Modify: `resources/views/experience.blade.php` (the `:tags` line, plus a new `:caption` line)
+- Modify: `resources/lang/en/pages/experience.php`, `resources/lang/cs/pages/experience.php` (drop `hero_tags`)
+- Modify: `tests/Feature/DockHeroTest.php` (the tags assertions move from lang to settings)
+- Test: `tests/Feature/SiteContentDockHeroTest.php` (create)
+
+**Interfaces:**
+- Consumes: the component's `tags` and `caption` props from Task 1.
+- Produces:
+  - `Setting` key `experience_hero_tags` → `['en' => string[], 'cs' => string[]]`, read with `Setting::list()`.
+  - `Setting` key `experience_hero_photo_caption` → `['en' => string, 'cs' => string]`, read with `Setting::text()`; may be `''`.
+  - Livewire public property `array $optionalKeys` and method `isOptional(string $key): bool` on the site-content component.
+
+- [ ] **Step 1: Write the failing test**
+
+Create `tests/Feature/SiteContentDockHeroTest.php`:
+
+```php
+<?php
+
+use App\Models\Setting;
+use App\Models\User;
+use Livewire\Volt\Volt;
+
+test('the seeder provides the dock hero tags and an empty photo caption', function () {
+    $this->seed(\Database\Seeders\SettingSeeder::class);
+
+    expect(Setting::list('experience_hero_tags', 'en'))->toHaveCount(5)
+        ->and(Setting::list('experience_hero_tags', 'cs'))->toHaveCount(5)
+        ->and(Setting::text('experience_hero_photo_caption', 'en'))->toBe('')
+        ->and(Setting::where('key', 'experience_hero_roles')->exists())->toBeTrue();
+});
+
+test('the site content page saves the dock hero fields', function () {
+    $this->seed(\Database\Seeders\SettingSeeder::class);
+
+    $this->actingAs(User::factory()->create());
+
+    Volt::test('pages.manage.site-content')
+        ->set('roleLists.experience_hero_tags.en', "Backend\nHardware")
+        ->set('roleLists.experience_hero_tags.cs', "Backend\nHardware")
+        ->set('texts.experience_hero_photo_caption.en', '<b>Tour de App, 2024</b>Regional finals.')
+        ->set('texts.experience_hero_photo_caption.cs', '<b>Tour de App, 2024</b>Krajské finále.')
+        ->call('save')
+        ->assertHasNoErrors();
+
+    expect(Setting::list('experience_hero_tags', 'en'))->toEqual(['Backend', 'Hardware'])
+        ->and(Setting::text('experience_hero_photo_caption', 'cs'))->toBe('<b>Tour de App, 2024</b>Krajské finále.');
+});
+
+test('the optional dock hero fields may be saved empty', function () {
+    $this->seed(\Database\Seeders\SettingSeeder::class);
+
+    $this->actingAs(User::factory()->create());
+
+    Volt::test('pages.manage.site-content')
+        ->set('texts.experience_hero_photo_caption.en', '')
+        ->set('texts.experience_hero_photo_caption.cs', '')
+        ->set('roleLists.experience_hero_tags.en', '')
+        ->set('roleLists.experience_hero_tags.cs', '')
+        ->call('save')
+        ->assertHasNoErrors();
+
+    expect(Setting::text('experience_hero_photo_caption', 'en'))->toBe('')
+        ->and(Setting::list('experience_hero_tags', 'en'))->toEqual([]);
+});
+
+test('the required hero fields still reject an empty english value', function () {
+    $this->seed(\Database\Seeders\SettingSeeder::class);
+
+    $this->actingAs(User::factory()->create());
+
+    Volt::test('pages.manage.site-content')
+        ->set('texts.experience_hero_title.en', '')
+        ->call('save')
+        ->assertHasErrors('texts.experience_hero_title.en');
+});
+
+test('the hero renders the caption once the setting carries one', function () {
+    $this->seed(\Database\Seeders\SettingSeeder::class);
+
+    $this->get(route('experience'))->assertDontSee('dock-hero-cap', false);
+
+    Setting::updateOrCreate(['key' => 'experience_hero_photo_caption'], ['value' => [
+        'en' => '<b>Tour de App, 2024</b>Regional finals jury.',
+        'cs' => '<b>Tour de App, 2024</b>Krajské finále.',
+    ]]);
+
+    $this->get(route('experience'))
+        ->assertSee('dock-hero-cap', false)
+        ->assertSee('<b>Tour de App, 2024</b>Regional finals jury.', false);
+});
+
+test('the hero renders its tags from the setting, not the lang file', function () {
+    $this->seed(\Database\Seeders\SettingSeeder::class);
+
+    Setting::updateOrCreate(['key' => 'experience_hero_tags'], ['value' => [
+        'en' => ['Only', 'Two'],
+        'cs' => ['Jen', 'Dva'],
+    ]]);
+
+    $html = $this->get(route('experience'))->assertOk()->getContent();
+
+    expect(substr_count($html, 'dock-hero-tag"'))->toBe(2);
+
+    $this->get(route('experience'))->assertSee('>Only</li>', false);
+});
+```
+
+Note on the Volt component name: if `Volt::test('pages.manage.site-content')` cannot resolve, check how sibling tests in `tests/Feature/` address the other `⚡` manage pages and copy that exact string.
+
+- [ ] **Step 2: Run it to make sure it fails**
+
+```bash
+docker exec portfolio-app-1 php artisan test --compact --filter=SiteContentDockHeroTest
+```
+
+Expected: FAIL — neither setting key exists.
+
+- [ ] **Step 3: Add the new keys to the seeder**
+
+In `database/seeders/SettingSeeder.php`, inside `$settings`, directly after the `experience_hero_roles` entry:
+
+```php
+            'experience_hero_tags' => [
+                'en' => ['Backend', 'Hardware', 'Competitions', 'Erasmus', 'Speaking'],
+                'cs' => ['Backend', 'Hardware', 'Soutěže', 'Erasmus', 'Přednášky'],
+            ],
+            'experience_hero_photo_caption' => ['en' => '', 'cs' => ''],
+```
+
+- [ ] **Step 4: Teach the admin page about optional fields**
+
+In `resources/views/pages/manage/⚡site-content.blade.php`:
+
+Add `'experience_hero_photo_caption'` to the end of `$textKeys`, and `'experience_hero_tags'` to the end of `$roleListKeys`.
+
+Add below `$roleListKeys`:
+
+```php
+    /**
+     * Keys whose English value may be left blank. Everything else is
+     * required — an empty hero title would render a hole on the site.
+     *
+     * @var array<int, string>
+     */
+    public array $optionalKeys = [
+        'experience_hero_tags',
+        'experience_hero_photo_caption',
+    ];
+```
+
+Change the `Experience hero` group to:
+
+```php
+        'Experience hero' => ['experience_hero_suptitle', 'experience_hero_title', 'experience_hero_roles', 'experience_hero_tags', 'experience_hero_photo_caption'],
+```
+
+In `save()`, replace the two rule-building loops with:
+
+```php
+        foreach ($this->textKeys as $key) {
+            $rules["texts.{$key}.en"] = [$this->isOptional($key) ? 'nullable' : 'required', 'string', 'max:2000'];
+            $rules["texts.{$key}.cs"] = ['nullable', 'string', 'max:2000'];
+        }
+
+        foreach ($this->roleListKeys as $key) {
+            $rules["roleLists.{$key}.en"] = [$this->isOptional($key) ? 'nullable' : 'required', 'string'];
+            $rules["roleLists.{$key}.cs"] = ['nullable', 'string'];
+        }
+```
+
+Add the helper next to `isRoleList()`:
+
+```php
+    /** True when a key may be saved with an empty English value. */
+    public function isOptional(string $key): bool
+    {
+        return in_array($key, $this->optionalKeys, true);
+    }
+```
+
+In the Blade half, in the **`en` slot only**, replace:
+
+```blade
+                            <flux:label>{{ $this->label($key) }} <flux:badge size="sm" color="yellow" inset="top bottom">Required</flux:badge></flux:label>
+```
+
+with:
+
+```blade
+                            <flux:label>
+                                {{ $this->label($key) }}
+                                @unless ($this->isOptional($key))
+                                    <flux:badge size="sm" color="yellow" inset="top bottom">Required</flux:badge>
+                                @endunless
+                            </flux:label>
+```
+
+The `cs` slot's label carries no badge already — leave it. `save()`'s existing `?:` fallback (cs falls back to en) is correct for the optional keys too: both empty yields empty.
+
+- [ ] **Step 5: Point the page at the settings**
+
+In `resources/views/experience.blade.php`, change the tags line and add the caption line:
+
+```blade
+        :tags="\App\Models\Setting::list('experience_hero_tags', $locale)"
+        :caption="\App\Models\Setting::text('experience_hero_photo_caption', $locale)"
+```
+
+Delete the now-unused `hero_tags` array from both `resources/lang/en/pages/experience.php` and `resources/lang/cs/pages/experience.php`. `hero_wordmark` and `hero_dock_label` stay — they are structural, not prose.
+
+- [ ] **Step 6: Update the Task 1 tags assertions**
+
+In `tests/Feature/DockHeroTest.php`, the test `'the dock hero renders the wordmark, dock label and tags from the lang files'` now over-claims. Rename it to `'the dock hero renders the wordmark and dock label from the lang files'` and delete its four tag assertions (`>Backend</li>`, `>Erasmus</li>`, `>Soutěže</li>`). Tag coverage now lives in `SiteContentDockHeroTest`.
+
+Also delete `'the dock hero omits the caption markup when no caption is passed'` — `SiteContentDockHeroTest` covers both the empty and filled caption cases against the real source.
+
+- [ ] **Step 7: Run the tests and seed**
+
+```bash
+docker exec portfolio-app-1 php artisan test --compact --filter=SiteContentDockHeroTest
+docker exec portfolio-app-1 php artisan test --compact --filter=DockHeroTest
+docker exec portfolio-app-1 php artisan db:seed --class=SettingSeeder --no-interaction
+```
+
+Expected: both suites PASS.
+
+- [ ] **Step 8: Format and commit**
+
+```bash
+docker exec portfolio-app-1 vendor/bin/pint --dirty --format agent
+git add database/seeders/SettingSeeder.php "resources/views/pages/manage/⚡site-content.blade.php" resources/views/experience.blade.php resources/lang/en/pages/experience.php resources/lang/cs/pages/experience.php tests/Feature/SiteContentDockHeroTest.php tests/Feature/DockHeroTest.php
+git commit -m "feat(settings): make the dock hero tags and caption admin-editable"
+```
+
+---
+
+### Task 5: Whole-suite verification and handoff
+
+**Files:** none expected. Fix whatever the suite turns up.
+
+- [ ] **Step 1: Run everything**
 
 ```bash
 docker exec portfolio-app-1 php artisan test --compact
 ```
 
-Expected: PASS. Any failure elsewhere means something depended on Experience rendering `.hero-page` — fix it here rather than leaving it for later.
+Expected: PASS. A failure elsewhere means something depended on Experience rendering `.hero-page` — fix it here, do not leave it.
 
-- [ ] **Step 5: Commit any tuning**
+- [ ] **Step 2: Check the admin page renders**
 
-```bash
-docker exec portfolio-app-1 vendor/bin/pint --dirty --format agent
-git add resources/css/components/dock-hero.css
-git commit -m "fix(experience): retune the dock hero photo crop"
-```
+Log into http://localhost:8008 and open the Site content page; confirm the Experience hero group shows five fields, with `Tags` as a textarea and `Photo caption` as an input, neither carrying the Required badge.
 
-Skip this commit if step 3 changed nothing.
+- [ ] **Step 3: Report what still needs the owner**
 
-- [ ] **Step 6: Report what still needs the owner**
-
-State plainly in the final message: the dock column stays empty until a clean transparent device export lands at `public/images/experience-dock.webp` and `config('portfolio.hero_images.experience_dock')` is pointed at it, and the photo caption stays hidden until it is filled in on the admin's Site content page.
+State plainly in the final message:
+- The dock column stays empty until a clean transparent device export lands at `public/images/experience-dock.webp` and `config('portfolio.hero_images.experience_dock')` points at it (~356px wide, no baked-in shadow — the CSS drop-shadow supplies it).
+- The photo caption stays hidden until it is filled in on the admin's Site content page.
+- The photo column reuses `public/images/experience-hero.webp`; a wider source (~1400×1500) would keep the `object-fit: cover` crop sharper.
 
 ---
 
 ## Notes for whoever executes this
 
-- Tasks are strictly ordered. Task 3 is the only one that changes what a visitor sees; Tasks 1 and 2 are safe to land on their own.
-- If a test in Task 3 or 4 fails for a reason the plan did not predict, use `superpowers:systematic-debugging` — do not loosen the assertion to make it pass.
+- Tasks are strictly ordered, and Tasks 1 and 2 each end with a stop-and-show step. Do not roll past them.
+- Task 1 is the only one that changes what a visitor sees on first render; Task 4 changes where its copy comes from, not how it looks.
+- If a test fails for a reason this plan did not predict, use `superpowers:systematic-debugging` — do not loosen the assertion to make it pass.
 - The design handoff (`README.md` in the zip) is the authority on any value this plan does not quote. Its metric strip section is deliberately not implemented.
