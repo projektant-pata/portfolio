@@ -46,7 +46,7 @@ Two smaller changes:
 | Prop | Type | Notes |
 | --- | --- | --- |
 | `eyebrow` | string | rendered as-is, emoji included; omitted when empty |
-| `title` | HTML string | `<em>` is not italic: weight 500, `--c-primary` |
+| `title` | HTML string | accent is `<span>` (site convention), styled weight 500 + `--c-primary` |
 | `roles` | array | rotator source; rotator rendered only when `count > 1` |
 | `tags` | array | non-interactive summary chips; row omitted when empty |
 | `wordmark` | string | outlined background word, `aria-hidden` |
@@ -77,6 +77,11 @@ block in `resources/css/app.css` for both themes, so everything resolves from
 `--border-w`, `--r-card`, `--t-fast`.
 
 ### Layout
+
+The hero does **not** carry the `portfolio-section` class. That class sets
+`opacity:0` on everything but `.hero-page` until the scroll observer adds
+`.is-visible`, which is wrong for an above-the-fold opener, and its
+`margin-bottom: var(--sp-section)` would fight the design's `2.25rem`.
 
 Container `.dock-hero`: `display:grid; grid-template-columns:250px 1fr 470px;
 min-height:640px; position:relative; overflow:hidden`, border
@@ -125,7 +130,7 @@ All hero prose stays admin-editable through the existing `Setting` model and the
 | Key | Status | Notes |
 | --- | --- | --- |
 | `experience_hero_suptitle` | exists, unchanged | emoji kept |
-| `experience_hero_title` | exists, seeder edited | `<span>` → `<em>` |
+| `experience_hero_title` | exists, unchanged | keeps its `<span>` accent |
 | `experience_hero_roles` | exists, unchanged | now feeds the rotator inside the dock hero |
 | `experience_hero_tags` | **new**, list | 5 summary chips, en/cs |
 | `experience_hero_photo_caption` | **new** | optional, seeds empty in both locales |
