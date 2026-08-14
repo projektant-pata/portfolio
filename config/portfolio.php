@@ -37,6 +37,10 @@ return [
         'home' => 'images/home-hero.webp',
         'about' => 'images/about-hero.webp',
         'experience' => 'images/experience-hero.webp',
+
+        /* Device shot in the Experience hero's dock column. Empty until the
+           clean transparent export lands — the column then renders label-only. */
+        'experience_dock' => '',
         'projects' => 'images/projects-hero.webp',
     ],
 

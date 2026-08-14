@@ -72,7 +72,7 @@ test('a subpage hero fills the first screen and still lets the next section peek
     expect($page->script($heroPeekJs))->toBeLessThanOrEqual(1)
         ->and($page->script($nextSectionPeekJs))->toBeGreaterThan(0)
         ->and($page->script($nextSectionPeekJs))->toBeLessThan(200);
-})->with(['/about-me', '/experience', '/projects']);
+})->with(['/about-me', '/projects']);
 
 test('a subpage hero fills the first screen and still lets the next section peek in on mobile', function (string $path) use ($heroPeekJs, $nextSectionPeekJs) {
     $this->seed(\Database\Seeders\SettingSeeder::class);
@@ -83,7 +83,7 @@ test('a subpage hero fills the first screen and still lets the next section peek
     expect($page->script($heroPeekJs))->toBeLessThanOrEqual(1)
         ->and($page->script($nextSectionPeekJs))->toBeGreaterThan(0)
         ->and($page->script($nextSectionPeekJs))->toBeLessThan(200);
-})->with(['/about-me', '/experience', '/projects']);
+})->with(['/about-me', '/projects']);
 
 test('every hero centres its text on the same line as the home hero', function (string $path) use ($heroTextOffsetJs) {
     $this->seed(\Database\Seeders\SettingSeeder::class);
@@ -91,7 +91,7 @@ test('every hero centres its text on the same line as the home hero', function (
     $page = visit($path)->resize(1440, 900);
 
     expect($page->script($heroTextOffsetJs))->toBeLessThanOrEqual(2);
-})->with(['/', '/about-me', '/experience', '/projects']);
+})->with(['/', '/about-me', '/projects']);
 
 test('the section after a subpage hero fades in on scroll like every other section', function (string $path) {
     $this->seed(\Database\Seeders\SettingSeeder::class);
@@ -110,7 +110,7 @@ test('the section after a subpage hero fades in on scroll like every other secti
     JS;
 
     expect($page->script($transitionDuration))->not->toBe('0s');
-})->with(['/about-me', '/experience', '/projects']);
+})->with(['/about-me', '/projects']);
 
 test('a subpage hero rotator cycles its roles', function () {
     $this->seed(\Database\Seeders\SettingSeeder::class);

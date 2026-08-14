@@ -1,0 +1,207 @@
+@import './hero-rotator.css';
+
+/* ================================================================
+   DOCK HERO
+   ================================================================
+   Bordered three-column page opener: dock (fixed 250px) / copy
+   (flexible) / photo (fixed 470px). Column widths are fixed on
+   purpose — the dock must not grow past the device shot, and the
+   photo must not shrink below a readable crop.
+
+   From design_handoff_experience_hero. Deviations from that
+   handoff, all deliberate: no metric strip, 640px min-height
+   instead of 720px (the strip is what made up the difference),
+   the rotator line in place of the static lede, and an eyebrow
+   that carries an emoji instead of the rule + letterspacing.
+   ================================================================ */
+
+.dock-hero {
+    position: relative;
+    display: grid;
+    grid-template-columns: 250px 1fr 470px;
+    min-height: 640px;
+    margin-bottom: 2.25rem;
+    background: var(--c-bg);
+    border: var(--border-w) solid var(--c-primary-fade);
+    border-radius: var(--r-card);
+    overflow: hidden;
+}
+
+/* ── Dock column ── */
+
+.dock-hero-dock {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 2.6rem;
+    overflow: hidden;
+    border-right: 1px solid color-mix(in srgb, var(--c-primary-fade) 55%, transparent);
+    background: linear-gradient(to bottom, color-mix(in srgb, var(--c-surface) 70%, transparent), transparent 70%);
+}
+
+.dock-hero-dock-label {
+    margin-bottom: 1.4rem;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--c-muted);
+}
+
+/* The device shot is meant to be cropped by the column's bottom edge —
+   it bleeds out, it is not a centered object. */
+.dock-hero-dock img {
+    display: block;
+    width: 178px;
+    filter: drop-shadow(0 24px 50px rgba(0, 0, 0, 0.55));
+}
+
+/* ── Copy column ── */
+
+.dock-hero-copy {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 1.5rem;
+    padding: 4.6rem 3.4rem 3.6rem;
+}
+
+/* Outlined page word behind the copy. Lives inside the copy column, not
+   the grid: anchored to the grid it gets clipped or collides with the
+   bottom edge. */
+.dock-hero-ghost {
+    position: absolute;
+    left: 0;
+    top: -0.5rem;
+    z-index: 0;
+    font-family: var(--font-display);
+    font-size: 132px;
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    white-space: nowrap;
+    pointer-events: none;
+    color: transparent;
+    -webkit-text-stroke: 1px color-mix(in srgb, var(--c-primary-fade) 80%, transparent);
+}
+
+.dock-hero-eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--c-muted);
+}
+
+.dock-hero-title {
+    font-family: var(--font-display);
+    font-size: 70px;
+    font-weight: 700;
+    line-height: 0.96;
+    letter-spacing: -0.02em;
+}
+
+.dock-hero-title span {
+    font-weight: 500;
+    color: var(--c-primary);
+}
+
+.dock-hero-roles {
+    max-width: 36ch;
+    font-size: 15.5px;
+    font-weight: 200;
+    line-height: 1.65;
+    color: var(--c-muted);
+    text-wrap: pretty;
+}
+
+.dock-hero-roles > #hero-rotator {
+    color: var(--c-fg);
+    font-weight: 600;
+}
+
+/* Summary chips — display only. Deliberately smaller and dot-less so they
+   do not read as the filter bar's .exp-tag buttons further down the page. */
+.dock-hero-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.dock-hero-tag {
+    padding: 0.4rem 0.8rem;
+    border: 1px solid color-mix(in srgb, var(--c-primary-fade) 75%, transparent);
+    border-radius: 999px;
+    font-size: 11.5px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: var(--c-muted);
+    cursor: default;
+    transition: var(--t-fast);
+}
+
+.dock-hero-tag:hover {
+    border-color: var(--c-primary);
+    color: var(--c-fg);
+}
+
+/* ── Photo column ── */
+
+.dock-hero-photo {
+    position: relative;
+    z-index: 2;
+    overflow: hidden;
+    margin: 0;
+}
+
+.dock-hero-photo img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 52% 22%;
+}
+
+/* Softens the seam against the copy column. */
+.dock-hero-photo::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to right, color-mix(in srgb, var(--c-bg) 65%, transparent), transparent 26%);
+}
+
+/* The dark bottom wash exists only to carry caption text. */
+.dock-hero-photo:has(.dock-hero-cap)::after {
+    background:
+        linear-gradient(to top, rgba(19, 18, 16, 0.9) 0 18%, transparent 55%),
+        linear-gradient(to right, color-mix(in srgb, var(--c-bg) 65%, transparent), transparent 26%);
+}
+
+/* Caption colours are literal, not tokens: they sit on the photo's dark
+   gradient in both themes. */
+.dock-hero-cap {
+    position: absolute;
+    left: 2rem;
+    right: 1.8rem;
+    bottom: 1.5rem;
+    z-index: 3;
+    font-size: 11.5px;
+    font-weight: 200;
+    line-height: 1.55;
+    color: #D6D3D1;
+}
+
+.dock-hero-cap b {
+    display: block;
+    margin-bottom: 0.15rem;
+    font-size: 12.5px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    color: #fff;
+}

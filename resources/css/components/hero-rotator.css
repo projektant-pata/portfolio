@@ -1,0 +1,27 @@
+/* ================================================================
+   HERO ROTATOR
+   ================================================================
+   The rotating role line and its blinking caret, shared by the
+   full-width page hero and the Experience dock hero. Imported by
+   both component stylesheets; the JS that drives it lives in
+   resources/js/app.js.
+   ================================================================ */
+
+#hero-rotator span {
+    color: var(--c-primary);
+}
+
+/* Blinking caret next to the rotating role text */
+.hero-caret {
+    display: inline-block;
+    width: 2px;
+    height: 0.9em;
+    margin-left: 2px;
+    background-color: var(--c-primary);
+    vertical-align: text-bottom;
+    animation: caret-blink 1s step-end infinite;
+}
+
+@keyframes caret-blink {
+    50% { opacity: 0; }
+}

@@ -1,3 +1,5 @@
+@import './hero-rotator.css';
+
 /* ================================================================
    PAGE HERO — shared by every public page
    ================================================================
@@ -52,25 +54,6 @@
 .underh1 > span#hero-rotator {
     color: var(--c-fg);
     font-weight: var(--fw-semibold);
-}
-
-#hero-rotator span {
-    color: var(--c-primary);
-}
-
-/* Blinking caret next to the rotating role text */
-.hero-caret {
-    display: inline-block;
-    width: 2px;
-    height: 0.9em;
-    margin-left: 2px;
-    background-color: var(--c-primary);
-    vertical-align: text-bottom;
-    animation: caret-blink 1s step-end infinite;
-}
-
-@keyframes caret-blink {
-    50% { opacity: 0; }
 }
 
 /* The box is sized here (not on the <img>) so it's definite regardless of

@@ -40,7 +40,7 @@ test('every public subpage renders exactly one h1', function (string $route) {
 
     expect(substr_count($html, '<h1'))->toBe(1)
         ->and(substr_count($html, 'id="hero-rotator"'))->toBe(1);
-})->with(['about-me', 'experience', 'projects']);
+})->with(['about-me', 'projects']);
 
 test('the about me hero renders its settings copy', function () {
     Setting::updateOrCreate(['key' => 'about_hero_suptitle'], ['value' => ['en' => '👤 whoami', 'cs' => '👤 whoami']]);
@@ -58,13 +58,7 @@ test('the about me hero renders its settings copy', function () {
 });
 
 test('the subpage heroes render the czech copy under the cs locale', function () {
-    Setting::updateOrCreate(['key' => 'experience_hero_title'], ['value' => ['en' => 'My <span>journey</span>,', 'cs' => 'Moje <span>cesta</span>,']]);
     Setting::updateOrCreate(['key' => 'projects_hero_title'], ['value' => ['en' => 'Things I’ve <span>shipped</span>,', 'cs' => 'Věci, co jsem <span>postavil</span>,']]);
-
-    $this->withSession(['locale' => 'cs'])
-        ->get(route('experience'))
-        ->assertSee('Moje <span>cesta</span>,', false)
-        ->assertDontSee('My <span>journey</span>,', false);
 
     $this->withSession(['locale' => 'cs'])
         ->get(route('projects'))

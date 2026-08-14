@@ -3,12 +3,17 @@
     @php $locale = app()->getLocale(); @endphp
 
     {{-- Hero --}}
-    <x-portfolio.page-hero
+    <x-portfolio.dock-hero
         :eyebrow="\App\Models\Setting::text('experience_hero_suptitle', $locale)"
         :title="\App\Models\Setting::text('experience_hero_title', $locale)"
         :roles="\App\Models\Setting::list('experience_hero_roles', $locale)"
-        :image="config('portfolio.hero_images.experience')"
-        image-alt=""
+        :tags="__('pages/experience.hero_tags')"
+        :wordmark="__('pages/experience.hero_wordmark')"
+        :dock-label="__('pages/experience.hero_dock_label')"
+        :dock-image="config('portfolio.hero_images.experience_dock')"
+        dock-image-alt=""
+        :photo="config('portfolio.hero_images.experience')"
+        photo-alt=""
     />
 
     <section id="experience" class="portfolio-section">
