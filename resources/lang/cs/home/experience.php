@@ -4,9 +4,16 @@ return [
     'title' => 'Zkušenosti',
 
     'title_home' => 'Práce & Život',
+    'title_all' => 'Vše',
     'title_work' => 'Práce',
     'title_life' => 'Život',
-    'search_placeholder' => 'Hledat podle názvu…',
+    'clear_filters' => 'Zrušit filtry',
+    'empty' => 'Žádný záznam neodpovídá filtrům.',
+    'reset' => 'Zrušit filtry',
+    'count_one' => ':count / :total záznam',
+    'count_few' => ':count / :total záznamy',
+    'count_many' => ':count / :total záznamů',
+    'search_placeholder' => 'Hledat názvy, místa, technologie…',
 
     'card1_year' => '2021 - nyní',
     'card1_title' => 'ECDL',

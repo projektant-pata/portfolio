@@ -11,6 +11,17 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 3rem;
+    opacity: 0;
+    translate: 0 24px;
+    transition: opacity var(--t-base) calc(var(--i, 0) * 0.06s),
+                translate var(--t-fast);
+}
+
+/* Scroll-reveal entrance — see initScrollReveal() in app.js. */
+.projects-row.is-visible {
+    opacity: 1;
+    translate: 0;
+    transition-delay: calc(var(--i, 0) * 0.06s);
 }
 
 .projects-row--reverse {

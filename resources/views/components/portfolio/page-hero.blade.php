@@ -27,9 +27,9 @@
             </h4>
         @endif
     </article>
-    @if ($image !== '')
-        <article class="hero-page-image">
+    <article class="hero-page-image {{ $image === '' ? 'hero-page-image--placeholder' : '' }}">
+        @if ($image !== '')
             <img src="{{ asset($image) }}" alt="{{ $imageAlt }}">
-        </article>
-    @endif
+        @endif
+    </article>
 </section>

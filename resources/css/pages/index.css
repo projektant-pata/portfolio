@@ -175,7 +175,9 @@ html:not(.dark) .tool-github-light { display: block; }
 }
 
 .reviews-row-card {
-    flex: 0 0 calc((100% - (var(--reviews-per-view) - 1) * var(--reviews-gap)) / var(--reviews-per-view));
+    /* -2px keeps the last card's right border off the clipped viewport
+       edge — flush against it, subpixel rounding erases the hairline. */
+    flex: 0 0 calc((100% - (var(--reviews-per-view) - 1) * var(--reviews-gap) - 2px) / var(--reviews-per-view));
     min-width: 0;
     display: flex;
     flex-direction: column;

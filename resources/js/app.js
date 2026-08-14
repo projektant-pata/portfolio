@@ -255,9 +255,15 @@ function initScrollReveal() {
     setStagger('.stats-cards');
     setStagger('.tools-row');
     setStagger('.reviews-row');
+    setStagger('.projects-year-group');
+    setStagger('#projects');
 
+    // Experience cards are excluded here: the masonry script in
+    // experience.blade.php rebuilds them from scratch on resize, so it
+    // owns its own reveal observer instead (a one-shot querySelectorAll
+    // snapshot here would go stale the moment that rebuild runs).
     const targets = document.querySelectorAll(
-        '.portfolio-section:not(.hero-page), .stats-cards-card, .tools-row-card'
+        '.portfolio-section:not(.hero-page), .stats-cards-card, .tools-row-card, .projects-row'
     );
     const carousels = document.querySelectorAll('.reviews-carousel');
     const revealCards = (carousel) => {
@@ -467,16 +473,18 @@ function initReviewsCarousel() {
         return;
     }
 
-    /** @type {number[]} scroll offsets, one per reachable card-aligned step */
+    /** @type {number[]} scroll offsets, one per reachable page-aligned step */
     let steps = [0];
 
     const measureSteps = () => {
         const maxScroll = Math.max(0, viewport.scrollWidth - viewport.clientWidth);
         const rowLeft = row.getBoundingClientRect().left + viewport.scrollLeft;
+        const perView = parseInt(getComputedStyle(carousel).getPropertyValue('--reviews-per-view'), 10) || 1;
 
-        const offsets = [...row.children].map(
-            (card) => Math.min(Math.round(card.getBoundingClientRect().left + viewport.scrollLeft - rowLeft), maxScroll)
-        );
+        const cards = [...row.children];
+        const offsets = cards
+            .filter((_, i) => i % perView === 0)
+            .map((card) => Math.min(Math.round(card.getBoundingClientRect().left + viewport.scrollLeft - rowLeft), maxScroll));
 
         // Cards past the last full page all clamp to maxScroll — keep one step.
         steps = [...new Set(offsets)];

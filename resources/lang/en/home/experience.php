@@ -4,9 +4,16 @@ return [
     'title' => 'Experience',
 
     'title_home' => 'Work & Life',
+    'title_all' => 'All',
     'title_work' => 'Work',
     'title_life' => 'Life',
-    'search_placeholder' => 'Search by title…',
+    'clear_filters' => 'Clear filters',
+    'empty' => 'No entries match those filters.',
+    'reset' => 'Reset',
+    'count_one' => ':count / :total entry',
+    'count_few' => ':count / :total entries',
+    'count_many' => ':count / :total entries',
+    'search_placeholder' => 'Search titles, places, tech…',
 
     'card1_year' => '2021 - now',
     'card1_title' => 'ECDL',

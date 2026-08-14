@@ -14,30 +14,55 @@
     <section id="experience" class="portfolio-section">
         <h2>{{ __('home/experience.title') }}</h2>
 
-        {{-- Filter tabs --}}
-        <div id="exp-filters">
-            <div class="exp-filters-group">
-                <button type="button" class="exp-filter" data-filter="work">{{ __('home/experience.title_work') }}</button>
-                <button type="button" class="exp-filter" data-filter="life">{{ __('home/experience.title_life') }}</button>
+        {{-- Filter bar --}}
+        <div class="exp-filterbar" id="exp-filterbar">
+            <div class="exp-filterbar-row">
+                <div class="exp-scope" id="exp-scope">
+                    <span class="exp-scope-thumb" id="exp-scope-thumb" aria-hidden="true"></span>
+                    <button type="button" data-scope="all" aria-pressed="true">{{ __('home/experience.title_all') }}</button>
+                    <button type="button" data-scope="work" aria-pressed="false">{{ __('home/experience.title_work') }}</button>
+                    <button type="button" data-scope="life" aria-pressed="false">{{ __('home/experience.title_life') }}</button>
+                </div>
+
+                <label class="exp-search">
+                    <svg viewBox="0 0 16 16" aria-hidden="true">
+                        <circle cx="6.8" cy="6.8" r="4.6" />
+                        <line x1="10.4" y1="10.4" x2="14" y2="14" />
+                    </svg>
+                    <input
+                        type="search"
+                        id="exp-search"
+                        placeholder="{{ __('home/experience.search_placeholder') }}"
+                        autocomplete="off"
+                    >
+                </label>
+
+                <div
+                    class="exp-count"
+                    id="exp-count"
+                    aria-live="polite"
+                    data-one="{{ __('home/experience.count_one') }}"
+                    data-few="{{ __('home/experience.count_few') }}"
+                    data-many="{{ __('home/experience.count_many') }}"
+                ></div>
             </div>
+
             @if ($badges->isNotEmpty())
-                <div class="exp-filters-group">
-                    @foreach ($badges as $badge)
-                        <button
-                            type="button"
-                            class="exp-filter exp-filter--badge"
-                            data-filter="badge:{{ $badge->slug }}"
-                            style="--badge-color: {{ $badge->color }}"
-                        >{{ $badge->getTranslation('name', $locale) }}</button>
-                    @endforeach
+                <div class="exp-filterbar-row">
+                    <div class="exp-tags" id="exp-tags">
+                        @foreach ($badges as $badge)
+                            <button
+                                type="button"
+                                class="exp-tag"
+                                aria-pressed="false"
+                                data-tag="{{ $badge->slug }}"
+                                style="--badge-color: {{ $badge->color }}"
+                            >{{ $badge->getTranslation('name', $locale) }}</button>
+                        @endforeach
+                    </div>
+                    <button type="button" class="exp-clear" id="exp-clear">{{ __('home/experience.clear_filters') }}</button>
                 </div>
             @endif
-            <div id="exp-search-wrap">
-                <button type="button" id="exp-search-btn" aria-label="{{ __('home/experience.search_placeholder') }}">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-                </button>
-                <input type="search" id="exp-search" placeholder="{{ __('home/experience.search_placeholder') }}" autocomplete="off">
-            </div>
         </div>
 
         {{-- Masonry grid --}}
@@ -46,6 +71,11 @@
             <div id="exp-col-left"></div>
             <div id="exp-col-right"></div>
         </div>
+
+        <p class="exp-empty" id="exp-empty" hidden>
+            {{ __('home/experience.empty') }}
+            <button type="button" class="exp-empty-reset" id="exp-reset">{{ __('home/experience.reset') }}</button>
+        </p>
 
         {{-- Hidden card pool: source of truth for JS --}}
         <div id="exp-cards-pool" style="display: none">
@@ -121,39 +151,55 @@
         const colRight = document.getElementById('exp-col-right');
         const gridEl = document.getElementById('exp-grid');
         const gridLine = document.getElementById('exp-grid-line');
+
+        const bar = document.getElementById('exp-filterbar');
+        const scopeEl = document.getElementById('exp-scope');
+        const thumb = document.getElementById('exp-scope-thumb');
+        const tagRow = document.getElementById('exp-tags');          // null when there are no badges
+        const clearBtn = document.getElementById('exp-clear');       // null when there are no badges
+        const countEl = document.getElementById('exp-count');
+        const emptyEl = document.getElementById('exp-empty');
+        const resetBtn = document.getElementById('exp-reset');
         const searchInput = document.getElementById('exp-search');
+
         const allCards = Array.from(pool.querySelectorAll('.exp-card'));
-        allCards.forEach(function (card, i) { card.dataset.idx = i; });
-        const activeFilters = new Set();
+        allCards.forEach(function (card, i) {
+            card.dataset.idx = i;
+            // Cached once: the search matches the card's whole visible text, and reading
+            // textContent on every keystroke would be wasteful.
+            card.dataset.searchText = card.textContent.replace(/\s+/g, ' ').trim().toLowerCase();
+        });
+
+        let scope = 'all';
+        const activeTags = new Set();
 
         function matchesFilters(card) {
-            const query = searchInput.value.trim().toLowerCase();
-            if (query) {
-                const title = (card.querySelector('.exp-card-title')?.textContent || '').toLowerCase();
-                if (!title.includes(query)) { return false; }
-            }
-            if (activeFilters.size === 0) { return true; }
+            if (scope !== 'all' && card.dataset.type !== scope) { return false; }
 
-            // Faceted filtering: OR within a group (type / badge), AND across
-            // groups. Selecting "Work" + a badge narrows to work cards that
-            // also carry that badge, instead of unioning the two sets.
-            const typeFilters = [];
-            const badgeFilters = [];
-            for (const f of activeFilters) {
-                if (f.startsWith('badge:')) { badgeFilters.push(f.slice(6)); }
-                else { typeFilters.push(f); }
-            }
-
-            if (typeFilters.length && !typeFilters.includes(card.dataset.type)) {
-                return false;
-            }
-            if (badgeFilters.length) {
+            if (activeTags.size) {
                 const slugs = JSON.parse(card.dataset.badges || '[]');
-                if (!badgeFilters.some(function (b) { return slugs.includes(b); })) {
-                    return false;
-                }
+                if (!slugs.some(function (slug) { return activeTags.has(slug); })) { return false; }
             }
+
+            const query = searchInput.value.trim().toLowerCase();
+            if (query && !card.dataset.searchText.includes(query)) { return false; }
+
             return true;
+        }
+
+        function moveThumb() {
+            const pressed = scopeEl.querySelector('button[aria-pressed="true"]');
+            if (!pressed) { return; }
+            thumb.style.width = pressed.offsetWidth + 'px';
+            thumb.style.transform = 'translateX(' + (pressed.offsetLeft - thumb.offsetLeft) + 'px)';
+        }
+
+        function countLabel(visible, total) {
+            // Czech needs three plural forms (1 / 2-4 / 5+); English reuses one of them.
+            const key = visible === 1 ? 'one' : (visible >= 2 && visible <= 4 ? 'few' : 'many');
+            return countEl.dataset[key]
+                .replace(':count', '<b>' + visible + '</b>')
+                .replace(':total', total);
         }
 
         function updateGridLine() {
@@ -176,7 +222,33 @@
             gridLine.style.height = (lastMid - firstMid) + 'px';
         }
 
+        // Scroll-reveal entrance for the cards themselves (see .exp-card in
+        // experience.css). Owned locally rather than by app.js's shared
+        // observer because resize rebuilds the columns from scratch below —
+        // a one-shot querySelectorAll snapshot would go stale the moment
+        // that happens. Cards already revealed before a rebuild carry that
+        // state over to their replacement clone instead of being
+        // re-observed: once a rebuild scrolls a card off-screen (e.g. the
+        // user resizes after scrolling down), a fresh observe() would never
+        // fire and the card would stay invisible forever.
+        const cardObserver = ('IntersectionObserver' in window)
+            ? new IntersectionObserver(function (entries) {
+                  entries.forEach(function (entry) {
+                      if (entry.isIntersecting) {
+                          entry.target.classList.add('is-visible');
+                          cardObserver.unobserve(entry.target);
+                      }
+                  });
+              }, { threshold: 0.15 })
+            : null;
+
         function layoutMasonry() {
+            const revealedIdx = new Set(
+                [...colLeft.children, ...colRight.children]
+                    .filter(function (c) { return c.classList.contains('is-visible'); })
+                    .map(function (c) { return c.dataset.idx; })
+            );
+
             colLeft.replaceChildren();
             colRight.replaceChildren();
             let leftH = 0;
@@ -192,6 +264,18 @@
                     rightH += clone.offsetHeight;
                 }
             });
+            [colLeft, colRight].forEach(function (col) {
+                [...col.children].forEach(function (card, i) {
+                    card.style.setProperty('--i', i);
+                    if (revealedIdx.has(card.dataset.idx)) {
+                        card.classList.add('is-visible');
+                    } else if (cardObserver) {
+                        cardObserver.observe(card);
+                    } else {
+                        card.classList.add('is-visible');
+                    }
+                });
+            });
             updateGridLine();
         }
 
@@ -199,71 +283,77 @@
         // clones — no rebuild, so the dim transition animates and the grid never
         // reflows while filtering.
         function applyDim() {
+            let visible = 0;
             [...colLeft.children, ...colRight.children].forEach(function (clone) {
-                clone.classList.toggle('is-dimmed', !matchesFilters(allCards[Number(clone.dataset.idx)]));
+                const matches = matchesFilters(allCards[Number(clone.dataset.idx)]);
+                clone.classList.toggle('is-dimmed', !matches);
+                if (matches) { visible++; }
+            });
+
+            countEl.innerHTML = countLabel(visible, allCards.length);
+            emptyEl.hidden = visible !== 0;
+            bar.classList.toggle(
+                'has-filters',
+                scope !== 'all' || activeTags.size > 0 || searchInput.value.trim() !== ''
+            );
+        }
+
+        scopeEl.addEventListener('click', function (e) {
+            const btn = e.target.closest('button[data-scope]');
+            if (!btn) { return; }
+            scopeEl.querySelectorAll('button[data-scope]').forEach(function (b) {
+                b.setAttribute('aria-pressed', String(b === btn));
+            });
+            scope = btn.dataset.scope;
+            moveThumb();
+            applyDim();
+        });
+
+        if (tagRow) {
+            tagRow.addEventListener('click', function (e) {
+                const btn = e.target.closest('.exp-tag');
+                if (!btn) { return; }
+                const on = btn.getAttribute('aria-pressed') !== 'true';
+                btn.setAttribute('aria-pressed', String(on));
+                if (on) { activeTags.add(btn.dataset.tag); } else { activeTags.delete(btn.dataset.tag); }
+                applyDim();
             });
         }
 
-        document.querySelectorAll('.exp-filter').forEach(function (btn) {
-            btn.addEventListener('click', function () {
-                const f = btn.dataset.filter;
-                const isBadge = f.startsWith('badge:');
-
-                if (isBadge) {
-                    // Badge filters are multi-select — toggle independently.
-                    if (activeFilters.has(f)) {
-                        activeFilters.delete(f);
-                        btn.classList.remove('active');
-                    } else {
-                        activeFilters.add(f);
-                        btn.classList.add('active');
-                    }
-                } else {
-                    // Type filters (work/life) are single-select.
-                    const wasActive = activeFilters.has(f);
-                    document.querySelectorAll('.exp-filter:not(.exp-filter--badge).active').forEach(function (b) {
-                        activeFilters.delete(b.dataset.filter);
-                        b.classList.remove('active');
-                    });
-                    if (!wasActive) {
-                        activeFilters.add(f);
-                        btn.classList.add('active');
-                    }
-                }
-                applyDim();
-            });
-        });
-
         searchInput.addEventListener('input', applyDim);
 
-        const searchWrap = document.getElementById('exp-search-wrap');
-        const searchBtn = document.getElementById('exp-search-btn');
-
-        searchBtn.addEventListener('click', function () {
-            searchWrap.classList.toggle('open');
-            if (searchWrap.classList.contains('open')) {
-                searchInput.focus();
-            } else {
-                searchInput.value = '';
-                applyDim();
+        function clearFilters() {
+            scope = 'all';
+            activeTags.clear();
+            searchInput.value = '';
+            scopeEl.querySelectorAll('button[data-scope]').forEach(function (b) {
+                b.setAttribute('aria-pressed', String(b.dataset.scope === 'all'));
+            });
+            if (tagRow) {
+                tagRow.querySelectorAll('.exp-tag').forEach(function (t) { t.setAttribute('aria-pressed', 'false'); });
             }
-        });
+            moveThumb();
+            applyDim();
+        }
 
-        document.addEventListener('click', function (e) {
-            if (!searchWrap.contains(e.target)) {
-                searchWrap.classList.remove('open');
-                searchInput.value = '';
-                applyDim();
-            }
-        });
+        if (clearBtn) { clearBtn.addEventListener('click', clearFilters); }
+        resetBtn.addEventListener('click', clearFilters);
 
         let resizeTimer;
         window.addEventListener('resize', function () {
             clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(layoutMasonry, 150);
+            resizeTimer = setTimeout(function () {
+                layoutMasonry();
+                moveThumb();
+            }, 150);
         });
 
         layoutMasonry();
+        moveThumb();
+        applyDim();
+
+        // Label widths change once the webfont swaps in, and again on resize.
+        if (document.fonts) { document.fonts.ready.then(moveThumb); }
     })();
     </script>
 

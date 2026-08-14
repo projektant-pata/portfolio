@@ -10,6 +10,7 @@ class ExperienceController extends Controller
     public function __invoke(): View
     {
         $experiences = Experience::with('badges')
+            ->orderByRaw("CAST(SUBSTRING(year->>'en' FROM '\\d{4}') AS INTEGER) DESC NULLS LAST")
             ->orderBy('sort_order')
             ->get();
 

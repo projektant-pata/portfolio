@@ -34,10 +34,10 @@ return [
     */
 
     'hero_images' => [
-        'home' => 'images/id-photo-portrait-businessman-suit-260nw-1505360618 1.png',
-        'about' => 'images/id-photo-portrait-businessman-suit-260nw-1505360618 1.png',
-        'experience' => 'images/id-photo-portrait-businessman-suit-260nw-1505360618 1.png',
-        'projects' => 'images/id-photo-portrait-businessman-suit-260nw-1505360618 1.png',
+        'home' => 'images/home-hero.webp',
+        'about' => 'images/about-hero.webp',
+        'experience' => 'images/experience-hero.webp',
+        'projects' => 'images/projects-hero.webp',
     ],
 
 ];

@@ -4,135 +4,247 @@
    EXPERIENCE PAGE STYLES
    ================================================================ */
 
-/* ── Filter tabs ── */
+/* ── Filter bar ── */
 
-#exp-filters {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.75rem;
-    row-gap: 0.75rem;
-    margin-bottom: 3rem;
+.exp-filterbar {
+    display: grid;
+    gap: 0.8rem;
+    margin-bottom: 2.25rem;
+    padding: 0.8rem 1rem;
+    background: var(--c-surface);
+    border: var(--border-w) solid var(--c-primary-fade);
+    border-radius: var(--r-card-sm);
     position: relative;
     z-index: 2;
-    background: var(--c-surface);
-    padding: 0.5rem 0.75rem;
-    border-radius: var(--r-card-sm);
-    border: var(--border-w) solid var(--c-primary-fade);
 }
 
-.exp-filters-group {
+.exp-filterbar-row {
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
-    gap: 0.35rem;
+    flex-wrap: wrap;
+    gap: 0.6rem 1rem;
 }
 
-/* Type buttons — badge pill style */
-.exp-filter {
+.exp-filterbar-row + .exp-filterbar-row {
+    border-top: 1px solid color-mix(in srgb, var(--c-primary-fade) 55%, transparent);
+    padding-top: 0.8rem;
+}
+
+/* ── Scope segmented control ── */
+
+.exp-scope {
+    position: relative;
+    display: inline-flex;
+    gap: 0.1rem;
+    padding: 0.2rem;
+    border-radius: 999px;
+    background: var(--c-surface-sunken);
+    border: 1px solid color-mix(in srgb, var(--c-primary-fade) 60%, transparent);
+}
+
+/* Width and translateX are set from JS off the pressed button's box. */
+.exp-scope-thumb {
+    position: absolute;
+    top: 0.2rem;
+    bottom: 0.2rem;
+    left: 0.2rem;
+    width: 0;
+    border-radius: 999px;
+    background: var(--c-primary);
+    transition: transform var(--t-fast), width var(--t-fast);
+}
+
+.exp-scope button {
+    position: relative;
+    font: inherit;
     font-size: var(--fs-sm);
-    line-height: 1;
     font-weight: var(--fw-semibold);
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    padding: 0.3rem 0.9rem;
+    padding: 0.35rem 1.05rem;
+    border: 0;
     border-radius: 999px;
-    border: var(--border-w) solid var(--c-primary-fade);
     background: transparent;
     color: var(--c-muted);
     cursor: pointer;
-    transition: background var(--t-fast), color var(--t-fast), border-color var(--t-fast);
+    transition: color var(--t-fast);
 }
 
-.exp-filter:hover {
-    border-color: var(--c-primary);
-    color: var(--c-primary);
-    background: color-mix(in srgb, var(--c-primary) 10%, transparent);
+.exp-scope button:hover {
+    color: var(--c-fg);
 }
 
-.exp-filter.active {
-    background: var(--c-primary);
-    border-color: var(--c-primary);
-    color: var(--c-bg);
-}
-
-/* Badge filter pills — same size as type pills, badge-color tinted */
-.exp-filter--badge {
-    text-transform: none;
-    letter-spacing: 0.05em;
-    border-color: color-mix(in srgb, var(--badge-color, var(--c-primary)) 35%, transparent);
-    color: var(--badge-color, var(--c-muted));
-}
-
-.exp-filter--badge:hover {
-    background: color-mix(in srgb, var(--badge-color, var(--c-primary)) 12%, transparent);
-    border-color: var(--badge-color, var(--c-primary));
-    color: var(--badge-color, var(--c-primary));
-}
-
-.exp-filter--badge.active {
-    background: var(--badge-color, var(--c-primary));
-    border-color: var(--badge-color, var(--c-primary));
+.exp-scope button[aria-pressed="true"] {
     color: var(--c-bg);
 }
 
 /* ── Search ── */
 
-#exp-search-wrap {
-    margin-left: auto;
-    flex-shrink: 0;
+.exp-search {
+    flex: 1 1 15rem;
+    min-width: 11rem;
     display: flex;
-    flex-direction: row-reverse;
     align-items: center;
-    gap: 0;
+    gap: 0.5rem;
+    padding: 0.4rem 0.85rem;
+    border-radius: 999px;
+    background: var(--c-surface-sunken);
+    border: 1px solid transparent;
+    transition: border-color var(--t-fast);
 }
 
-#exp-search-btn {
+.exp-search:focus-within {
+    border-color: var(--c-primary);
+}
+
+.exp-search svg {
     flex-shrink: 0;
-    width: 2rem;
-    height: 2rem;
-    border-radius: 50%;
-    border: var(--border-w) solid var(--c-primary-fade);
+    width: 14px;
+    height: 14px;
+    fill: none;
+    stroke: var(--c-muted);
+    stroke-width: 1.6;
+    transition: stroke var(--t-fast);
+}
+
+.exp-search:focus-within svg {
+    stroke: var(--c-primary);
+}
+
+.exp-search input {
+    flex: 1;
+    min-width: 0;
+    border: 0;
+    background: transparent;
+    color: var(--c-fg);
+    font-family: inherit;
+    font-size: var(--fs-sm);
+    outline: none;
+}
+
+.exp-search input::placeholder {
+    color: var(--c-muted);
+}
+
+/* ── Result count ── */
+
+.exp-count {
+    margin-left: auto;
+    font-family: ui-monospace, monospace;
+    font-size: var(--fs-mini);
+    color: var(--c-muted);
+    white-space: nowrap;
+}
+
+.exp-count b {
+    color: var(--c-primary);
+    font-weight: var(--fw-semibold);
+}
+
+/* ── Badge tag chips ── */
+
+.exp-tags {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem;
+    flex: 1;
+}
+
+.exp-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-family: inherit;
+    font-size: var(--fs-mini);
+    padding: 0.25rem 0.75rem 0.25rem 0.6rem;
+    border-radius: 999px;
+    border: 1px solid color-mix(in srgb, var(--c-primary-fade) 70%, transparent);
     background: transparent;
     color: var(--c-muted);
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: border-color var(--t-fast), color var(--t-fast), background var(--t-fast);
+    transition: color var(--t-fast), border-color var(--t-fast), background var(--t-fast);
 }
 
-#exp-search-btn:hover,
-#exp-search-wrap.open #exp-search-btn {
-    border-color: var(--c-primary);
-    color: var(--c-primary);
-    background: color-mix(in srgb, var(--c-primary) 10%, transparent);
+.exp-tag::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--badge-color, var(--c-primary));
+    transition: box-shadow var(--t-fast);
 }
 
-#exp-search {
-    width: 0;
-    opacity: 0;
-    padding: 0;
-    border: none;
-    border-bottom: 1px solid transparent;
-    background: transparent;
+.exp-tag:hover {
     color: var(--c-fg);
-    font-size: var(--fs-sm);
-    outline: none;
-    margin-right: 0;
-    transition: width 0.25s ease, opacity 0.2s ease, margin-right 0.25s ease;
-    overflow: hidden;
+    border-color: color-mix(in srgb, var(--badge-color, var(--c-primary)) 55%, transparent);
 }
 
-#exp-search::placeholder {
+.exp-tag[aria-pressed="true"] {
+    color: var(--badge-color, var(--c-primary));
+    border-color: color-mix(in srgb, var(--badge-color, var(--c-primary)) 60%, transparent);
+    background: color-mix(in srgb, var(--badge-color, var(--c-primary)) 14%, transparent);
+}
+
+.exp-tag[aria-pressed="true"]::before {
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--badge-color, var(--c-primary)) 28%, transparent);
+}
+
+/* ── Clear ── */
+
+.exp-clear {
+    font-family: inherit;
+    font-size: var(--fs-mini);
+    color: var(--c-muted);
+    background: transparent;
+    border: 0;
+    padding: 0.25rem 0.2rem;
+    cursor: pointer;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--t-fast), color var(--t-fast);
+}
+
+.exp-filterbar.has-filters .exp-clear {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.exp-clear:hover {
+    color: var(--c-primary);
+}
+
+/* ── Empty state ── */
+
+.exp-empty {
+    padding: 2.5rem 0;
+    text-align: center;
+    font-size: var(--fs-sm);
     color: var(--c-muted);
 }
 
-#exp-search-wrap.open #exp-search {
-    width: 16rem;
-    opacity: 1;
-    margin-right: 0.5rem;
-    border-bottom-color: var(--c-primary-fade);
+.exp-empty-reset {
+    font-family: inherit;
+    font-size: inherit;
+    color: var(--c-muted);
+    background: transparent;
+    border: 0;
+    padding: 0;
+    text-decoration: underline;
+    cursor: pointer;
+    transition: color var(--t-fast);
+}
+
+.exp-empty-reset:hover {
+    color: var(--c-primary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .exp-scope-thumb,
+    .exp-tag,
+    .exp-clear {
+        transition: none;
+    }
 }
 
 /* ── Grid layout ── */
@@ -184,13 +296,27 @@
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    transition: border-color var(--t-fast), box-shadow var(--t-fast), opacity var(--t-base), filter var(--t-base);
+    transition: border-color var(--t-fast), box-shadow var(--t-fast),
+                opacity var(--t-base) calc(var(--i, 0) * 0.06s),
+                filter var(--t-base), translate var(--t-fast);
+}
+
+/* Scroll-reveal entrance — see initScrollReveal() in app.js. The stagger
+   delay lives on this (pre-reveal) rule because a transition uses the
+   delay declared for the state it's entering, and entering .is-visible
+   simply means this selector stops matching. */
+.exp-card:not(.is-visible) {
+    opacity: 0;
+    translate: 0 24px;
 }
 
 .exp-card.is-dimmed {
     opacity: 0.25;
     filter: grayscale(0.6);
     pointer-events: none;
+    /* Filter toggles happen long after the reveal — never let the stagger
+       delay baked into .exp-card's transition hold up a dim/undim fade. */
+    transition-delay: 0s;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -258,18 +384,32 @@
     opacity: var(--exp-glow-opacity);
     pointer-events: none;
     animation: exp-border-rotate var(--exp-frame-spin) linear infinite;
+    visibility: visible;
+    transition:
+        opacity var(--t-base) var(--t-base-time),
+        visibility 0s var(--t-base-time);
 }
 
-/* A dimmed card gets opacity + filter, which makes it a stacking context —
-   the glow would then paint over the card face instead of behind it. */
-.exp-card.is-dimmed .exp-card-glow {
-    display: none;
+/* The glow must stay invisible while the card is mid-transition: a dimming,
+   un-dimming, or not-yet-revealed card has opacity < 1, which makes it a
+   stacking context, and the z-index:-1 glow would then paint over the card
+   face instead of behind it. So: dim/pre-reveal → hide instantly;
+   undim/reveal → wait out the card's transition, then fade in. */
+.exp-card.is-dimmed .exp-card-glow,
+.exp-card:not(.is-visible) .exp-card-glow {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0s, visibility 0s;
 }
 
 @media (prefers-reduced-motion: reduce) {
     .exp-card--special,
     .exp-card-glow {
         animation: none;
+    }
+
+    .exp-card-glow {
+        transition: none;
     }
 }
 
@@ -511,34 +651,23 @@
         display: none;
     }
 
-    #exp-filters {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .exp-filters-group {
-        justify-content: center;
-    }
-
-    #exp-search-wrap {
-        width: 100%;
-        margin-left: 0;
-        flex-direction: row;
-        justify-content: center;
-    }
-
-    #exp-search-wrap.open #exp-search {
-        width: 100%;
+    .exp-scope {
         flex: 1;
+        justify-content: center;
+    }
+
+    .exp-count {
+        margin-left: 0;
     }
 }
 
 @media (max-width: 576px) {
-    #exp-filters {
-        gap: 0.5rem;
+    .exp-filterbar {
+        padding: 0.7rem 0.8rem;
     }
 
-    .exp-filter {
+    .exp-scope button {
+        padding: 0.35rem 0.7rem;
         font-size: var(--fs-mini);
     }
 

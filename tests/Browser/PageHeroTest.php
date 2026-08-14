@@ -44,32 +44,72 @@ test('the home hero rotator cycles its roles', function () {
     expect($page->script($read))->not->toBe($first);
 });
 
-$nextSectionVisibleJs = <<<'JS'
+/**
+ * Height of the next section's sliver above the fold. The subpage peek is
+ * bought with a negative margin now, so it is measured from that section
+ * rather than from the hero's own (full-screen) box.
+ */
+$nextSectionPeekJs = <<<'JS'
     (() => {
-        const hero = document.querySelector('.hero-page');
-        const next = hero.nextElementSibling;
-        return next.getBoundingClientRect().top < window.innerHeight;
+        const next = document.querySelector('.hero-page').nextElementSibling;
+        return Math.round(window.innerHeight - next.getBoundingClientRect().top);
     })()
 JS;
 
-test('a subpage hero stops short of the fold on desktop', function (string $path) use ($heroPeekJs, $nextSectionVisibleJs) {
+/** Distance in px between the hero text's centre and the viewport's centre. */
+$heroTextOffsetJs = <<<'JS'
+    (() => {
+        const text = document.querySelector('.hero-page-text').getBoundingClientRect();
+        return Math.round(Math.abs((text.top + text.bottom) / 2 - window.innerHeight / 2));
+    })()
+JS;
+
+test('a subpage hero fills the first screen and still lets the next section peek in', function (string $path) use ($heroPeekJs, $nextSectionPeekJs) {
     $this->seed(\Database\Seeders\SettingSeeder::class);
 
     $page = visit($path)->resize(1440, 900);
 
-    expect($page->script($heroPeekJs))->toBeGreaterThan(0)
-        ->and($page->script($heroPeekJs))->toBeLessThan(200)
-        ->and($page->script($nextSectionVisibleJs))->toBeTrue();
+    expect($page->script($heroPeekJs))->toBeLessThanOrEqual(1)
+        ->and($page->script($nextSectionPeekJs))->toBeGreaterThan(0)
+        ->and($page->script($nextSectionPeekJs))->toBeLessThan(200);
 })->with(['/about-me', '/experience', '/projects']);
 
-test('a subpage hero stops short of the fold on mobile', function (string $path) use ($heroPeekJs, $nextSectionVisibleJs) {
+test('a subpage hero fills the first screen and still lets the next section peek in on mobile', function (string $path) use ($heroPeekJs, $nextSectionPeekJs) {
     $this->seed(\Database\Seeders\SettingSeeder::class);
 
     $page = visit($path)->resize(390, 844);
 
-    expect($page->script($heroPeekJs))->toBeGreaterThan(0)
-        ->and($page->script($heroPeekJs))->toBeLessThan(200)
-        ->and($page->script($nextSectionVisibleJs))->toBeTrue();
+
+    expect($page->script($heroPeekJs))->toBeLessThanOrEqual(1)
+        ->and($page->script($nextSectionPeekJs))->toBeGreaterThan(0)
+        ->and($page->script($nextSectionPeekJs))->toBeLessThan(200);
+})->with(['/about-me', '/experience', '/projects']);
+
+test('every hero centres its text on the same line as the home hero', function (string $path) use ($heroTextOffsetJs) {
+    $this->seed(\Database\Seeders\SettingSeeder::class);
+
+    $page = visit($path)->resize(1440, 900);
+
+    expect($page->script($heroTextOffsetJs))->toBeLessThanOrEqual(2);
+})->with(['/', '/about-me', '/experience', '/projects']);
+
+test('the section after a subpage hero fades in on scroll like every other section', function (string $path) {
+    $this->seed(\Database\Seeders\SettingSeeder::class);
+
+    $page = visit($path)->resize(1440, 900);
+
+    // Exact opacity is timing-dependent (the entrance transition may already
+    // be mid-flight by the time this runs), so assert the reveal transition
+    // is wired up at all rather than pin an instantaneous value — this is
+    // what used to be force-disabled for the section right after the peek.
+    $transitionDuration = <<<'JS'
+        (() => {
+            const next = document.querySelector('.hero-page').nextElementSibling;
+            return getComputedStyle(next).transitionDuration;
+        })()
+    JS;
+
+    expect($page->script($transitionDuration))->not->toBe('0s');
 })->with(['/about-me', '/experience', '/projects']);
 
 test('a subpage hero rotator cycles its roles', function () {
