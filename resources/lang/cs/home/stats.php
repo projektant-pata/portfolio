@@ -2,6 +2,10 @@
 
 return [
     'title' => 'Moje statistiky',
+    'head_ghost' => 'Statistiky',
+    'head_eyebrow' => 'V číslech',
+    'head_title' => 'Něco z toho je <em>vážně</em>',
+    'head_note' => 'Dvě čísla bych obhájil u pohovoru, jedno ne.',
     'card1_title' => 'Junior',
     'card1_text' => 'Profesionální úroveň',
     'card2_title' => '5+',
