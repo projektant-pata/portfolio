@@ -39,3 +39,20 @@ test('the work and tools heads render without a ghost wordmark', function () {
         ->assertDontSee('>Work &amp; Life</div>', false)
         ->assertDontSee('>Tools</div>', false);
 });
+
+test('the reviews head renders with a ghost and no note', function () {
+    $this->get(route('home'))
+        ->assertSee('What people say')
+        ->assertSee('Words from people who <em>worked</em> with me', false)
+        ->assertSee('<div class="sechead-ghost" aria-hidden="true">Reviews</div>', false);
+});
+
+test('every h2 on the home page belongs to a section head', function () {
+    $html = $this->get(route('home'))->getContent();
+
+    // 5 section heads + the footer wordmark, which keeps its own oversized
+    // treatment and is not a section head.
+    expect(preg_match_all('/<h2[\s>]/', $html))->toBe(6)
+        ->and(preg_match_all('/<p class="sechead-eyebrow">/', $html))->toBe(5)
+        ->and($html)->toContain('<h2 class="portfolio-footer-watermark">');
+});

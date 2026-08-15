@@ -131,7 +131,11 @@
 
     {{-- Reviews --}}
     <section id="reviews" class="portfolio-section">
-        <h2>{{ \App\Models\Setting::text('reviews_title', $locale) }}</h2>
+        <x-portfolio.section-head
+            :ghost="__('home/reviews.head_ghost')"
+            :eyebrow="__('home/reviews.head_eyebrow')"
+            :title="__('home/reviews.head_title')"
+        />
         <div class="reviews-carousel" data-reviews-carousel>
             <div class="reviews-carousel-viewport">
                 <article class="reviews-row" role="list">
