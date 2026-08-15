@@ -50,6 +50,19 @@
     flex-wrap: wrap;
 }
 
+/* `auto` flex-basis sizes the title block off its max-content, clamped by
+   the h2's `max-width: 26ch` (section-head.css below) — so a title that
+   wraps to two lines still reserves the FULL 26ch, not the narrower width
+   it actually renders at, and can starve the note of room and force it
+   onto its own line even above the 1100px breakpoint (seen on the
+   "Things I shipped, not things I started" / Projects title). Flexing
+   the title block from a zero basis makes it size off the space left
+   after the note claims its own width instead. */
+.sechead .sechead-row > div:first-child {
+    flex: 1 1 0%;
+    min-width: 0;
+}
+
 .sechead .sechead-eyebrow {
     display: flex;
     align-items: center;
