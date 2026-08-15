@@ -22,6 +22,6 @@ test('the seeder installs the subpage hero copy and drops the orphaned keys', fu
 
     expect(Setting::text('about_hero_title', 'cs'))->toBe('Něco <span>o mně</span>,')
         ->and(Setting::text('experience_hero_suptitle', 'en'))->toBe('🗓️ Where I’ve been')
-        ->and(Setting::list('projects_hero_roles', 'cs'))->toHaveCount(4)
+        ->and(Setting::list('projects_hero_roles', 'cs'))->toHaveCount(5)
         ->and(Setting::whereIn('key', ['about_hero_subtitle', 'about_hero_meta'])->count())->toBe(0);
 });

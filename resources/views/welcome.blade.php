@@ -3,14 +3,18 @@
     @php $locale = app()->getLocale(); @endphp
     @php $heroRoles = \App\Models\Setting::list('hero_roles', $locale); @endphp
 
-    {{-- Hero --}}
-    <x-portfolio.page-hero
+    {{-- Hero — the only one with `full`: home shows no peek of the next section. --}}
+    <x-portfolio.dock-hero
         full
         :eyebrow="\App\Models\Setting::text('hero_suptitle', $locale)"
         :title="\App\Models\Setting::text('hero_title', $locale)"
         :roles="$heroRoles"
-        :image="config('portfolio.hero_images.home')"
-        image-alt=""
+        :tags="__('home/hero.hero_tags')"
+        :wordmark="__('home/hero.hero_wordmark')"
+        :photo="config('portfolio.hero_images.home')"
+        photo-alt=""
+        photo-position="50% 30%"
+        :caption="__('home/hero.hero_photo_caption')"
     />
 
     {{-- Stats --}}

@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'hero_wordmark' => 'About me',
+    'hero_tags' => ['Chess', 'Rock music', 'Volunteering', 'Freelance', 'SPŠE Pardubice'],
+
     'title' => 'About me',
     'card1_title' => 'About me',
     'card1_text' => 'Hi there! I’m Richard Hývl, a starting software developer and freelancer with a passion.

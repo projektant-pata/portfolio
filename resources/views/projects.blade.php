@@ -2,15 +2,20 @@
 
     @php $locale = app()->getLocale(); @endphp
     {{-- Hero --}}
-    <x-portfolio.page-hero
+    <x-portfolio.dock-hero
         :eyebrow="\App\Models\Setting::text('projects_hero_suptitle', $locale)"
         :title="\App\Models\Setting::text('projects_hero_title', $locale)"
         :roles="\App\Models\Setting::list('projects_hero_roles', $locale)"
-        :image="config('portfolio.hero_images.projects')"
-        image-alt=""
+        :tags="__('pages/projects.hero_tags')"
+        :wordmark="__('pages/projects.hero_wordmark')"
+        :photo="config('portfolio.hero_images.projects')"
+        photo-alt=""
+        photo-position="50% 30%"
     />
 
-    <section id="projects" class="portfolio-section">
+    {{-- No fade-up: the hero leaves this section's top edge inside the first
+         viewport, so it must already be there when the page paints. --}}
+    <section id="projects" class="portfolio-section portfolio-section--no-reveal">
         @forelse ($projects as $year => $yearProjects)
             <article class="projects-year-group">
                 <h2 class="projects-year-label">{{ $year }}</h2>

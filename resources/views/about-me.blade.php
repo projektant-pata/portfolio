@@ -3,16 +3,20 @@
     @php $locale = app()->getLocale(); @endphp
 
     {{-- Hero --}}
-    <x-portfolio.page-hero
+    <x-portfolio.dock-hero
         :eyebrow="\App\Models\Setting::text('about_hero_suptitle', $locale)"
         :title="\App\Models\Setting::text('about_hero_title', $locale)"
         :roles="\App\Models\Setting::list('about_hero_roles', $locale)"
-        :image="config('portfolio.hero_images.about')"
-        image-alt=""
+        :tags="__('pages/about-me.hero_tags')"
+        :wordmark="__('pages/about-me.hero_wordmark')"
+        :photo="config('portfolio.hero_images.about')"
+        photo-alt=""
+        photo-position="50% 25%"
     />
 
-    {{-- About Me --}}
-    <section id="about-me" class="portfolio-section">
+    {{-- About Me. No fade-up: the hero leaves this section's top edge inside
+         the first viewport, so it must already be there when the page paints. --}}
+    <section id="about-me" class="portfolio-section portfolio-section--no-reveal">
         <h2>{!! \App\Models\Setting::text('about_title', $locale) !!}</h2>
         <div class="about-me-content">
             @foreach ($aboutCards as $card)

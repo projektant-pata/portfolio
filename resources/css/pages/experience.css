@@ -652,12 +652,21 @@
     }
 
     .exp-scope {
-        flex: 1;
+        /* Full row of its own so centering has the whole bar width to work
+           with — sharing the row with .exp-search left it centered inside
+           only its own flex share, which still read as pinned left. */
+        flex-basis: 100%;
         justify-content: center;
     }
 
     .exp-count {
         margin-left: 0;
+    }
+
+    /* One column now — a dimmed card still eats a full row, so filtered-out
+       cards are removed from flow instead of just faded. */
+    .exp-card.is-dimmed {
+        display: none;
     }
 }
 

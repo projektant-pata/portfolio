@@ -37,6 +37,7 @@
     --color-portfolio-surface-sunken:  #131210;  /* recessed tracks, tab strips  */
     --color-portfolio-fg:              #FFFFFF;  /* default text color           */
     --color-portfolio-muted:           #A3A3A3;  /* muted text (subtitles)       */
+    --color-portfolio-watermark:       #FED7AA;  /* giant ghost headings (h2)    */
     --color-selection-bg:              #FFB347;  /* ::selection background       */
     --color-selection-fg:              #000000;  /* ::selection text             */
 
@@ -132,6 +133,7 @@ select:focus[data-flux-control] {
     --c-surface-sunken: var(--color-portfolio-surface-sunken);
     --c-fg:             var(--color-portfolio-fg);
     --c-muted:          var(--color-portfolio-muted);
+    --c-watermark:      var(--color-portfolio-watermark);
     --c-selection-bg:   var(--color-selection-bg);
     --c-selection-fg:   var(--color-selection-fg);
 
@@ -161,11 +163,6 @@ select:focus[data-flux-control] {
        Section and component gaps in rem.                          */
     --sp-section:   6.25rem;  /* gap between page sections (~100px)*/
     --sp-card-pad:  1.5rem;   /* inner padding for cards           */
-
-    /* ── Hero ───────────────────────────────────────────────────
-       How much of the next section stays visible under a subpage
-       hero — the sliver that invites the scroll. Fluid, no px.    */
-    --hero-peek: clamp(4rem, 11svh, 8rem);
 
     /* ── Radii ──────────────────────────────────────────────────*/
     --r-card:   1.875rem;  /* large card corner radius (~30px)     */
@@ -201,32 +198,46 @@ select:focus[data-flux-control] {
    ================================================================ */
 
 html:not(.dark) {
-    /* Primary: rich amber — legible as text, beautiful as accent */
-    --color-primary:       #B45309;   /* amber-700 — readable on light surfaces */
-    --color-primary-dark:  #92400E;   /* amber-800 — hover/darker states        */
-    --color-primary-light: #FBBF24;   /* amber-400 — visible golden borders     */
-    --color-primary-fade:  #FDE68A;   /* amber-200 — warm fills, dividers       */
+    /* Primary: burnt bronze — passes AA as body text on white, still the
+       same gold family as the dark theme's #FACC15 accent */
+    --color-primary:       #A45B0B;   /* bronze — text-safe on white surfaces   */
+    --color-primary-dark:  #7C400A;   /* deeper bronze — hover/active states    */
+    --color-primary-light: #E6C063;   /* soft gold — hairline borders, dots     */
+    --color-primary-fade:  #F6E7BE;   /* pale gold — fills, dividers            */
 
-    /* Surfaces: warm hierarchy — cards visually lift off the page */
-    --color-portfolio-bg:             #F3F1EC;  /* warm parchment           */
-    --color-portfolio-surface:        #FFFFFF;  /* white card faces pop     */
-    --color-portfolio-surface-sunken: #E4E0D7;  /* recessed tracks          */
+    /* Surfaces: bone page, white cards — cards lift without the page reading
+       as cream */
+    --color-portfolio-bg:             #FAF9F6;  /* bone                     */
+    --color-portfolio-surface:        #FFFFFF;  /* white card faces         */
+    --color-portfolio-surface-sunken: #EFEDE6;  /* recessed tracks          */
 
     /* Text */
-    --color-portfolio-fg:    #1C1B17;
-    --color-portfolio-muted: #78716C;   /* warm stone-500 — harmonizes with amber */
+    --color-portfolio-fg:    #14130E;   /* warm ink                               */
+    --color-portfolio-muted: #5B564C;   /* warm stone — readable at weight 200    */
+
+    /* Giant ghost headings: pale sand, filled instead of stroked. Gold at this
+       size reads as highlighter; sand reads as background texture. */
+    --color-portfolio-watermark: #E6E0D0;
 
     /* Selection */
-    --color-selection-bg: #FCD34D;   /* amber-300                                */
-    --color-selection-fg: #1C1B17;
+    --color-selection-bg: #E6C063;
+    --color-selection-fg: #14130E;
 
-    --border-w:       2px;        /* thicker borders in light mode           */
+    /* Borders stay hairline — a 2px gold frame on a white card reads as candy */
+    --border-w:       1px;
 }
 
-/* h2 watermark: solid amber fill in light mode — stroke is too faint on parchment */
+/* h2 watermark: solid sand fill in light mode — a stroke this thin disappears
+   on bone, and gold at this size overpowers the content it sits behind. */
 html:not(.dark) .portfolio-page h2 {
-    color: var(--c-primary-lt);
+    color: var(--c-watermark);
     -webkit-text-stroke: 0;
+}
+
+/* Year labels are content, not texture — they keep the accent so the timeline
+   stays readable, unlike the section watermarks they inherit from. */
+html:not(.dark) .portfolio-page h2.projects-year-label {
+    color: var(--c-primary);
 }
 
 /* Special card frame: the white sweeps vanish on a white card face, so light
@@ -340,8 +351,8 @@ html:not(.dark) .exp-card--special {
     font-size: var(--fs-h2);
     font-weight: 500;
     font-family: var(--font-display);
-    color: color-mix(in srgb, var(--c-primary-lt) 12%, transparent);
-    -webkit-text-stroke: 1px var(--c-primary-lt);
+    color: color-mix(in srgb, var(--c-watermark) 12%, transparent);
+    -webkit-text-stroke: 1px var(--c-watermark);
     overflow-wrap: anywhere;
 }
 
@@ -428,16 +439,19 @@ html:not(.dark) .exp-card--special {
 }
 
 /* ── Scroll reveal (fade-up) ──
-   Every section except the hero (which gets its own entrance sequence,
-   see pages/index.css) fades up once it crosses into the viewport;
-   see initScrollReveal() in app.js. */
-.portfolio-section:not(.hero-page) {
+   Every section fades up once it crosses into the viewport; see
+   initScrollReveal() in app.js. The hero is not one of them — it carries no
+   .portfolio-section class and runs its own entrance instead (see
+   components/dock-hero.css). Sections that already peek into the first
+   viewport opt out with .portfolio-section--no-reveal — they would otherwise
+   fade in while the visitor is still looking at the hero. */
+.portfolio-section:not(.portfolio-section--no-reveal) {
     opacity: 0;
     translate: 0 24px;
     transition: opacity var(--t-base), translate var(--t-base);
 }
 
-.portfolio-section:not(.hero-page).is-visible {
+.portfolio-section.is-visible {
     opacity: 1;
     translate: 0;
 }

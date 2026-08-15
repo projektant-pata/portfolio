@@ -9,22 +9,57 @@
    photo must not shrink below a readable crop.
 
    From design_handoff_experience_hero. Deviations from that
-   handoff, all deliberate: no metric strip, 640px min-height
+   handoff, all deliberate: no metric strip, 700px min-height
    instead of 720px (the strip is what made up the difference),
    the rotator line in place of the static lede, and an eyebrow
    that carries an emoji instead of the rule + letterspacing.
    ================================================================ */
 
+/* The section owns the screen; the band inside it owns the layout. Splitting
+   the two is what lets the columns stay 700px tall while still sitting in the
+   middle of a full-height opener. */
 .dock-hero {
+    display: flex;
+    align-items: center;
+    /* The box is symmetric about the viewport centre — the same offset above
+       and below — so the band, which is only centred inside it, lands on the
+       true middle of the first screen. `dvh` (not `vh`) so mobile browser
+       chrome cannot make it overflow.
+
+       Centring costs the peek, so the bottom margin buys it back: it pulls
+       the next section up to `100dvh - peek`, leaving its top edge just
+       inside the first screen. The value only goes negative once 5dvh grows
+       past the top offset (viewports over ~1120px), and by then the box has
+       far more slack around the 700px band than it takes back. */
+    --dock-hero-top: 3.5rem;
+    --dock-hero-peek: 5dvh;
+    min-height: calc(100dvh - 2 * var(--dock-hero-top));
+    margin-top: var(--dock-hero-top);
+    margin-bottom: calc(var(--dock-hero-top) - var(--dock-hero-peek));
+}
+
+/* Home only: no peek. Paying back the full top offset instead of `top - peek`
+   makes the box exactly 100dvh, so the next section's top edge lands on the
+   fold rather than inside it. Deliberately above the 1200px media query —
+   equal specificity there, so stacked mobile keeps its own bottom margin and
+   "the next section is not visible" stays a desktop guarantee. */
+.dock-hero--full {
+    margin-bottom: var(--dock-hero-top);
+}
+
+.dock-hero-inner {
     position: relative;
     display: grid;
-    grid-template-columns: 250px 1fr 470px;
-    min-height: 640px;
-    margin-bottom: 2.25rem;
+    grid-template-columns: 1fr 470px;
+    width: 100%;
+    min-height: 700px;
     background: var(--c-bg);
-    border: var(--border-w) solid var(--c-primary-fade);
-    border-radius: var(--r-card);
     overflow: hidden;
+}
+
+/* Dock column only renders once a label or device shot is passed in. */
+.dock-hero-inner:has(.dock-hero-dock) {
+    grid-template-columns: 250px 1fr 470px;
 }
 
 /* ── Dock column ── */
@@ -41,7 +76,7 @@
     background: linear-gradient(to bottom, color-mix(in srgb, var(--c-surface) 70%, transparent), transparent 70%);
 }
 
-.dock-hero-dock-label {
+.dock-hero .dock-hero-dock-label {
     margin-bottom: 1.4rem;
     font-size: 10px;
     font-weight: 600;
@@ -60,20 +95,28 @@
 
 /* ── Copy column ── */
 
+/* The copy block is centred in the column on its own terms — the ghost
+   wordmark is out of flow above it, so it never shifts the text. */
 .dock-hero-copy {
     position: relative;
     z-index: 2;
+    /* Sizing anchor for the title below: the copy column is what is left of
+       the row after the fixed photo and the fixed nav, so it — not the
+       viewport — is the width the title has to fit inside. */
+    container-type: inline-size;
     display: flex;
     flex-direction: column;
-    justify-content: flex-end;
+    justify-content: center;
     gap: 1.5rem;
-    padding: 4.6rem 3.4rem 3.6rem;
+    /* No left padding on purpose: the copy hangs on the band's left edge,
+       flush with the ghost wordmark above it. */
+    padding: 3.4rem 3.4rem 3.4rem 0;
 }
 
 /* Outlined page word behind the copy. Lives inside the copy column, not
    the grid: anchored to the grid it gets clipped or collides with the
    bottom edge. */
-.dock-hero-ghost {
+.dock-hero .dock-hero-ghost {
     position: absolute;
     left: 0;
     top: -0.5rem;
@@ -89,18 +132,35 @@
     -webkit-text-stroke: 1px color-mix(in srgb, var(--c-primary-fade) 80%, transparent);
 }
 
-.dock-hero-eyebrow {
-    font-size: 11px;
+/* Light theme: a pale-gold stroke vanishes on bone. Fill the word with the
+   same sand the section watermarks use so it stays background texture. */
+html:not(.dark) .dock-hero .dock-hero-ghost {
+    color: var(--c-watermark);
+    -webkit-text-stroke: 0;
+}
+
+.dock-hero .dock-hero-eyebrow {
+    font-size: 13.5px;
     font-weight: 600;
     color: var(--c-muted);
 }
 
-.dock-hero-title {
+/* Fluid against the copy column, not a flat 70px: the hero titles are owner
+   editable, and the longest word in one of them (`projektant-pata` on Home)
+   is what decides whether the line fits. At 70px that word filled the column
+   to the pixel and pushed the trailing comma onto a line of its own. `cqw`
+   keeps the ratio between the word and its column constant at every width;
+   it still caps at the handoff's 70px once the column is wide enough. */
+.dock-hero .dock-hero-title {
     font-family: var(--font-display);
-    font-size: 70px;
+    font-size: clamp(38px, 13cqw, 70px);
     font-weight: 700;
     line-height: 0.96;
     letter-spacing: -0.02em;
+    /* The global h1 sets `overflow-wrap: anywhere`, which let a title break
+       between its last word and its trailing comma the moment the line ran
+       one glyph long. The clamp above keeps it inside the column instead. */
+    overflow-wrap: normal;
 }
 
 .dock-hero-title span {
@@ -108,11 +168,11 @@
     color: var(--c-primary);
 }
 
-.dock-hero-roles {
+.dock-hero .dock-hero-roles {
     max-width: 36ch;
-    font-size: 15.5px;
-    font-weight: 200;
-    line-height: 1.65;
+    font-size: 20px;
+    font-weight: 300;
+    line-height: 1.55;
     color: var(--c-muted);
     text-wrap: pretty;
 }
@@ -145,18 +205,16 @@
     transition: var(--t-fast);
 }
 
-.dock-hero-tag:hover {
-    border-color: var(--c-primary);
-    color: var(--c-fg);
-}
-
 /* ── Photo column ── */
 
+/* The card itself is square-cornered; the photo is the only rounded thing
+   in the hero, which is what makes it read as a pasted-in print. */
 .dock-hero-photo {
     position: relative;
     z-index: 2;
     overflow: hidden;
     margin: 0;
+    border-radius: var(--r-card);
 }
 
 .dock-hero-photo img {
@@ -165,22 +223,25 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: 52% 22%;
+    /* Per-page crop, set as an inline custom property by the component. The
+       fallback is the Experience photograph's hand-tuned position. */
+    object-position: var(--dock-hero-photo-pos, 52% 22%);
+
+    /* The photo is a background element, not the subject of the hero: it is
+       knocked back so the copy column stays the brightest thing on the row. */
+    filter: brightness(0.72) saturate(0.92);
 }
 
-/* Softens the seam against the copy column. */
+/* Softens the seam against the copy column and carries the caption's
+   bottom wash. Both washes are unconditional — the photo reads as part of
+   the dark page even when no caption sits on it. */
 .dock-hero-photo::after {
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(to right, color-mix(in srgb, var(--c-bg) 65%, transparent), transparent 26%);
-}
-
-/* The dark bottom wash exists only to carry caption text. */
-.dock-hero-photo:has(.dock-hero-cap)::after {
     background:
-        linear-gradient(to top, rgba(19, 18, 16, 0.9) 0 18%, transparent 55%),
-        linear-gradient(to right, color-mix(in srgb, var(--c-bg) 65%, transparent), transparent 26%);
+        linear-gradient(to top, rgba(19, 18, 16, 0.92) 0 16%, transparent 58%),
+        linear-gradient(to right, color-mix(in srgb, var(--c-bg) 75%, transparent), transparent 30%);
 }
 
 /* Caption colours are literal, not tokens: they sit on the photo's dark
@@ -204,4 +265,123 @@
     font-weight: 600;
     letter-spacing: 0.01em;
     color: #fff;
+}
+
+/* ── Entrance (staggered fade-up on load) ── */
+
+/* Staged by initHeroEntrance() in app.js, which adds .hero-loaded on the
+   frame after paint. The ghost wordmark is left out on purpose: it sits out
+   of flow behind the copy, and sliding it reads as a glitch rather than an
+   entrance. */
+.dock-hero .dock-hero-eyebrow,
+.dock-hero .dock-hero-title,
+.dock-hero .dock-hero-roles,
+.dock-hero .dock-hero-tags,
+.dock-hero .dock-hero-photo {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity var(--t-base), transform var(--t-base);
+}
+
+.dock-hero.hero-loaded .dock-hero-eyebrow { transition-delay: 0.05s; }
+.dock-hero.hero-loaded .dock-hero-title   { transition-delay: 0.15s; }
+.dock-hero.hero-loaded .dock-hero-roles   { transition-delay: 0.25s; }
+.dock-hero.hero-loaded .dock-hero-tags    { transition-delay: 0.3s; }
+.dock-hero.hero-loaded .dock-hero-photo   { transition-delay: 0.35s; }
+
+.dock-hero.hero-loaded .dock-hero-eyebrow,
+.dock-hero.hero-loaded .dock-hero-title,
+.dock-hero.hero-loaded .dock-hero-roles,
+.dock-hero.hero-loaded .dock-hero-tags,
+.dock-hero.hero-loaded .dock-hero-photo {
+    opacity: 1;
+    transform: none;
+}
+
+/* ── Responsive ── */
+
+/* Below 1200px the columns stack: dock (if any) on top as a row, then copy,
+   then photo. The outer .dock-hero drops its 100dvh sizing trick — that math
+   only works while the band is short enough to fit one screen; once stacked,
+   the box needs to grow with its content instead. */
+@media (max-width: 1200px) {
+    .dock-hero {
+        min-height: 0;
+        margin-top: 2.5rem;
+        /* Wider than the desktop gap on purpose: the watermark h2 right below
+           has no margin-top of its own (by design, elsewhere on the site it
+           hugs the element above it) and its clamp()'d font grows fast at
+           narrow widths, so a small gap reads as a collision. */
+        margin-bottom: 4.5rem;
+    }
+
+    .dock-hero-inner,
+    .dock-hero-inner:has(.dock-hero-dock) {
+        grid-template-columns: 1fr;
+        min-height: 0;
+    }
+
+    .dock-hero-dock {
+        flex-direction: row;
+        align-items: flex-end;
+        gap: 1.6rem;
+        padding: 2rem 2rem 0;
+        border-right: 0;
+        border-bottom: 1px solid var(--c-primary-fade);
+    }
+
+    .dock-hero .dock-hero-dock-label {
+        margin-bottom: 0.4rem;
+    }
+
+    .dock-hero-dock img {
+        width: 130px;
+    }
+
+    /* Clears the ghost wordmark below: top offset + font-size at their
+       largest (near the 1200px edge) is ~112px, so padding-top leaves an
+       8px margin on top of that instead of letting the eyebrow run through
+       the outline strokes. */
+    .dock-hero-copy {
+        padding: 7.5rem 2rem 3rem;
+    }
+
+    /* Flush with the copy column's own left padding (2rem here) instead of
+       the desktop rule's left: 0 — desktop gets away with 0 because its
+       copy column has no left padding, but stacked mobile does. */
+    .dock-hero .dock-hero-ghost {
+        left: 2rem;
+        top: 0.5rem;
+        font-size: clamp(56px, 9vw, 96px);
+    }
+
+    .dock-hero-photo {
+        min-height: 380px;
+    }
+}
+
+@media (max-width: 560px) {
+    .dock-hero .dock-hero-eyebrow {
+        font-size: 12px;
+    }
+
+    .dock-hero .dock-hero-roles {
+        font-size: 16px;
+    }
+
+    /* Top clearance for the ghost wordmark stays the value set at 1200px —
+       only the side/bottom padding shrinks here. */
+    .dock-hero-copy {
+        padding: 7.5rem 1.4rem 2.5rem;
+    }
+
+    /* Follows the copy column's narrower left padding above. */
+    .dock-hero .dock-hero-ghost {
+        left: 1.4rem;
+    }
+
+    .dock-hero-cap {
+        left: 1.4rem;
+        right: 1.2rem;
+    }
 }

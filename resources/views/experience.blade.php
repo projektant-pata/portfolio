@@ -9,14 +9,16 @@
         :roles="\App\Models\Setting::list('experience_hero_roles', $locale)"
         :tags="__('pages/experience.hero_tags')"
         :wordmark="__('pages/experience.hero_wordmark')"
-        :dock-label="__('pages/experience.hero_dock_label')"
         :dock-image="config('portfolio.hero_images.experience_dock')"
         dock-image-alt=""
         :photo="config('portfolio.hero_images.experience')"
         photo-alt=""
+        :caption="__('pages/experience.hero_photo_caption')"
     />
 
-    <section id="experience" class="portfolio-section">
+    {{-- No fade-up: the hero leaves this section's top edge inside the first
+         viewport, so it must already be there when the page paints. --}}
+    <section id="experience" class="portfolio-section portfolio-section--no-reveal">
         <h2>{{ __('home/experience.title') }}</h2>
 
         {{-- Filter bar --}}
