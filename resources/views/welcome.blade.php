@@ -34,7 +34,11 @@
 
     {{-- Work & Life --}}
     <section class="work portfolio-section">
-        <h2>{{ __('home/experience.title_home') }}</h2>
+        <x-portfolio.section-head
+            :eyebrow="__('home/experience.head_eyebrow')"
+            :title="__('home/experience.head_title')"
+            :note="__('home/experience.head_note', ['url' => route('experience')])"
+        />
         <article class="work-top">
             <button type="button" id="work-top-btn-work" class="work-top-btn" aria-pressed="false">
                 <h4>{{ __('home/experience.title_work') }}</h4>
@@ -75,7 +79,11 @@
 
     {{-- Tools --}}
     <section id="tools" class="portfolio-section">
-        <h2>{{ \App\Models\Setting::text('tools_title', $locale) }}</h2>
+        <x-portfolio.section-head
+            :eyebrow="__('home/tools.head_eyebrow')"
+            :title="__('home/tools.head_title')"
+            :note="__('home/tools.head_note')"
+        />
         <article class="tools-row">
             <div class="tools-row-card">
                 <img src="{{ asset('images/tools/laravel.png') }}" alt="Laravel">

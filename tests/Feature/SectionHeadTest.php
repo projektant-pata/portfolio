@@ -26,3 +26,16 @@ test('the projects head links out to the projects page', function () {
         ->assertSee('Things I <em>shipped</em>, not things I started', false)
         ->assertSee('<a href="'.route('projects').'">All projects →</a>', false);
 });
+
+test('the work and tools heads render without a ghost wordmark', function () {
+    $response = $this->get(route('home'));
+
+    $response
+        ->assertSee('Track record')
+        ->assertSee("Where I've <em>been</em> since 2021", false)
+        ->assertSee('<a href="'.route('experience').'">Experience page</a>', false)
+        ->assertSee('Daily drivers')
+        ->assertSee('What I actually <em>open</em> every day', false)
+        ->assertDontSee('>Work &amp; Life</div>', false)
+        ->assertDontSee('>Tools</div>', false);
+});
