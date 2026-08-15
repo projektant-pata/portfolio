@@ -427,6 +427,12 @@ html:not(.dark) .exp-card--special {
     flex-direction: column;
     min-height: 100vh;
     min-width: 0; /* allow the grid column to shrink below content min-width */
+    /* The section-head ghost is nowrap and overflows the column on narrow
+       viewports. Clipped here rather than on .portfolio-section, because the
+       ghost sits above its section's box and clipping there would cut it.
+       `clip` not `hidden`: hidden would make this a scroll container and break
+       any future sticky child. */
+    overflow-x: clip;
 }
 
 .portfolio-main {
