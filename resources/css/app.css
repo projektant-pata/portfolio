@@ -618,7 +618,10 @@ html:not(.dark) .exp-card--special {
 
 .portfolio-footer-social-links {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    /* `1fr` alone floors each track at its content's min-content width, not 0
+       — at 1100px that floor pushed the document 17px past the viewport.
+       `minmax(0, 1fr)` lets the tracks actually shrink to fit. */
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 0.6rem 1rem;
 }
 
