@@ -19,3 +19,10 @@ test('the stats head renders in Czech', function () {
         ->assertSee('V číslech')
         ->assertSee('Něco z toho je <em>vážně</em>', false);
 });
+
+test('the projects head links out to the projects page', function () {
+    $this->get(route('home'))
+        ->assertSee('Selected work')
+        ->assertSee('Things I <em>shipped</em>, not things I started', false)
+        ->assertSee('<a href="'.route('projects').'">All projects →</a>', false);
+});

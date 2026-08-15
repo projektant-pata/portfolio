@@ -62,7 +62,12 @@
 
     {{-- Projects --}}
     <section id="projects" class="portfolio-section">
-        <h2>{{ __('home/projects.title') }}</h2>
+        <x-portfolio.section-head
+            :ghost="__('home/projects.head_ghost')"
+            :eyebrow="__('home/projects.head_eyebrow')"
+            :title="__('home/projects.head_title')"
+            :note="__('home/projects.head_note', ['url' => route('projects')])"
+        />
         @foreach ($featuredProjects as $index => $project)
             <x-portfolio.project-row :project="$project" :locale="$locale" :reverse="$index % 2 !== 0" />
         @endforeach
