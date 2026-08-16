@@ -37,6 +37,14 @@ class ArticleController extends Controller
             'locale' => $locale,
             'body' => ArticleMarkdown::renderArticle($article, $locale),
             'readNext' => $readNext,
+            // A row without a thumbnail falls back to its archive numeral, and
+            // that numeral counts from the oldest post across the whole
+            // archive — the same figure the listing gives it, current article
+            // included in the count.
+            'archiveIndexes' => $others->concat([$article])
+                ->sortBy('date')
+                ->values()
+                ->mapWithKeys(fn (Article $other, int $i) => [$other->id => str_pad((string) ($i + 1), 2, '0', STR_PAD_LEFT)]),
         ]);
     }
 }

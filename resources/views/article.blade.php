@@ -66,7 +66,11 @@
 
             <div class="blog-list">
                 @foreach ($readNext as $next)
-                    <x-portfolio.blog-row :article="$next" :locale="$locale" />
+                    <x-portfolio.blog-row
+                        :article="$next"
+                        :locale="$locale"
+                        :archive-index="$archiveIndexes[$next->id]"
+                    />
                 @endforeach
             </div>
         </section>

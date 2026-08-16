@@ -37,6 +37,21 @@ test('read next never includes the current, draft or scheduled articles', functi
         ->assertDontSee('Read next');
 });
 
+test('a thumbnail-less read-next row keeps the archive numeral it has in the listing', function () {
+    Article::factory()->published()->create(['date' => '2024-01-01', 'thumbnail_url' => null]);
+    Article::factory()->published()->create(['date' => '2025-01-01', 'thumbnail_url' => null]);
+    $current = Article::factory()->published()->create(['date' => '2026-01-01', 'thumbnail_url' => null]);
+
+    // The current article is 03 in the archive, so the two rows under it are
+    // the same 01 and 02 the listing shows — the numeral is a property of the
+    // whole archive, not of the block it is rendered in.
+    $this->get(route('blog.show', $current->slug))
+        ->assertOk()
+        ->assertSee('>01<', false)
+        ->assertSee('>02<', false)
+        ->assertDontSee('>03<', false);
+});
+
 test('read next is omitted when there is nothing else published', function () {
     $only = Article::factory()->published()->create();
 
