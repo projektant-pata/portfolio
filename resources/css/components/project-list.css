@@ -125,7 +125,10 @@ html:not(.dark) .portfolio-page .proj-list .proj-yhead h2 {
     background: #4ade80;
 }
 
-/* Sized to the row: its bottom edge lands with the stack chips. */
+/* Fixed height, independent of the row's content — the body column (name,
+   description, chips) grows or shrinks with description length, so the
+   shot's bottom edge does not track the chip row exactly; it sits close by
+   for a typical one-to-two-line description, not flush against it. */
 .proj-list .proj-shot {
     height: 11.5rem;
     border-radius: var(--r-card-sm);
