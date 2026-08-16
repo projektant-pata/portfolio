@@ -543,7 +543,7 @@ html:not(.dark) .portfolio-page .proj-list .proj-yhead h2 {
         grid-column: 1;
     }
 
-    .proj-filters {
+    .portfolio-section .proj-filters {
         gap: 0.5rem 0.9rem;
         padding: 0.85rem 0;
     }
