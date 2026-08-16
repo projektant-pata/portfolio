@@ -24,6 +24,12 @@ class ProjectsSeeder extends Seeder
                 'cs' => 'Tento projekt je rozcestník všech webových stránek, které jsem vytvořil při studiu na střední škole při plnění úkolů od učitele Reného "Dusíka" Duse. Jsou to jedny z mých prvních stránek (první jsme vytvářeli už na základní škole).',
             ],
             'img_url' => 'images/projects/spse_wp.png',
+            'kind' => 'school',
+            'status' => 'archived',
+            'role' => [
+                'en' => 'Everything — my first hand-written site',
+                'cs' => 'Všechno — moje první ručně psané stránky',
+            ],
         ]);
 
         Link::create([
@@ -31,6 +37,7 @@ class ProjectsSeeder extends Seeder
             'url' => 'https://hyvlri22.llmp.spse-net.cz/',
             'alt' => ['en' => 'Visit website', 'cs' => 'Navštívit web'],
             'img_url' => 'images/projects/icons/web.webp',
+            'kind' => 'live',
         ]);
 
         Link::create([
@@ -38,6 +45,7 @@ class ProjectsSeeder extends Seeder
             'url' => 'https://github.com/projektant-pata/SPSE-WP',
             'alt' => ['en' => 'View on GitHub', 'cs' => 'Zobrazit na GitHubu'],
             'img_url' => 'images/mobile/icons/github.webp',
+            'kind' => 'repo',
         ]);
 
         $spsehub->badges()->sync($badgeIds->only(['javascript'])->values()->all());
@@ -51,6 +59,13 @@ class ProjectsSeeder extends Seeder
                 'cs' => 'Projekt, na kterém jsem se podílel během své práce na částečný úvazek v PekneWeby. Plán byl jednoduchý - rebranding a rekonstrukce restaurace. Můj záběr byl ve front-endu a back-endu. A výsledek? Myslím, že firma PekneWeby odvedla báječnou práci.',
             ],
             'img_url' => 'images/projects/usladovny.png',
+            'kind' => 'client',
+            'client' => 'PekneWeby',
+            'status' => 'live',
+            'role' => [
+                'en' => 'Front-end and back-end',
+                'cs' => 'Front-end a back-end',
+            ],
         ]);
 
         Link::create([
@@ -58,6 +73,7 @@ class ProjectsSeeder extends Seeder
             'url' => 'https://www.usladovnychrudim.cz/',
             'alt' => ['en' => 'Visit website', 'cs' => 'Navštívit web'],
             'img_url' => 'images/projects/icons/web.webp',
+            'kind' => 'live',
         ]);
 
         $usladovny->badges()->sync($badgeIds->only(['symfony', 'php'])->values()->all());
@@ -71,6 +87,12 @@ class ProjectsSeeder extends Seeder
                 'cs' => 'Myslím si, že každý, kdo dělá něco uměleckého, by měl mít portfolio v jakékoli podobě, které ukazuje jeho um, kreativitu a hlavně osobnost - a věřím, že i weboví vývojáři jsou umělci.',
             ],
             'img_url' => 'images/projects/portfolio.png',
+            'kind' => 'personal',
+            'status' => 'live',
+            'role' => [
+                'en' => 'Design and build, start to finish',
+                'cs' => 'Návrh i realizace, od začátku do konce',
+            ],
         ]);
 
         Link::create([
@@ -78,6 +100,7 @@ class ProjectsSeeder extends Seeder
             'url' => 'https://github.com/projektant-pata/portfolio',
             'alt' => ['en' => 'View on GitHub', 'cs' => 'Zobrazit na GitHubu'],
             'img_url' => 'images/mobile/icons/github.webp',
+            'kind' => 'repo',
         ]);
 
         $portfolio->badges()->sync($badgeIds->only(['laravel', 'php'])->values()->all());
