@@ -240,3 +240,22 @@ test('editing a project loads its metadata into the form', function () {
         ->assertSet('status', 'archived')
         ->assertSet('client', $project->client);
 });
+
+test('can create project with the school kind and wip status', function () {
+    $user = User::factory()->create();
+
+    Livewire::actingAs($user)
+        ->test('pages::manage.projects')
+        ->set('header', ['en' => 'Thesis Project', 'cs' => ''])
+        ->set('slug', 'thesis-project')
+        ->set('year', '2026')
+        ->set('kind', 'school')
+        ->set('status', 'wip')
+        ->call('save')
+        ->assertHasNoErrors();
+
+    $project = Project::first();
+
+    expect($project->kind)->toBe('school')
+        ->and($project->status)->toBe('wip');
+});
