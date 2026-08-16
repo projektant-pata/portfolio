@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Pest\Browser\Playwright\Playwright;
 use Tests\TestCase;
 
 /*
@@ -14,8 +16,12 @@ use Tests\TestCase;
 */
 
 pest()->extend(TestCase::class)
-    ->use(Illuminate\Foundation\Testing\RefreshDatabase::class)
+    ->use(RefreshDatabase::class)
     ->in('Feature', 'Browser');
+
+// Unit tests get the application (config, cache, model casts) but not the
+// database — nothing here touches a table.
+pest()->extend(TestCase::class)->in('Unit');
 
 /*
 | The plugin's 5s default covers the whole first visit — booting the
@@ -24,7 +30,7 @@ pest()->extend(TestCase::class)
 | with "Timeout 5000ms exceeded" before reaching its assertions.
 */
 pest()->beforeEach(function () {
-    Pest\Browser\Playwright\Playwright::setTimeout(30_000);
+    Playwright::setTimeout(30_000);
 })->in('Browser');
 
 /*

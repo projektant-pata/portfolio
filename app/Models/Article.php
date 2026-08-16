@@ -59,6 +59,19 @@ class Article extends Model
         return $this->published_at !== null && $this->published_at->lessThanOrEqualTo(now());
     }
 
+    /**
+     * Whole minutes at 200 words per minute, from the Markdown source.
+     *
+     * `str_word_count()` is deliberately avoided: it drops Czech diacritics
+     * and would undercount every `cs` post.
+     */
+    public function readingTime(string $locale): int
+    {
+        $words = preg_split('/\s+/u', trim($this->getTranslation('content', $locale)), -1, PREG_SPLIT_NO_EMPTY) ?: [];
+
+        return max(1, (int) ceil(count($words) / 200));
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
