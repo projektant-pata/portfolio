@@ -1,5 +1,9 @@
 <?php
 
+use App\Models\AboutCard;
+use App\Models\Project;
+use Database\Seeders\SettingSeeder;
+
 /**
  * The light theme is the state without `.dark` on <html>, so these tests strip
  * the class the pre-paint script sets instead of driving the cookie: the CSS
@@ -36,17 +40,17 @@ $contrastOf = fn (string $selector, string $backgroundSelector): string => <<<JS
 JS;
 
 test('the light page sits on bone, not cream', function (string $path) use ($goLight, $colorOf, $themeTransition) {
-    $this->seed(\Database\Seeders\SettingSeeder::class);
+    $this->seed(SettingSeeder::class);
 
     $page = visit($path)->resize(1440, 900);
     $page->script($goLight);
     $page->wait($themeTransition);
 
     expect($page->script($colorOf('.portfolio-page', 'backgroundColor')))->toBe('rgb(250, 249, 246)');
-})->with(['/', '/about-me', '/projects', '/experience']);
+})->with(['/', '/about-me', '/projects', '/experience', '/blog']);
 
 test('section watermarks are sand in light mode, never the gold accent', function () use ($goLight, $colorOf, $themeTransition) {
-    $this->seed(\Database\Seeders\SettingSeeder::class);
+    $this->seed(SettingSeeder::class);
 
     $page = visit('/')->resize(1440, 900);
     $page->script($goLight);
@@ -59,8 +63,8 @@ test('section watermarks are sand in light mode, never the gold accent', functio
 });
 
 test('project year labels keep the accent they inherit the watermark style from', function () use ($goLight, $colorOf, $themeTransition) {
-    $this->seed(\Database\Seeders\SettingSeeder::class);
-    \App\Models\Project::factory()->create();
+    $this->seed(SettingSeeder::class);
+    Project::factory()->create();
 
     $page = visit('/projects')->resize(1440, 900);
     $page->script($goLight);
@@ -75,8 +79,8 @@ test('project year labels keep the accent they inherit the watermark style from'
 });
 
 test('light-mode body and muted text clear WCAG AA on their own surface', function () use ($goLight, $contrastOf, $themeTransition) {
-    $this->seed(\Database\Seeders\SettingSeeder::class);
-    \App\Models\AboutCard::factory()->create();
+    $this->seed(SettingSeeder::class);
+    AboutCard::factory()->create();
 
     $page = visit('/about-me')->resize(1440, 900);
     $page->script($goLight);

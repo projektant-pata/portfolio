@@ -5,6 +5,8 @@ use App\Models\Review;
 use App\Models\Setting;
 use App\Models\Stat;
 use App\Models\User;
+use Carbon\CarbonImmutable;
+use Database\Seeders\SettingSeeder;
 use Livewire\Livewire;
 
 test('stats manage page renders for admins', function () {
@@ -37,7 +39,7 @@ test('a stat requires an english caption', function () {
 test('a stat with an age source computes its value', function () {
     $stat = Stat::factory()->create(['source' => 'age', 'value' => null]);
 
-    expect($stat->displayValue('en'))->toBe((string) (int) \Carbon\CarbonImmutable::parse('2006-10-05')->diffInYears(now()));
+    expect($stat->displayValue('en'))->toBe((string) (int) CarbonImmutable::parse('2006-10-05')->diffInYears(now()));
 });
 
 test('can create a review', function () {
@@ -87,23 +89,28 @@ test('site content editor persists settings and every rotating role list', funct
         ->set('texts.experience_hero_title', ['en' => 'My journey', 'cs' => 'Moje cesta'])
         ->set('texts.projects_hero_suptitle', ['en' => 'Built', 'cs' => 'Postaveno'])
         ->set('texts.projects_hero_title', ['en' => 'Shipped', 'cs' => 'Vydáno'])
+        ->set('texts.blog_hero_suptitle', ['en' => 'Thinking', 'cs' => 'Myslím'])
+        ->set('texts.blog_hero_title', ['en' => 'Build logs', 'cs' => 'Zápisky'])
         ->set('roleLists.hero_roles', ['en' => "Developer\nChess player", 'cs' => "Vývojář\nŠachista"])
         ->set('roleLists.about_hero_roles', ['en' => "Student\nFreelancer", 'cs' => "Student\nFreelancer"])
         ->set('roleLists.experience_hero_roles', ['en' => "Certificates\nWork", 'cs' => "Certifikáty\nPráce"])
         ->set('roleLists.projects_hero_roles', ['en' => "Laravel\nSpring Boot", 'cs' => "Laravel\nSpring Boot"])
+        ->set('roleLists.blog_hero_roles', ['en' => "Writes on break\nMarkdown maximalist", 'cs' => "Píše, když\nMarkdown fanatik"])
         ->call('save')
         ->assertHasNoErrors();
 
     expect(Setting::text('hero_suptitle', 'cs'))->toBe('Ahoj')
         ->and(Setting::text('projects_hero_title', 'cs'))->toBe('Vydáno')
+        ->and(Setting::text('blog_hero_title', 'cs'))->toBe('Zápisky')
         ->and(Setting::list('hero_roles', 'en'))->toBe(['Developer', 'Chess player'])
         ->and(Setting::list('about_hero_roles', 'cs'))->toBe(['Student', 'Freelancer'])
         ->and(Setting::list('experience_hero_roles', 'en'))->toBe(['Certificates', 'Work'])
-        ->and(Setting::list('projects_hero_roles', 'cs'))->toBe(['Laravel', 'Spring Boot']);
+        ->and(Setting::list('projects_hero_roles', 'cs'))->toBe(['Laravel', 'Spring Boot'])
+        ->and(Setting::list('blog_hero_roles', 'en'))->toBe(['Writes on break', 'Markdown maximalist']);
 });
 
 test('the czech hero copy falls back to english when left blank', function () {
-    $this->seed(\Database\Seeders\SettingSeeder::class);
+    $this->seed(SettingSeeder::class);
 
     Livewire::actingAs(User::factory()->create())
         ->test('pages::manage.site-content')

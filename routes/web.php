@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\AboutMeController;
+use App\Http\Controllers\ArticleController;
+use App\Http\Controllers\BlogController;
 use App\Http\Controllers\ExperienceController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LanguageController;
@@ -11,6 +13,8 @@ Route::get('/', HomeController::class)->name('home');
 Route::get('/about-me', AboutMeController::class)->name('about-me');
 Route::get('/experience', ExperienceController::class)->name('experience');
 Route::get('/projects', ProjectsController::class)->name('projects');
+Route::get('/blog', BlogController::class)->name('blog');
+Route::get('/blog/{article:slug}', ArticleController::class)->name('blog.show');
 
 Route::post('/language/toggle', [LanguageController::class, 'toggle'])->name('language.toggle');
 

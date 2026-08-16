@@ -1,5 +1,7 @@
 <?php
 
+use Database\Seeders\SettingSeeder;
+
 /**
  * Height of the next section's sliver above the fold. This — not the hero's
  * own box — is what "fills the first screen" means here: the hero is sized
@@ -23,7 +25,7 @@ $heroBandOffsetJs = <<<'JS'
 JS;
 
 test('the home hero fills the first screen with nothing of the next section showing', function () use ($nextSectionPeekJs) {
-    $this->seed(\Database\Seeders\SettingSeeder::class);
+    $this->seed(SettingSeeder::class);
 
     $page = visit('/')->resize(1440, 900);
 
@@ -31,7 +33,7 @@ test('the home hero fills the first screen with nothing of the next section show
 });
 
 test('the hero keeps its side-by-side desktop layout', function (string $path) {
-    $this->seed(\Database\Seeders\SettingSeeder::class);
+    $this->seed(SettingSeeder::class);
 
     $page = visit($path)->resize(1440, 900);
 
@@ -44,7 +46,7 @@ test('the hero keeps its side-by-side desktop layout', function (string $path) {
     JS;
 
     expect($page->script($sideBySide))->toBeTrue();
-})->with(['/', '/about-me', '/projects', '/experience']);
+})->with(['/', '/about-me', '/projects', '/experience', '/blog']);
 
 /**
  * Samples the rotator's text every 100ms rather than comparing two snapshots:
@@ -66,34 +68,34 @@ JS;
 $distinctSamplesJs = 'new Set(window.__rotatorSamples).size';
 
 test('the hero rotator cycles its roles', function (string $path) use ($startSamplingJs, $distinctSamplesJs) {
-    $this->seed(\Database\Seeders\SettingSeeder::class);
+    $this->seed(SettingSeeder::class);
 
     $page = visit($path)->resize(1440, 900);
     $page->script($startSamplingJs);
     $page->wait(3);
 
     expect($page->script($distinctSamplesJs))->toBeGreaterThan(1);
-})->with(['/', '/about-me', '/projects', '/experience']);
+})->with(['/', '/about-me', '/projects', '/experience', '/blog']);
 
 test('a subpage hero fills the first screen and still lets the next section peek in', function (string $path) use ($nextSectionPeekJs) {
-    $this->seed(\Database\Seeders\SettingSeeder::class);
+    $this->seed(SettingSeeder::class);
 
     $page = visit($path)->resize(1440, 900);
 
     expect($page->script($nextSectionPeekJs))->toBeGreaterThan(0)
         ->and($page->script($nextSectionPeekJs))->toBeLessThan(200);
-})->with(['/about-me', '/projects', '/experience']);
+})->with(['/about-me', '/projects', '/experience', '/blog']);
 
 test('every hero centres its band on the same line', function (string $path) use ($heroBandOffsetJs) {
-    $this->seed(\Database\Seeders\SettingSeeder::class);
+    $this->seed(SettingSeeder::class);
 
     $page = visit($path)->resize(1440, 900);
 
     expect($page->script($heroBandOffsetJs))->toBeLessThanOrEqual(2);
-})->with(['/', '/about-me', '/projects', '/experience']);
+})->with(['/', '/about-me', '/projects', '/experience', '/blog']);
 
 test('the hero columns stack on mobile', function (string $path) {
-    $this->seed(\Database\Seeders\SettingSeeder::class);
+    $this->seed(SettingSeeder::class);
 
     $page = visit($path)->resize(390, 844);
 
@@ -106,10 +108,10 @@ test('the hero columns stack on mobile', function (string $path) {
     JS;
 
     expect($page->script($stacked))->toBeTrue();
-})->with(['/', '/about-me', '/projects', '/experience']);
+})->with(['/', '/about-me', '/projects', '/experience', '/blog']);
 
 test('the section that peeks under a subpage hero does not wait for the scroll observer', function (string $path) {
-    $this->seed(\Database\Seeders\SettingSeeder::class);
+    $this->seed(SettingSeeder::class);
 
     $page = visit($path)->resize(1440, 900);
 
@@ -123,10 +125,10 @@ test('the section that peeks under a subpage hero does not wait for the scroll o
     JS;
 
     expect($page->script($opacity))->toBe('1');
-})->with(['/about-me', '/projects', '/experience']);
+})->with(['/about-me', '/projects', '/experience', '/blog']);
 
 test('the section after the home hero fades in on scroll like every other section', function () {
-    $this->seed(\Database\Seeders\SettingSeeder::class);
+    $this->seed(SettingSeeder::class);
 
     // Exact opacity is timing-dependent (the reveal may already be mid-flight
     // by the time this runs), so assert the transition is wired up at all
@@ -144,7 +146,7 @@ test('the section after the home hero fades in on scroll like every other sectio
 });
 
 test('the hero copy is revealed by the entrance sequence', function (string $path) {
-    $this->seed(\Database\Seeders\SettingSeeder::class);
+    $this->seed(SettingSeeder::class);
 
     $page = visit($path)->resize(1440, 900);
     $page->wait(1);
@@ -154,4 +156,4 @@ test('the hero copy is revealed by the entrance sequence', function (string $pat
     JS;
 
     expect($page->script($titleOpacity))->toBe('1');
-})->with(['/', '/about-me', '/projects', '/experience']);
+})->with(['/', '/about-me', '/projects', '/experience', '/blog']);

@@ -27,7 +27,7 @@
                     <img src="{{ asset('images/mobile/icons/notes.webp') }}" alt="">
                     <p>{{ __('layout/footer.nav4') }}</p>
                 </a>
-                <a href="#" class="portfolio-footer-nav-link">
+                <a href="{{ route('blog') }}" class="portfolio-footer-nav-link">
                     <img src="{{ asset('images/mobile/icons/safari.webp') }}" alt="">
                     <p>{{ __('layout/footer.nav5') }}</p>
                 </a>

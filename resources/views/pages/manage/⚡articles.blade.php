@@ -16,6 +16,7 @@ new #[Title('Manage Articles')] class extends Component {
     public array $content = ['en' => '', 'cs' => ''];
     public string $slug = '';
     public string $date = '';
+    public string $published_at = '';
     public string $thumbnail_url = '';
     public array $selectedBadgeIds = [];
 
@@ -88,6 +89,7 @@ new #[Title('Manage Articles')] class extends Component {
         $this->content = array_merge(['en' => '', 'cs' => ''], $article->content ?? []);
         $this->slug = $article->slug;
         $this->date = $article->date?->format('Y-m-d') ?? '';
+        $this->published_at = $article->published_at?->format('Y-m-d\TH:i') ?? '';
         $this->thumbnail_url = $article->thumbnail_url ?? '';
         $this->selectedBadgeIds = $article->badges->pluck('id')->toArray();
         $this->modal('form')->show();
@@ -127,6 +129,7 @@ new #[Title('Manage Articles')] class extends Component {
             'content.cs' => ['nullable', 'string'],
             'slug' => ['required', 'string', 'max:255', \Illuminate\Validation\Rule::unique('articles', 'slug')->ignore($article)],
             'date' => ['required', 'date'],
+            'published_at' => ['nullable', 'date'],
             'thumbnail_url' => ['nullable', 'url', 'max:500'],
             'selectedBadgeIds' => ['nullable', 'array'],
             'selectedBadgeIds.*' => ['nullable', 'uuid', 'exists:badges,id'],
@@ -144,6 +147,7 @@ new #[Title('Manage Articles')] class extends Component {
             'content' => array_filter($validated['content'] ?? [], fn ($v) => filled($v)) ?: null,
             'slug' => $validated['slug'],
             'date' => $validated['date'],
+            'published_at' => $validated['published_at'] ?: null,
             'thumbnail_url' => $validated['thumbnail_url'] ?: null,
             'user_id' => auth()->id(),
         ];
@@ -185,6 +189,7 @@ new #[Title('Manage Articles')] class extends Component {
         $this->content = ['en' => '', 'cs' => ''];
         $this->slug = '';
         $this->date = '';
+        $this->published_at = '';
         $this->thumbnail_url = '';
         $this->selectedBadgeIds = [];
         $this->resetValidation();
@@ -218,7 +223,12 @@ new #[Title('Manage Articles')] class extends Component {
                     </flux:table.cell>
                     <flux:table.cell variant="strong">{{ $article->header['en'] ?? '—' }}</flux:table.cell>
                     <flux:table.cell>{{ $article->slug }}</flux:table.cell>
-                    <flux:table.cell>{{ $article->date?->format('d.m.Y') ?? '—' }}</flux:table.cell>
+                    <flux:table.cell>
+                        {{ $article->date?->format('d.m.Y') ?? '—' }}
+                        @unless ($article->isPublished())
+                            <flux:badge size="sm" color="zinc">{{ $article->published_at ? 'Scheduled' : 'Draft' }}</flux:badge>
+                        @endunless
+                    </flux:table.cell>
                     <flux:table.cell>{{ $article->updated_at->format('d.m.Y') }}</flux:table.cell>
                     <flux:table.cell wire:sort:ignore>
                         <div class="flex gap-2 justify-end">
@@ -289,6 +299,13 @@ new #[Title('Manage Articles')] class extends Component {
                     <flux:label>Date <flux:badge size="sm" color="yellow" inset="top bottom">Required</flux:badge></flux:label>
                     <flux:input wire:model="date" type="date" />
                     <flux:error name="date" />
+                </flux:field>
+
+                <flux:field>
+                    <flux:label>Published at</flux:label>
+                    <flux:input wire:model="published_at" type="datetime-local" />
+                    <flux:description>Empty = draft. A future time schedules the post.</flux:description>
+                    <flux:error name="published_at" />
                 </flux:field>
 
                 <flux:field class="col-span-2">
