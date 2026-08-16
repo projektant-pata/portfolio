@@ -26,6 +26,9 @@
     /* Display font for the big outlined "watermark" headings (h1 accent, h2).
        Swap this one value to change the look of every big heading.          */
     --font-display: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+    /* Monospace for dates, counters and other ledger-style numerals. */
+    --font-mono: 'Fira Code', ui-monospace, SFMono-Regular, monospace;
+    --r-pill:   999px;     /* badges, chips, pills                 */
 
     /* Portfolio color palette — dark theme (default) */
     --color-primary:                   #FACC15;  /* yellow-gold accent           */

@@ -38,6 +38,12 @@ class SettingSeeder extends Seeder
                 'en' => ['Side projects that <span>survived</span>', 'Laravel <span>monoliths</span>', 'Spring Boot <span>APIs</span>', 'Shipped with <span>Docker</span>', 'Built, broken, <span>rebuilt</span>'],
                 'cs' => ['Vedlejšáky, co <span>přežily</span>', 'Laravel <span>monolity</span>', 'Spring Boot <span>API</span>', 'Nasazeno přes <span>Docker</span>', 'Postaveno, rozbito, <span>opraveno</span>'],
             ],
+            'blog_hero_suptitle' => ['en' => '📝 Thinking out loud', 'cs' => '📝 Myslím nahlas'],
+            'blog_hero_title' => ['en' => 'Build logs, and <span>what broke</span>,', 'cs' => 'Zápisky a <span>co se rozbilo</span>,'],
+            'blog_hero_roles' => [
+                'en' => ['Writes only when <span>something breaks</span>', 'Markdown <span>maximalist</span>', '<span>Arch</span> btw', 'Still not a <span>frontend dev</span>', 'Commits at 2am, <span>posts at 2pm</span>'],
+                'cs' => ['Píše, jen když se <span>něco rozbije</span>', 'Markdown <span>fanatik</span>', '<span>Arch</span>, mimochodem', 'Pořád ne <span>frontend vývojář</span>', 'Commituje ve 2 ráno, <span>publikuje ve 2 odpoledne</span>'],
+            ],
         ];
 
         foreach ($settings as $key => $value) {

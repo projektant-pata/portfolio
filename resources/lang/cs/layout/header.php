@@ -12,4 +12,7 @@ return [
 
     'projects_title' => 'Projekty',
     'projects_desc' => 'Prohlédněte si sbírku projektů Richarda Hývla v oblasti vývoje webu a softwaru.',
+
+    'blog_title' => 'Blog',
+    'blog_desc' => 'Zápisky ze stavění, reporty ze soutěží a věci, co se rozbily. Backend, domácí hardware a občas šachy.',
 ];

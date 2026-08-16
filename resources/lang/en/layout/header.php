@@ -12,4 +12,7 @@ return [
 
     'projects_title' => 'Projects',
     'projects_desc' => 'Browse a collection of Richard Hývl’s web and software development projects.',
+
+    'blog_title' => 'Blog',
+    'blog_desc' => 'Build logs, competition write-ups and things that broke. Backend, homelab hardware and the occasional chess tangent.',
 ];

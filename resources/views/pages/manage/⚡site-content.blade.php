@@ -21,6 +21,8 @@ new #[Title('Manage Site content')] class extends Component {
         'experience_hero_title',
         'projects_hero_suptitle',
         'projects_hero_title',
+        'blog_hero_suptitle',
+        'blog_hero_title',
         'stats_title',
         'tools_title',
         'reviews_title',
@@ -33,6 +35,7 @@ new #[Title('Manage Site content')] class extends Component {
         'about_hero_roles',
         'experience_hero_roles',
         'projects_hero_roles',
+        'blog_hero_roles',
     ];
 
     /**
@@ -46,6 +49,7 @@ new #[Title('Manage Site content')] class extends Component {
         'About me hero' => ['about_hero_suptitle', 'about_hero_title', 'about_hero_roles'],
         'Experience hero' => ['experience_hero_suptitle', 'experience_hero_title', 'experience_hero_roles'],
         'Projects hero' => ['projects_hero_suptitle', 'projects_hero_title', 'projects_hero_roles'],
+        'Blog hero' => ['blog_hero_suptitle', 'blog_hero_title', 'blog_hero_roles'],
         'Section titles' => ['stats_title', 'tools_title', 'reviews_title', 'about_title'],
     ];
 

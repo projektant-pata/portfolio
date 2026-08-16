@@ -42,6 +42,9 @@ return [
            clean transparent export lands — the column then renders label-only. */
         'experience_dock' => '',
         'projects' => 'images/projects-hero.webp',
+
+        /* No blog crop exists yet — the Experience portrait stands in. */
+        'blog' => 'images/experience-hero.webp',
     ],
 
 ];
