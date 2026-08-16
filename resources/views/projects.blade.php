@@ -108,6 +108,15 @@
         const groups = Array.from(list.querySelectorAll('.proj-group'));
         const total = rows.length;
 
+        // No projects at all: `.proj-none` (server-rendered) already covers
+        // this. Skip filter wiring so `.proj-empty` — meant for "filters
+        // excluded everything" — never shows on top of it. Nothing below
+        // this line has work to do with zero rows: the toggle listener
+        // above is a no-op with no `.proj-toggle` in the DOM, and every
+        // remaining listener/call here only matters once there is at least
+        // one row to filter or count.
+        if (total === 0) { return; }
+
         let kind = 'all';
         const activeStack = new Set();
 

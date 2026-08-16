@@ -15,6 +15,13 @@ test('the home page teases projects straight from the database', function () {
     visit('/')->assertSee('Featured Project');
 });
 
+test('the projects page never shows both empty states when there are no projects at all', function () {
+    $page = visit('/projects');
+
+    expect($page->script("document.querySelector('.proj-none') !== null"))->toBeTrue()
+        ->and($page->script("document.getElementById('proj-empty').hidden"))->toBeTrue();
+});
+
 test('reviews carousel auto-advances and is not user-scrollable', function () {
     Review::query()->delete();
     foreach (range(0, 4) as $i) {

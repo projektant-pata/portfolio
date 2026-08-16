@@ -181,7 +181,6 @@ test('the empty state ships hidden with a clear-filters action', function () {
 
     $html = $this->get(route('projects'))->getContent();
 
-    expect($html)->toContain('class="proj-empty"')
-        ->toContain('hidden')
+    expect($html)->toContain('<div class="proj-empty" id="proj-empty" hidden>')
         ->toContain('Clear filters');
 });
