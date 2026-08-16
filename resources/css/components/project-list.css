@@ -199,6 +199,17 @@ html:not(.dark) .portfolio-page .proj-list .proj-yhead h2 {
     color: var(--bc, var(--c-primary));
 }
 
+/* Badge accent hex (`--bc`) is picked once per badge, independent of theme —
+   several read under 3:1 as text on bone even though they're fine on the
+   dark surface. Blend the badge hue toward the light theme's own ink so
+   every badge stays legible without a per-badge override. Qualified up to
+   `.portfolio-page` to beat that page's `html:not(.dark) h2` reset and any
+   other light-theme rule on specificity, the same trick the year head
+   already relies on above. */
+html:not(.dark) .portfolio-page .proj-list .proj-chip {
+    color: color-mix(in srgb, var(--bc, var(--c-primary)) 50%, var(--c-fg) 50%);
+}
+
 /* ── expand in place ── */
 .proj-list .proj-act {
     justify-self: end;
@@ -419,6 +430,12 @@ html:not(.dark) .portfolio-page .proj-list .proj-yhead h2 {
     color: var(--bc, var(--c-primary));
     border-color: color-mix(in srgb, var(--bc, var(--c-primary)) 60%, transparent);
     background: color-mix(in srgb, var(--bc, var(--c-primary)) 14%, transparent);
+}
+
+/* Same badge-hex legibility problem as `.proj-chip` above, for the pressed
+   stack-filter label. */
+html:not(.dark) .portfolio-page .proj-filters .proj-fchip[aria-pressed='true'] {
+    color: color-mix(in srgb, var(--bc, var(--c-primary)) 50%, var(--c-fg) 50%);
 }
 
 .proj-filters .proj-fchip[aria-pressed='true']::before {
