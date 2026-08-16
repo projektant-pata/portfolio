@@ -77,6 +77,15 @@ html:not(.dark) .portfolio-page .proj-list .proj-yhead h2 {
     align-items: start;
 }
 
+/* Home renders these rows with `:expandable="false"` — no `.proj-act`
+   button ever prints, so the 4th track's `6rem` (plus its `2rem` gap) would
+   sit reserved and empty at the row's right edge. Drop it. Same specificity
+   as the rule above; wins on source order, same trick the two `@media`
+   blocks below already rely on. */
+.proj-list--compact .proj-item {
+    grid-template-columns: 5.5rem 18rem 1fr;
+}
+
 /* The head already separates the group; its first row must not draw a second
    rule. `.is-first-visible` is set by the filter script when the real first
    row is filtered out. */
@@ -290,7 +299,7 @@ html:not(.dark) .portfolio-page .proj-list .proj-yhead h2 {
 }
 
 /* ── filter bar ── */
-.proj-filters {
+.portfolio-section .proj-filters {
     position: sticky;
     top: 0;
     z-index: 5;
@@ -305,7 +314,7 @@ html:not(.dark) .portfolio-page .proj-list .proj-yhead h2 {
 }
 
 /* Rows dissolve under the bar rather than colliding with it. */
-.proj-filters::after {
+.portfolio-section .proj-filters::after {
     content: '';
     position: absolute;
     left: 0;
@@ -451,7 +460,7 @@ html:not(.dark) .portfolio-page .proj-list .proj-yhead h2 {
 }
 
 /* ── empty state ── */
-.proj-empty {
+.portfolio-section .proj-empty {
     display: grid;
     gap: 0.9rem;
     justify-items: start;

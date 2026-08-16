@@ -58,7 +58,7 @@
     {{-- Projects --}}
     <section id="projects" class="portfolio-section">
         <h2>{{ __('home/projects.title') }}</h2>
-        <div class="proj-list">
+        <div class="proj-list proj-list--compact">
             @foreach ($featuredProjects as $project)
                 <x-portfolio.project-row :project="$project" :locale="$locale" :expandable="false" />
             @endforeach
