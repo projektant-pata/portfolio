@@ -234,12 +234,6 @@ html:not(.dark) .portfolio-page h2 {
     -webkit-text-stroke: 0;
 }
 
-/* Year labels are content, not texture — they keep the accent so the timeline
-   stays readable, unlike the section watermarks they inherit from. */
-html:not(.dark) .portfolio-page h2.projects-year-label {
-    color: var(--c-primary);
-}
-
 /* Special card frame: the white sweeps vanish on a white card face, so light
    mode sweeps through amber-400 instead and dims the glow.
    See pages/experience.css for the rest. */

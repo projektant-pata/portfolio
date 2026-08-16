@@ -67,7 +67,11 @@ test('project year labels keep the accent they inherit the watermark style from'
     $page->wait($themeTransition);
 
     // Years are content, not texture — sand would make the timeline unreadable.
-    expect($page->script($colorOf('.projects-year-label', 'color')))->toBe('rgb(164, 91, 11)');
+    // The year head is `color: transparent` with a `-webkit-text-stroke`, so
+    // the fill color is meaningless here; the stroke color and width are what
+    // carry the visible ink.
+    expect($page->script($colorOf('.proj-yhead h2', 'webkitTextStrokeColor')))->toBe('rgb(164, 91, 11)')
+        ->and($page->script($colorOf('.proj-yhead h2', 'webkitTextStrokeWidth')))->toBe('1px');
 });
 
 test('light-mode body and muted text clear WCAG AA on their own surface', function () use ($goLight, $contrastOf, $themeTransition) {
