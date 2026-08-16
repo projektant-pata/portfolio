@@ -35,4 +35,19 @@ class ArticleFactory extends Factory
             'content' => ['en' => $this->faker->paragraph(), 'cs' => $this->faker->paragraph()],
         ]);
     }
+
+    public function published(): static
+    {
+        return $this->state(fn () => ['published_at' => now()->subDay()]);
+    }
+
+    public function draft(): static
+    {
+        return $this->state(fn () => ['published_at' => null]);
+    }
+
+    public function scheduled(): static
+    {
+        return $this->state(fn () => ['published_at' => now()->addWeek()]);
+    }
 }
