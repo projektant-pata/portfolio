@@ -16,19 +16,19 @@
     {{-- No fade-up: the hero leaves this section's top edge inside the first
          viewport, so it must already be there when the page paints. --}}
     <section id="projects" class="portfolio-section portfolio-section--no-reveal">
-        @forelse ($projects as $year => $yearProjects)
-            <article class="projects-year-group">
-                <h2 class="projects-year-label">{{ $year }}</h2>
+        <div class="proj-list">
+            @forelse ($projects as $year => $yearProjects)
+                <section class="proj-group">
+                    <x-portfolio.project-year-head :year="$year" :count="$yearProjects->count()" />
 
-                @foreach ($yearProjects as $index => $project)
-                    <x-portfolio.project-row :project="$project" :locale="$locale" :reverse="$index % 2 !== 0" />
-                @endforeach
-            </article>
-        @empty
-            <p style="color: var(--c-muted); text-align: center; padding: 4rem 0;">
-                {{ app()->getLocale() === 'cs' ? 'Žádné projekty zatím nejsou.' : 'No projects yet.' }}
-            </p>
-        @endforelse
+                    @foreach ($yearProjects as $project)
+                        <x-portfolio.project-row :project="$project" :locale="$locale" />
+                    @endforeach
+                </section>
+            @empty
+                <p class="proj-none">{{ __('pages/projects.empty_list') }}</p>
+            @endforelse
+        </div>
     </section>
 
 </x-portfolio-layout>

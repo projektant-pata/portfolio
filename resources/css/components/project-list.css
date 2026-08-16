@@ -1,0 +1,230 @@
+/* ── Projects list ─────────────────────────────────────────
+   /projects: rows grouped under one year head each. The year
+   is a group divider — printed once per year, never per row.
+   Every selector carries an ancestor class so it clears the
+   `.portfolio-page *` reset (0,1,0) and the element rules
+   `.portfolio-page h2 / h3 / p` (0,1,1). No new tokens. */
+
+.proj-list {
+    display: grid;
+    overflow-x: clip;
+}
+
+.proj-list .proj-group + .proj-group {
+    margin-top: 1.5rem;
+}
+
+/* ── year head ── */
+.proj-list .proj-yhead {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 1.1rem;
+    padding: 1.1rem 0 0.9rem;
+    background: var(--c-bg);
+}
+
+.proj-list .proj-yhead h2 {
+    margin: 0;
+    text-align: left;
+    font-family: var(--font-display);
+    font-size: 2.6rem;
+    font-weight: var(--fw-bold);
+    letter-spacing: -0.04em;
+    line-height: 0.85;
+    color: transparent;
+    -webkit-text-stroke: 1px var(--c-primary);
+}
+
+.proj-list .proj-yline {
+    height: 1px;
+    background: linear-gradient(
+        90deg,
+        color-mix(in srgb, var(--c-primary-fade) 90%, transparent),
+        color-mix(in srgb, var(--c-primary-fade) 15%, transparent)
+    );
+}
+
+.proj-list .proj-ycount {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--c-muted);
+    white-space: nowrap;
+}
+
+/* ── row ── */
+.proj-list .proj-item {
+    display: grid;
+    grid-template-columns: 5.5rem 18rem 1fr 6rem;
+    gap: 2rem;
+    padding: 1.75rem 0;
+    border-top: 1px solid color-mix(in srgb, var(--c-primary-fade) 55%, transparent);
+    align-items: start;
+}
+
+/* The head already separates the group; its first row must not draw a second
+   rule. `.is-first-visible` is set by the filter script when the real first
+   row is filtered out. */
+.proj-list .proj-group .proj-item:first-of-type,
+.proj-list .proj-item.is-first-visible {
+    border-top: 0;
+}
+
+.proj-list .proj-rail {
+    display: grid;
+    gap: 0.4rem;
+    align-content: start;
+    padding-top: 0.15rem;
+}
+
+.proj-list .proj-kind {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--c-muted);
+    line-height: 1.5;
+}
+
+.proj-list .proj-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--c-muted);
+}
+
+.proj-list .proj-status::before {
+    content: '';
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--c-muted);
+    flex-shrink: 0;
+}
+
+.proj-list .proj-status[data-state='live']::before {
+    background: #4ade80;
+}
+
+/* Sized to the row: its bottom edge lands with the stack chips. */
+.proj-list .proj-shot {
+    height: 11.5rem;
+    border-radius: var(--r-card-sm);
+    overflow: hidden;
+    background: var(--c-surface-sunken);
+    border: var(--border-w) solid var(--c-primary-fade);
+    transition: border-color var(--t-fast);
+}
+
+.proj-list .proj-item:hover .proj-shot {
+    border-color: var(--c-primary);
+}
+
+.proj-list .proj-shot img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.proj-list .proj-body {
+    display: grid;
+    gap: 0.7rem;
+    justify-items: start;
+}
+
+/* No gold accent — project names are proper nouns; the gold in this row
+   belongs to the year and the chips. */
+.proj-list .proj-name {
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    font-weight: var(--fw-bold);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+}
+
+.proj-list .proj-desc {
+    font-size: 0.92rem;
+    font-weight: var(--fw-light);
+    line-height: 1.6;
+    color: var(--c-muted);
+    max-width: 52ch;
+    text-wrap: pretty;
+}
+
+.proj-list .proj-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    align-items: center;
+}
+
+.proj-list .proj-chip {
+    font-size: 11px;
+    font-weight: var(--fw-semibold);
+    padding: 0.2rem 0.65rem;
+    border-radius: var(--r-pill);
+    border: 1px solid color-mix(in srgb, var(--bc, var(--c-primary)) 55%, transparent);
+    color: var(--bc, var(--c-primary));
+}
+
+@media (max-width: 1100px) {
+    .proj-list .proj-item {
+        grid-template-columns: 5rem 13rem 1fr;
+        gap: 1.5rem;
+    }
+
+    .proj-list .proj-shot {
+        height: 9rem;
+    }
+
+    .proj-list .proj-yhead h2 {
+        font-size: 2.1rem;
+    }
+
+    .proj-list .proj-desc {
+        max-width: none;
+    }
+}
+
+@media (max-width: 760px) {
+    .proj-list .proj-item {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        padding: 1.6rem 0;
+    }
+
+    .proj-list .proj-rail {
+        display: flex;
+        align-items: center;
+        gap: 0.9rem;
+        padding-top: 0;
+    }
+
+    .proj-list .proj-shot {
+        height: 12rem;
+    }
+
+    .proj-list .proj-yhead {
+        padding: 0.9rem 0 0.7rem;
+    }
+
+    .proj-list .proj-yhead h2 {
+        font-size: 1.9rem;
+    }
+}
+
+.proj-list .proj-none {
+    padding: 4rem 0;
+    text-align: center;
+    color: var(--c-muted);
+}
