@@ -19,7 +19,12 @@
 
     {{-- Stats --}}
     <section id="stats" class="portfolio-section">
-        <h2>{{ \App\Models\Setting::text('stats_title', $locale) }}</h2>
+        <x-portfolio.section-head
+            :ghost="__('home/stats.head_ghost')"
+            :eyebrow="__('home/stats.head_eyebrow')"
+            :title="__('home/stats.head_title')"
+            :note="__('home/stats.head_note')"
+        />
         <article class="stats-cards">
             @foreach ($stats as $stat)
                 <x-portfolio.stats-card :value="$stat->displayValue($locale)" :text="$stat->getTranslation('text', $locale)" :value-id="$stat->value_id" />
@@ -29,7 +34,11 @@
 
     {{-- Work & Life --}}
     <section class="work portfolio-section">
-        <h2>{{ __('home/experience.title_home') }}</h2>
+        <x-portfolio.section-head
+            :eyebrow="__('home/experience.head_eyebrow')"
+            :title="__('home/experience.head_title')"
+            :note="__('home/experience.head_note', ['url' => route('experience')])"
+        />
         <article class="work-top">
             <button type="button" id="work-top-btn-work" class="work-top-btn" aria-pressed="false">
                 <h4>{{ __('home/experience.title_work') }}</h4>
@@ -57,7 +66,12 @@
 
     {{-- Projects --}}
     <section id="projects" class="portfolio-section">
-        <h2>{{ __('home/projects.title') }}</h2>
+        <x-portfolio.section-head
+            :ghost="__('home/projects.head_ghost')"
+            :eyebrow="__('home/projects.head_eyebrow')"
+            :title="__('home/projects.head_title')"
+            :note="__('home/projects.head_note', ['url' => route('projects')])"
+        />
         @foreach ($featuredProjects as $index => $project)
             <x-portfolio.project-row :project="$project" :locale="$locale" :reverse="$index % 2 !== 0" />
         @endforeach
@@ -65,7 +79,11 @@
 
     {{-- Tools --}}
     <section id="tools" class="portfolio-section">
-        <h2>{{ \App\Models\Setting::text('tools_title', $locale) }}</h2>
+        <x-portfolio.section-head
+            :eyebrow="__('home/tools.head_eyebrow')"
+            :title="__('home/tools.head_title')"
+            :note="__('home/tools.head_note')"
+        />
         <article class="tools-row">
             <div class="tools-row-card">
                 <img src="{{ asset('images/tools/laravel.png') }}" alt="Laravel">
@@ -113,7 +131,11 @@
 
     {{-- Reviews --}}
     <section id="reviews" class="portfolio-section">
-        <h2>{{ \App\Models\Setting::text('reviews_title', $locale) }}</h2>
+        <x-portfolio.section-head
+            :ghost="__('home/reviews.head_ghost')"
+            :eyebrow="__('home/reviews.head_eyebrow')"
+            :title="__('home/reviews.head_title')"
+        />
         <div class="reviews-carousel" data-reviews-carousel>
             <div class="reviews-carousel-viewport">
                 <article class="reviews-row" role="list">

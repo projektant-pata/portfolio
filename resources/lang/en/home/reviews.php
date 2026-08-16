@@ -2,6 +2,9 @@
 
 return [
     'title' => 'Reviews',
+    'head_ghost' => 'Reviews',
+    'head_eyebrow' => 'What people say',
+    'head_title' => 'Words from people who <em>worked</em> with me',
     'prev' => 'Previous reviews',
     'next' => 'Next reviews',
 

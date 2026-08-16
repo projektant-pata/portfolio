@@ -4,6 +4,9 @@ return [
     'title' => 'Zkušenosti',
 
     'title_home' => 'Práce & Život',
+    'head_eyebrow' => 'Dosavadní dráha',
+    'head_title' => 'Kde jsem <em>byl</em> od roku 2021',
+    'head_note' => 'Přepni mezi seznamy. Celý přehled na <a href=":url">stránce Zkušenosti</a>.',
     'title_all' => 'Vše',
     'title_work' => 'Práce',
     'title_life' => 'Život',

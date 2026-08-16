@@ -2,6 +2,9 @@
 
 return [
     'title' => 'Reference',
+    'head_ghost' => 'Reference',
+    'head_eyebrow' => 'Co říkají ostatní',
+    'head_title' => 'Slova lidí, kteří se mnou <em>pracovali</em>',
     'prev' => 'Předchozí reference',
     'next' => 'Další reference',
 

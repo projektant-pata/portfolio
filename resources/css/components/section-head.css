@@ -1,0 +1,187 @@
+/* ================================================================
+   SECTION HEAD (.sechead)
+   ================================================================
+   The site-wide opener for a page section: ghost wordmark above,
+   gold-rule eyebrow, the real h2, optional right-hand note.
+
+   Ported from the design handoff (design_handoff_section_start).
+   No new tokens, no new colours.
+
+   Rules that collide with the global `.portfolio-page h2` / `p`
+   rules (app.css:348, :376) are written double-classed — those
+   globals are 0,1,1 and would otherwise win. Same trick as
+   dock-hero.css:142.
+   ================================================================ */
+
+.sechead {
+    position: relative;
+    margin-bottom: 1.875rem;
+}
+
+/* Outlined page word above the head. Decorative: aria-hidden in the
+   markup, never selectable, never a click target.
+   `line-height: 1.12` + `padding-bottom: .1em` are load-bearing — at
+   line-height 1 the descenders clip and `My stats` renders as
+   `Mu stats`. */
+.sechead .sechead-ghost {
+    position: absolute;
+    left: -0.2rem;
+    top: -4.6rem;
+    font-family: var(--font-display);
+    font-size: clamp(64px, 9vw, 118px);
+    font-weight: var(--fw-bold);
+    letter-spacing: -0.04em;
+    line-height: 1.12;
+    padding-bottom: 0.1em;
+    white-space: nowrap;
+    pointer-events: none;
+    user-select: none;
+    color: transparent;
+    -webkit-text-stroke: 1px color-mix(in srgb, var(--c-primary-fade) 80%, transparent);
+}
+
+/* Title block left, note right, bottom-aligned on purpose: the note's
+   last line sits on the title's baseline block. */
+.sechead .sechead-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 2.5rem;
+    flex-wrap: wrap;
+}
+
+/* `auto` flex-basis sizes the title block off its max-content, clamped by
+   the h2's `max-width: 26ch` (section-head.css below) — so a title that
+   wraps to two lines still reserves the FULL 26ch, not the narrower width
+   it actually renders at, and can starve the note of room and force it
+   onto its own line even above the 1100px breakpoint (seen on the
+   "Things I shipped, not things I started" / Projects title). Flexing
+   the title block from a zero basis makes it size off the space left
+   after the note claims its own width instead. */
+.sechead .sechead-row > div:first-child {
+    flex: 1 1 0%;
+    min-width: 0;
+}
+
+.sechead .sechead-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 11px;
+    font-weight: var(--fw-semibold);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--c-muted);
+    margin-bottom: 0.7rem;
+}
+
+/* The system's section marker — the Experience hero already uses it.
+   No emoji, no icons. */
+.sechead .sechead-eyebrow::before {
+    content: '';
+    width: 26px;
+    height: 1px;
+    background: var(--c-primary);
+    flex-shrink: 0;
+}
+
+/* Overrides the global watermark h2 (app.css:348) for heads only. That
+   rule still dresses the h2 on about-me / experience / projects; when
+   the component reaches those pages, delete it there and drop the four
+   reset declarations here. */
+.sechead .sechead-row h2 {
+    text-align: left;
+    margin-bottom: 0;
+    color: var(--c-fg);
+    -webkit-text-stroke: 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.9rem, 1.2rem + 2vw, 2.6rem);
+    font-weight: var(--fw-bold);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    max-width: 26ch;
+    text-wrap: pretty;
+}
+
+/* One gold phrase per title, never two. Not italic. */
+.sechead .sechead-row h2 em {
+    font-style: normal;
+    font-weight: 500;
+    color: var(--c-primary);
+}
+
+.sechead .sechead-note {
+    font-size: 0.95rem;
+    font-weight: var(--fw-light);
+    line-height: 1.6;
+    color: var(--c-muted);
+    max-width: 38ch;
+    text-wrap: pretty;
+}
+
+.sechead .sechead-note a {
+    color: var(--c-fg);
+    text-decoration: none;
+    border-bottom: var(--border-w) solid var(--c-primary-fade);
+    transition: border-color var(--t-fast), color var(--t-fast);
+}
+
+.sechead .sechead-note a:hover {
+    color: var(--c-primary);
+    border-color: var(--c-primary);
+}
+
+/* ── Variants ── */
+
+/* Tight gaps and heads inside a card: the ghost overlaps the head
+   instead of sitting above it. */
+.sechead--behind .sechead-ghost {
+    top: -0.5rem;
+    left: -0.4rem;
+    opacity: 0.75;
+}
+
+/* Kept for continuity with pages that still centre their heads. The
+   home page does not use it — the note needs a right column. */
+.sechead--center {
+    text-align: center;
+}
+
+.sechead--center .sechead-row {
+    flex-direction: column;
+    align-items: center;
+}
+
+.sechead--center .sechead-eyebrow {
+    justify-content: center;
+}
+
+.sechead--center .sechead-ghost {
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/* ── Responsive ── */
+
+/* The note drops to its own full-width row under the title. */
+@media (max-width: 1100px) {
+    .sechead .sechead-note {
+        max-width: none;
+        flex-basis: 100%;
+    }
+}
+
+@media (max-width: 760px) {
+    .sechead {
+        margin-bottom: 1.4rem;
+    }
+
+    .sechead .sechead-ghost {
+        top: -2.6rem;
+        font-size: clamp(44px, 13vw, 72px);
+    }
+
+    .sechead .sechead-row h2 {
+        max-width: none;
+    }
+}
