@@ -5,6 +5,7 @@ return [
     'nav2' => 'O mně',
     'nav3' => 'Zkušenosti',
     'nav4' => 'Projekty',
+    'nav5' => 'Blog',
 
     'soc1' => 'Pošta',
     'soc2' => 'Instagram',
@@ -12,6 +13,4 @@ return [
     'soc4' => 'LinkedIn',
     'soc5' => 'GitHub',
     'soc6' => 'Šachy',
-
-    'proj1' => 'SPŠE-WP',
 ];

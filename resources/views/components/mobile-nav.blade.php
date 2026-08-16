@@ -49,6 +49,12 @@
         {{-- Row 2 — social links --}}
         <div class="mobile-nav-row">
             <div class="mobile-nav-app">
+                <a href="{{ route('blog') }}">
+                    <img src="{{ asset('images/mobile/icons/safari.webp') }}" alt="blog">
+                </a>
+                <p class="mini">{{ __('layout/mobile.nav5') }}</p>
+            </div>
+            <div class="mobile-nav-app">
                 <a href="{{ config('portfolio.social.email') }}" target="_blank" rel="noopener noreferrer">
                     <img src="{{ asset('images/mobile/icons/email.png') }}" alt="email">
                 </a>
@@ -66,16 +72,16 @@
                 </a>
                 <p class="mini">{{ __('layout/mobile.soc3') }}</p>
             </div>
+        </div>
+
+        {{-- Row 3 — misc links --}}
+        <div class="mobile-nav-row">
             <div class="mobile-nav-app">
                 <a href="{{ config('portfolio.social.linkedin') }}" target="_blank" rel="noopener noreferrer">
                     <img src="{{ asset('images/mobile/icons/linkedin.webp') }}" alt="linkedin">
                 </a>
                 <p class="mini">{{ __('layout/mobile.soc4') }}</p>
             </div>
-        </div>
-
-        {{-- Row 3 — misc links --}}
-        <div class="mobile-nav-row">
             <div class="mobile-nav-app">
                 <a href="{{ config('portfolio.social.github') }}" target="_blank" rel="noopener noreferrer">
                     <img src="{{ asset('images/mobile/icons/github.webp') }}" alt="github">
@@ -87,12 +93,6 @@
                     <img src="{{ asset('images/mobile/icons/chess.png') }}" alt="chess">
                 </a>
                 <p class="mini">{{ __('layout/mobile.soc6') }}</p>
-            </div>
-            <div class="mobile-nav-app">
-                <a href="https://hyvlri22.llmp.spse-net.cz/" target="_blank" rel="noopener noreferrer">
-                    <img src="{{ asset('images/mobile/icons/safari.webp') }}" alt="SPSE-WP">
-                </a>
-                <p class="mini">{{ __('layout/mobile.proj1') }}</p>
             </div>
             <div class="mobile-nav-app"></div>
         </div>
