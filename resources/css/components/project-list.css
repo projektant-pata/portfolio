@@ -17,7 +17,7 @@
 /* ── year head ── */
 .proj-list .proj-yhead {
     position: sticky;
-    top: 0;
+    top: 3.5rem;
     z-index: 3;
     display: grid;
     grid-template-columns: auto 1fr auto;
@@ -286,6 +286,195 @@ html:not(.dark) .portfolio-page .proj-list .proj-yhead h2 {
     pointer-events: none;
 }
 
+/* ── filter bar ── */
+.proj-filters {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.55rem 1.6rem;
+    padding: 1rem 0;
+    background: var(--c-bg);
+    border-top: 1px solid color-mix(in srgb, var(--c-primary-fade) 55%, transparent);
+    border-bottom: 1px solid color-mix(in srgb, var(--c-primary-fade) 55%, transparent);
+}
+
+/* Rows dissolve under the bar rather than colliding with it. */
+.proj-filters::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
+    height: 1.25rem;
+    background: linear-gradient(var(--c-bg), transparent);
+    pointer-events: none;
+}
+
+.proj-filters .proj-fgroup {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    flex-wrap: wrap;
+}
+
+.proj-filters .proj-flabel {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--c-muted) 80%, transparent);
+    margin-right: 0.15rem;
+}
+
+/* Single-select gets one object, not four buttons that can all read as off. */
+.proj-filters .proj-seg {
+    position: relative;
+    display: inline-flex;
+    gap: 0.1rem;
+    padding: 0.2rem;
+    border-radius: var(--r-pill);
+    background: var(--c-surface-sunken);
+    border: 1px solid color-mix(in srgb, var(--c-primary-fade) 60%, transparent);
+}
+
+.proj-filters .proj-seg-thumb {
+    position: absolute;
+    top: 0.2rem;
+    bottom: 0.2rem;
+    left: 0.2rem;
+    width: 0;
+    border-radius: var(--r-pill);
+    background: var(--c-primary);
+    transition: transform var(--t-fast), width var(--t-fast);
+}
+
+.proj-filters .proj-seg button {
+    position: relative;
+    font-size: 11.5px;
+    font-weight: var(--fw-semibold);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0.34rem 0.95rem;
+    border: 0;
+    border-radius: var(--r-pill);
+    background: transparent;
+    color: var(--c-muted);
+    cursor: pointer;
+    transition: color var(--t-fast);
+}
+
+.proj-filters .proj-seg button:hover {
+    color: var(--c-fg);
+}
+
+.proj-filters .proj-seg button[aria-pressed='true'] {
+    color: var(--c-bg);
+}
+
+.proj-filters .proj-fchip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 11.5px;
+    font-weight: var(--fw-semibold);
+    padding: 0.28rem 0.75rem 0.28rem 0.6rem;
+    border-radius: var(--r-pill);
+    border: 1px solid color-mix(in srgb, var(--c-primary-fade) 75%, transparent);
+    background: none;
+    color: var(--c-muted);
+    cursor: pointer;
+    transition: color var(--t-fast), border-color var(--t-fast), background var(--t-fast);
+}
+
+.proj-filters .proj-fchip::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--bc, var(--c-primary));
+    transition: box-shadow var(--t-fast);
+}
+
+.proj-filters .proj-fchip:hover {
+    color: var(--c-fg);
+    border-color: color-mix(in srgb, var(--bc, var(--c-primary)) 55%, transparent);
+}
+
+.proj-filters .proj-fchip[aria-pressed='true'] {
+    color: var(--bc, var(--c-primary));
+    border-color: color-mix(in srgb, var(--bc, var(--c-primary)) 60%, transparent);
+    background: color-mix(in srgb, var(--bc, var(--c-primary)) 14%, transparent);
+}
+
+.proj-filters .proj-fchip[aria-pressed='true']::before {
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--bc, var(--c-primary)) 28%, transparent);
+}
+
+.proj-filters .proj-fcount {
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--c-muted);
+}
+
+.proj-filters .proj-fcount b {
+    color: var(--c-fg);
+    font-weight: var(--fw-semibold);
+}
+
+.proj-filters .proj-fclear,
+.proj-empty .proj-fclear {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--c-muted);
+    background: none;
+    border: 0;
+    border-bottom: 1px solid var(--c-primary-fade);
+    padding: 0 0 2px;
+    cursor: pointer;
+}
+
+.proj-filters .proj-fclear:hover,
+.proj-empty .proj-fclear:hover {
+    color: var(--c-primary);
+    border-color: var(--c-primary);
+}
+
+/* ── empty state ── */
+.proj-empty {
+    display: grid;
+    gap: 0.9rem;
+    justify-items: start;
+    padding: 3.5rem 0 4rem;
+    border-top: 1px solid color-mix(in srgb, var(--c-primary-fade) 55%, transparent);
+}
+
+.proj-empty .proj-etitle {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: var(--fw-bold);
+}
+
+.proj-empty .proj-ebody {
+    font-size: 0.92rem;
+    font-weight: var(--fw-light);
+    color: var(--c-muted);
+    max-width: 44ch;
+}
+
+/* Filtered-out rows and their emptied year groups. */
+.proj-list .proj-item[hidden],
+.proj-list .proj-group[hidden] {
+    display: none;
+}
+
 @media (max-width: 1100px) {
     .proj-list .proj-item {
         grid-template-columns: 5rem 13rem 1fr;
@@ -331,6 +520,7 @@ html:not(.dark) .portfolio-page .proj-list .proj-yhead h2 {
 
     .proj-list .proj-yhead {
         padding: 0.9rem 0 0.7rem;
+        top: 0;
     }
 
     .proj-list .proj-yhead h2 {
@@ -339,6 +529,23 @@ html:not(.dark) .portfolio-page .proj-list .proj-yhead h2 {
 
     .proj-list .proj-act {
         grid-column: 1;
+    }
+
+    .proj-filters {
+        gap: 0.5rem 0.9rem;
+        padding: 0.85rem 0;
+    }
+
+    .proj-filters .proj-fcount {
+        margin-left: 0;
+        flex-basis: 100%;
+    }
+
+    /* A segmented control must never break onto two lines. */
+    .proj-filters .proj-seg {
+        max-width: 100%;
+        overflow-x: auto;
+        scrollbar-width: none;
     }
 }
 

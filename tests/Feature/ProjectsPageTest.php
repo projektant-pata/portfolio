@@ -145,3 +145,43 @@ test('a project with no links says so instead of hiding the link row', function 
 
     expect($html)->toContain('proj-link--none')->toContain('No public link');
 });
+
+test('the filter bar offers one kind button per kind plus all', function () {
+    Project::factory()->create();
+
+    $html = $this->get(route('projects'))->getContent();
+
+    expect($html)->toContain('data-kind-filter="all"')
+        ->toContain('data-kind-filter="personal"')
+        ->toContain('data-kind-filter="client"')
+        ->toContain('data-kind-filter="school"');
+});
+
+test('the filter bar offers a stack chip per attached badge only', function () {
+    $attached = Badge::factory()->create(['slug' => 'laravel', 'name' => ['en' => 'Laravel']]);
+    Badge::factory()->create(['slug' => 'svelte', 'name' => ['en' => 'Svelte']]);
+    Project::factory()->create()->badges()->attach($attached);
+
+    $html = $this->get(route('projects'))->getContent();
+
+    expect($html)->toContain('data-stack-filter="laravel"')
+        ->not->toContain('data-stack-filter="svelte"');
+});
+
+test('the count starts at every project shown', function () {
+    Project::factory()->count(3)->create();
+
+    $html = $this->get(route('projects'))->getContent();
+
+    expect($html)->toContain('<b>3</b>')->toContain('3 total');
+});
+
+test('the empty state ships hidden with a clear-filters action', function () {
+    Project::factory()->create();
+
+    $html = $this->get(route('projects'))->getContent();
+
+    expect($html)->toContain('class="proj-empty"')
+        ->toContain('hidden')
+        ->toContain('Clear filters');
+});
