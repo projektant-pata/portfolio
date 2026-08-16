@@ -2,7 +2,6 @@
 
 return [
     'hero_wordmark' => 'Blog',
-    'hero_dock_label' => 'Navigace',
     'hero_tags' => ['Zápisky ze stavění', 'Homelab', 'Soutěže', 'Backend', 'Postmortemy'],
 
     'list_title' => 'Všechny články',

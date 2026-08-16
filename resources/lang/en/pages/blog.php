@@ -2,7 +2,6 @@
 
 return [
     'hero_wordmark' => 'Blog',
-    'hero_dock_label' => 'Navigate',
     'hero_tags' => ['Build logs', 'Homelab', 'Competitions', 'Backend', 'Postmortems'],
 
     'list_title' => 'All posts',

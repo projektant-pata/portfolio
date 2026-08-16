@@ -8,7 +8,6 @@
         :roles="\App\Models\Setting::list('blog_hero_roles', $locale)"
         :tags="__('pages/blog.hero_tags')"
         :wordmark="__('pages/blog.hero_wordmark')"
-        :dock-label="__('pages/blog.hero_dock_label')"
         :photo="config('portfolio.hero_images.blog')"
         photo-alt=""
         photo-position="50% 38%"
