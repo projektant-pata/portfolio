@@ -177,6 +177,105 @@
     color: var(--bc, var(--c-primary));
 }
 
+/* ── expand in place ── */
+.proj-list .proj-act {
+    justify-self: end;
+    padding-top: 0.35rem;
+}
+
+.proj-list .proj-toggle {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--c-muted);
+    background: none;
+    border: 0;
+    border-bottom: 1px solid var(--c-primary-fade);
+    padding: 0 0 2px;
+    cursor: pointer;
+    transition: color var(--t-fast), border-color var(--t-fast);
+}
+
+.proj-list .proj-toggle:hover {
+    color: var(--c-primary);
+    border-color: var(--c-primary);
+}
+
+.proj-list .proj-more {
+    display: none;
+    gap: 1rem;
+    padding-top: 0.4rem;
+}
+
+.proj-list .proj-item.is-open .proj-more {
+    display: grid;
+}
+
+.proj-list .proj-item.is-open .proj-toggle {
+    color: var(--c-primary);
+    border-color: var(--c-primary);
+}
+
+.proj-list .proj-facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 2rem;
+    margin: 0;
+}
+
+.proj-list .proj-fact {
+    display: grid;
+    gap: 0.15rem;
+}
+
+.proj-list .proj-fact dt {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--c-muted) 75%, transparent);
+}
+
+.proj-list .proj-fact dd {
+    margin: 0;
+    font-size: 0.88rem;
+    font-weight: var(--fw-light);
+    color: var(--c-fg);
+}
+
+.proj-list .proj-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.proj-list .proj-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 11px;
+    font-weight: var(--fw-semibold);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.35rem 0.8rem;
+    border-radius: var(--r-pill);
+    border: 1px solid color-mix(in srgb, var(--c-primary-fade) 80%, transparent);
+    color: var(--c-fg);
+    transition: color var(--t-fast), border-color var(--t-fast);
+}
+
+.proj-list .proj-link:hover {
+    border-color: var(--c-primary);
+    color: var(--c-primary);
+}
+
+.proj-list .proj-link--none {
+    border-style: dashed;
+    color: var(--c-muted);
+    pointer-events: none;
+}
+
 @media (max-width: 1100px) {
     .proj-list .proj-item {
         grid-template-columns: 5rem 13rem 1fr;
@@ -193,6 +292,12 @@
 
     .proj-list .proj-desc {
         max-width: none;
+    }
+
+    .proj-list .proj-act {
+        grid-column: 3;
+        justify-self: start;
+        padding-top: 0;
     }
 }
 
@@ -220,6 +325,10 @@
 
     .proj-list .proj-yhead h2 {
         font-size: 1.9rem;
+    }
+
+    .proj-list .proj-act {
+        grid-column: 1;
     }
 }
 

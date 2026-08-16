@@ -95,3 +95,53 @@ test('the czech locale renders czech project copy', function () {
 test('a page with no projects renders the empty list message', function () {
     $this->get(route('projects'))->assertSee('No projects yet');
 });
+
+test('each row carries a details toggle wired to its own panel', function () {
+    Project::factory()->create(['slug' => 'portfolio']);
+
+    $html = $this->get(route('projects'))->getContent();
+
+    expect($html)->toContain('aria-controls="proj-more-portfolio"')
+        ->toContain('aria-expanded="false"')
+        ->toContain('id="proj-more-portfolio"');
+});
+
+test('the details panel lists role, client and stack', function () {
+    $badge = Badge::factory()->create(['name' => ['en' => 'Laravel'], 'slug' => 'laravel']);
+    $project = Project::factory()->client()->create([
+        'client' => 'PekneWeby',
+        'role' => ['en' => 'Front-end and back-end'],
+    ]);
+    $project->badges()->attach($badge);
+
+    $html = $this->get(route('projects'))->getContent();
+
+    expect($html)->toContain('Front-end and back-end')
+        ->toContain('PekneWeby')
+        ->toContain('Laravel');
+});
+
+test('a link renders as a labelled pill named by its kind', function () {
+    $project = Project::factory()->create();
+    Link::factory()->create(['project_id' => $project->id, 'url' => 'https://github.com/a/b', 'kind' => 'repo']);
+
+    $html = $this->get(route('projects'))->getContent();
+
+    expect($html)->toContain('https://github.com/a/b')->toContain('Source');
+});
+
+test('a project link opens in a new tab with rel noopener', function () {
+    $project = Project::factory()->create();
+    Link::factory()->create(['project_id' => $project->id, 'url' => 'https://github.com/a/b', 'kind' => 'repo']);
+
+    $this->get(route('projects'))
+        ->assertSee('<a class="proj-link" href="https://github.com/a/b" target="_blank" rel="noopener noreferrer">', false);
+});
+
+test('a project with no links says so instead of hiding the link row', function () {
+    Project::factory()->create();
+
+    $html = $this->get(route('projects'))->getContent();
+
+    expect($html)->toContain('proj-link--none')->toContain('No public link');
+});

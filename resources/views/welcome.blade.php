@@ -60,7 +60,7 @@
         <h2>{{ __('home/projects.title') }}</h2>
         <div class="proj-list">
             @foreach ($featuredProjects as $project)
-                <x-portfolio.project-row :project="$project" :locale="$locale" />
+                <x-portfolio.project-row :project="$project" :locale="$locale" :expandable="false" />
             @endforeach
         </div>
     </section>

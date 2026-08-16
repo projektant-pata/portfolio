@@ -31,4 +31,23 @@
         </div>
     </section>
 
+    <script>
+    (function () {
+        const list = document.querySelector('.proj-list');
+        if (!list) { return; }
+
+        list.addEventListener('click', function (e) {
+            const btn = e.target.closest('.proj-toggle');
+            if (!btn) { return; }
+
+            const row = btn.closest('.proj-item');
+            const open = btn.getAttribute('aria-expanded') !== 'true';
+
+            row.classList.toggle('is-open', open);
+            btn.setAttribute('aria-expanded', String(open));
+            btn.textContent = open ? btn.dataset.labelClose : btn.dataset.labelOpen;
+        });
+    })();
+    </script>
+
 </x-portfolio-layout>
