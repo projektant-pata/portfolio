@@ -2,6 +2,7 @@
 
 use App\Models\Badge;
 use App\Models\Project;
+use Database\Seeders\SettingSeeder;
 
 /**
  * Browser tests run inside the container against the seeded settings the dock
@@ -17,7 +18,7 @@ use App\Models\Project;
 $segTransition = 1;
 
 beforeEach(function () {
-    $this->seed(\Database\Seeders\SettingSeeder::class);
+    $this->seed(SettingSeeder::class);
 
     $laravel = Badge::factory()->create(['slug' => 'laravel', 'name' => ['en' => 'Laravel'], 'color' => '#FF2D20']);
     $php = Badge::factory()->create(['slug' => 'php', 'name' => ['en' => 'PHP'], 'color' => '#777BB4']);
@@ -94,3 +95,36 @@ test('the projects list never scrolls sideways', function (int $width) {
 
     expect($page->script($overflow))->toBeLessThanOrEqual(0);
 })->with([1440, 1100, 760, 390]);
+
+test('picking the client kind writes ?kind=client into the URL', function () {
+    $page = visit('/projects')->resize(1440, 900);
+
+    $page->click('[data-kind-filter="client"]');
+
+    expect($page->script('window.location.search'))->toBe('?kind=client');
+});
+
+test('clearing the filters empties the query string', function () {
+    $page = visit('/projects')->resize(1440, 900);
+
+    $page->click('[data-kind-filter="client"]');
+    expect($page->script('window.location.search'))->toBe('?kind=client');
+
+    $page->click('#proj-clear');
+
+    expect($page->script('window.location.search'))->toBe('');
+});
+
+test('loading the page with ?kind=client in the URL restores the filter on load', function () {
+    $page = visit('/projects?kind=client')->resize(1440, 900);
+
+    $visibleRows = <<<'JS'
+        document.querySelectorAll('.proj-item:not([hidden])').length
+    JS;
+    $pressed = <<<'JS'
+        document.querySelector('[data-kind-filter="client"]').getAttribute('aria-pressed')
+    JS;
+
+    expect($page->script($visibleRows))->toBe(1)
+        ->and($page->script($pressed))->toBe('true');
+});

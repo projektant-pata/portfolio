@@ -15,6 +15,20 @@ test('the home page teases projects straight from the database', function () {
     visit('/')->assertSee('Featured Project');
 });
 
+test('the home page compact project list draws no border above its first row', function () {
+    Project::factory()->create(['sort_order' => 0, 'header' => ['en' => 'First Featured']]);
+    Project::factory()->create(['sort_order' => 1, 'header' => ['en' => 'Second Featured']]);
+
+    $page = visit('/')->resize(1440, 900);
+
+    $borderTopWidth = <<<'JS'
+        (i) => getComputedStyle(document.querySelectorAll('.proj-list--compact .proj-item')[i]).borderTopWidth
+    JS;
+
+    expect($page->script("({$borderTopWidth})(0)"))->toBe('0px')
+        ->and($page->script("({$borderTopWidth})(1)"))->not->toBe('0px');
+});
+
 test('the projects page never shows both empty states when there are no projects at all', function () {
     $page = visit('/projects');
 
