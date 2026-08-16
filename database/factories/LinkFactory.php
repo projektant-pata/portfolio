@@ -16,6 +16,7 @@ class LinkFactory extends Factory
         return [
             'project_id' => Project::factory(),
             'url' => $this->faker->url(),
+            'kind' => 'live',
             'alt' => ['en' => $this->faker->words(3, true)],
             'img_url' => null,
         ];

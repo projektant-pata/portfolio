@@ -255,7 +255,6 @@ function initScrollReveal() {
     setStagger('.stats-cards');
     setStagger('.tools-row');
     setStagger('.reviews-row');
-    setStagger('.projects-year-group');
     setStagger('#projects');
 
     // Experience cards are excluded here: the masonry script in

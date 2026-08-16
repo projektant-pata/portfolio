@@ -168,6 +168,7 @@ select:focus[data-flux-control] {
     --r-card:   1.875rem;  /* large card corner radius (~30px)     */
     --r-card-sm: 1.25rem;  /* smaller card corner radius (~20px)   */
     --r-phone:  2.8125rem; /* phone nav corner radius (~45px)      */
+    --r-pill:   999px;     /* fully-rounded pill/segmented control */
 
     /* ── Layout ─────────────────────────────────────────────────
        The outer wrapper uses min() to be both fluid and capped.
@@ -232,12 +233,6 @@ html:not(.dark) {
 html:not(.dark) .portfolio-page h2 {
     color: var(--c-watermark);
     -webkit-text-stroke: 0;
-}
-
-/* Year labels are content, not texture — they keep the accent so the timeline
-   stays readable, unlike the section watermarks they inherit from. */
-html:not(.dark) .portfolio-page h2.projects-year-label {
-    color: var(--c-primary);
 }
 
 /* Special card frame: the white sweeps vanish on a white card face, so light

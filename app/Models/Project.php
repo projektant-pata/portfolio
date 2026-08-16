@@ -12,11 +12,21 @@ class Project extends Model
 {
     use HasFactory, HasUuids;
 
+    /** @var list<string> */
+    public const KINDS = ['personal', 'client', 'school'];
+
+    /** @var list<string> */
+    public const STATUSES = ['live', 'archived', 'wip'];
+
     protected $fillable = [
         'year',
+        'kind',
+        'client',
+        'status',
         'slug',
         'header',
         'description',
+        'role',
         'img_url',
         'sort_order',
     ];
@@ -25,6 +35,7 @@ class Project extends Model
         'year' => 'integer',
         'header' => 'array',
         'description' => 'array',
+        'role' => 'array',
     ];
 
     public function getTranslation(string $field, string $locale, string $fallback = 'en'): string

@@ -28,16 +28,17 @@ test('home page teases only the first two projects', function () {
         ->assertDontSee('Third Featured');
 });
 
-test('featured project links open in a new tab with rel noopener', function () {
-    $project = Project::factory()->create(['sort_order' => 0]);
-    $project->links()->create([
-        'url' => 'https://example.com',
-        'alt' => ['en' => 'Visit website'],
-        'img_url' => 'images/projects/icons/web.webp',
+test('featured project row renders the project name, kind, and data-kind attribute', function () {
+    $project = Project::factory()->create([
+        'sort_order' => 0,
+        'kind' => 'personal',
+        'header' => ['en' => 'Featured One'],
     ]);
 
     $this->get(route('home'))
-        ->assertSee('href="https://example.com" target="_blank" rel="noopener noreferrer"', false);
+        ->assertSee('<h3 class="proj-name">Featured One</h3>', false)
+        ->assertSee('data-kind="personal"', false)
+        ->assertSee('Personal');
 });
 
 test('home page renders projects in the locale of the request', function () {

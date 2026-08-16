@@ -1,0 +1,593 @@
+/* ── Projects list ─────────────────────────────────────────
+   /projects: rows grouped under one year head each. The year
+   is a group divider — printed once per year, never per row.
+   Every selector carries an ancestor class so it clears the
+   `.portfolio-page *` reset (0,1,0) and the element rules
+   `.portfolio-page h2 / h3 / p` (0,1,1). No new tokens. */
+
+.proj-list {
+    display: grid;
+    overflow-x: clip;
+}
+
+.proj-list .proj-group + .proj-group {
+    margin-top: 1.5rem;
+}
+
+/* ── year head ── */
+.proj-list .proj-yhead {
+    position: sticky;
+    top: 3.5rem;
+    z-index: 3;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 1.1rem;
+    padding: 1.1rem 0 0.9rem;
+    background: var(--c-bg);
+}
+
+.proj-list .proj-yhead h2 {
+    margin: 0;
+    text-align: left;
+    font-family: var(--font-display);
+    font-size: 2.6rem;
+    font-weight: var(--fw-bold);
+    letter-spacing: -0.04em;
+    line-height: 0.85;
+    color: transparent;
+    -webkit-text-stroke: 1px var(--c-primary);
+}
+
+/* Year numerals keep the accent even in light mode — they are content, not
+   texture, unlike every other h2 watermark, which app.css's light-theme
+   reset (`html:not(.dark) .portfolio-page h2`) turns solid sand. Qualified
+   all the way up to `.portfolio-page` so this beats that rule on specificity
+   alone, without depending on stylesheet load order. */
+html:not(.dark) .portfolio-page .proj-list .proj-yhead h2 {
+    color: transparent;
+    -webkit-text-stroke: 1px var(--c-primary);
+}
+
+.proj-list .proj-yline {
+    height: 1px;
+    background: linear-gradient(
+        90deg,
+        color-mix(in srgb, var(--c-primary-fade) 90%, transparent),
+        color-mix(in srgb, var(--c-primary-fade) 15%, transparent)
+    );
+}
+
+.proj-list .proj-ycount {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--c-muted);
+    white-space: nowrap;
+}
+
+/* ── row ── */
+.proj-list .proj-item {
+    display: grid;
+    grid-template-columns: 5.5rem 18rem 1fr 6rem;
+    gap: 2rem;
+    padding: 1.75rem 0;
+    border-top: 1px solid color-mix(in srgb, var(--c-primary-fade) 55%, transparent);
+    align-items: start;
+}
+
+/* Home renders these rows with `:expandable="false"` — no `.proj-act`
+   button ever prints, so the 4th track's `6rem` (plus its `2rem` gap) would
+   sit reserved and empty at the row's right edge. Drop it. Same specificity
+   as the rule above; wins on source order, same trick the two `@media`
+   blocks below already rely on. */
+.proj-list--compact .proj-item {
+    grid-template-columns: 5.5rem 18rem 1fr;
+}
+
+/* The head already separates the group; its first row must not draw a second
+   rule. `.is-first-visible` is set by the filter script when the real first
+   row is filtered out. */
+.proj-list .proj-group .proj-item:first-of-type,
+.proj-list .proj-item.is-first-visible {
+    border-top: 0;
+}
+
+/* Home's compact list (`.proj-list--compact`) has no `.proj-group` wrapper —
+   the rule above never matches there, so its first row would draw a divider
+   line right under the "Projects" h2, which the deleted `.projects-row`
+   component never had. */
+.proj-list--compact .proj-item:first-of-type {
+    border-top: 0;
+}
+
+.proj-list .proj-rail {
+    display: grid;
+    gap: 0.4rem;
+    align-content: start;
+    padding-top: 0.15rem;
+}
+
+.proj-list .proj-kind {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--c-muted);
+    line-height: 1.5;
+}
+
+.proj-list .proj-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--c-muted);
+}
+
+.proj-list .proj-status::before {
+    content: '';
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--c-muted);
+    flex-shrink: 0;
+}
+
+.proj-list .proj-status[data-state='live']::before {
+    background: #4ade80;
+}
+
+/* Fixed height, independent of the row's content — the body column (name,
+   description, chips) grows or shrinks with description length, so the
+   shot's bottom edge does not track the chip row exactly; it sits close by
+   for a typical one-to-two-line description, not flush against it. */
+.proj-list .proj-shot {
+    height: 11.5rem;
+    border-radius: var(--r-card-sm);
+    overflow: hidden;
+    background: var(--c-surface-sunken);
+    border: var(--border-w) solid var(--c-primary-fade);
+    transition: border-color var(--t-fast);
+}
+
+.proj-list .proj-item:hover .proj-shot {
+    border-color: var(--c-primary);
+}
+
+.proj-list .proj-shot img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.proj-list .proj-body {
+    display: grid;
+    gap: 0.7rem;
+    justify-items: start;
+}
+
+/* No gold accent — project names are proper nouns; the gold in this row
+   belongs to the year and the chips. */
+.proj-list .proj-name {
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    font-weight: var(--fw-bold);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+}
+
+.proj-list .proj-desc {
+    font-size: 0.92rem;
+    font-weight: var(--fw-light);
+    line-height: 1.6;
+    color: var(--c-muted);
+    max-width: 52ch;
+    text-wrap: pretty;
+}
+
+.proj-list .proj-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    align-items: center;
+}
+
+.proj-list .proj-chip {
+    font-size: 11px;
+    font-weight: var(--fw-semibold);
+    padding: 0.2rem 0.65rem;
+    border-radius: var(--r-pill);
+    border: 1px solid color-mix(in srgb, var(--bc, var(--c-primary)) 55%, transparent);
+    color: var(--bc, var(--c-primary));
+}
+
+/* Badge accent hex (`--bc`) is picked once per badge, independent of theme —
+   several read under 3:1 as text on bone even though they're fine on the
+   dark surface. Blend the badge hue toward the light theme's own ink so
+   every badge stays legible without a per-badge override. Qualified up to
+   `.portfolio-page` to beat that page's `html:not(.dark) h2` reset and any
+   other light-theme rule on specificity, the same trick the year head
+   already relies on above. */
+html:not(.dark) .portfolio-page .proj-list .proj-chip {
+    color: color-mix(in srgb, var(--bc, var(--c-primary)) 50%, var(--c-fg) 50%);
+}
+
+/* ── expand in place ── */
+.proj-list .proj-act {
+    justify-self: end;
+    padding-top: 0.35rem;
+}
+
+.proj-list .proj-toggle {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--c-muted);
+    background: none;
+    border: 0;
+    border-bottom: 1px solid var(--c-primary-fade);
+    padding: 0 0 2px;
+    cursor: pointer;
+    transition: color var(--t-fast), border-color var(--t-fast);
+}
+
+.proj-list .proj-toggle:hover {
+    color: var(--c-primary);
+    border-color: var(--c-primary);
+}
+
+.proj-list .proj-more {
+    display: none;
+    gap: 1rem;
+    padding-top: 0.4rem;
+}
+
+.proj-list .proj-item.is-open .proj-more {
+    display: grid;
+}
+
+.proj-list .proj-item.is-open .proj-toggle {
+    color: var(--c-primary);
+    border-color: var(--c-primary);
+}
+
+.proj-list .proj-facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 2rem;
+    margin: 0;
+}
+
+.proj-list .proj-fact {
+    display: grid;
+    gap: 0.15rem;
+}
+
+.proj-list .proj-fact dt {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--c-muted) 75%, transparent);
+}
+
+.proj-list .proj-fact dd {
+    margin: 0;
+    font-size: 0.88rem;
+    font-weight: var(--fw-light);
+    color: var(--c-fg);
+}
+
+.proj-list .proj-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.proj-list .proj-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 11px;
+    font-weight: var(--fw-semibold);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.35rem 0.8rem;
+    border-radius: var(--r-pill);
+    border: 1px solid color-mix(in srgb, var(--c-primary-fade) 80%, transparent);
+    color: var(--c-fg);
+    transition: color var(--t-fast), border-color var(--t-fast);
+}
+
+.proj-list .proj-link:hover {
+    border-color: var(--c-primary);
+    color: var(--c-primary);
+}
+
+.proj-list .proj-link--none {
+    border-style: dashed;
+    color: var(--c-muted);
+    pointer-events: none;
+}
+
+/* ── filter bar ── */
+.portfolio-section .proj-filters {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.55rem 1.6rem;
+    padding: 1rem 0;
+    background: var(--c-bg);
+    border-top: 1px solid color-mix(in srgb, var(--c-primary-fade) 55%, transparent);
+    border-bottom: 1px solid color-mix(in srgb, var(--c-primary-fade) 55%, transparent);
+}
+
+/* Rows dissolve under the bar rather than colliding with it. */
+.portfolio-section .proj-filters::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
+    height: 1.25rem;
+    background: linear-gradient(var(--c-bg), transparent);
+    pointer-events: none;
+}
+
+.proj-filters .proj-fgroup {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    flex-wrap: wrap;
+}
+
+.proj-filters .proj-flabel {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--c-muted) 80%, transparent);
+    margin-right: 0.15rem;
+}
+
+/* Single-select gets one object, not four buttons that can all read as off. */
+.proj-filters .proj-seg {
+    position: relative;
+    display: inline-flex;
+    gap: 0.1rem;
+    padding: 0.2rem;
+    border-radius: var(--r-pill);
+    background: var(--c-surface-sunken);
+    border: 1px solid color-mix(in srgb, var(--c-primary-fade) 60%, transparent);
+}
+
+.proj-filters .proj-seg-thumb {
+    position: absolute;
+    top: 0.2rem;
+    bottom: 0.2rem;
+    left: 0.2rem;
+    width: 0;
+    border-radius: var(--r-pill);
+    background: var(--c-primary);
+    transition: transform var(--t-fast), width var(--t-fast);
+}
+
+.proj-filters .proj-seg button {
+    position: relative;
+    font-size: 11.5px;
+    font-weight: var(--fw-semibold);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0.34rem 0.95rem;
+    border: 0;
+    border-radius: var(--r-pill);
+    background: transparent;
+    color: var(--c-muted);
+    cursor: pointer;
+    transition: color var(--t-fast);
+}
+
+.proj-filters .proj-seg button:hover {
+    color: var(--c-fg);
+}
+
+.proj-filters .proj-seg button[aria-pressed='true'] {
+    color: var(--c-bg);
+}
+
+.proj-filters .proj-fchip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 11.5px;
+    font-weight: var(--fw-semibold);
+    padding: 0.28rem 0.75rem 0.28rem 0.6rem;
+    border-radius: var(--r-pill);
+    border: 1px solid color-mix(in srgb, var(--c-primary-fade) 75%, transparent);
+    background: none;
+    color: var(--c-muted);
+    cursor: pointer;
+    transition: color var(--t-fast), border-color var(--t-fast), background var(--t-fast);
+}
+
+.proj-filters .proj-fchip::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--bc, var(--c-primary));
+    transition: box-shadow var(--t-fast);
+}
+
+.proj-filters .proj-fchip:hover {
+    color: var(--c-fg);
+    border-color: color-mix(in srgb, var(--bc, var(--c-primary)) 55%, transparent);
+}
+
+.proj-filters .proj-fchip[aria-pressed='true'] {
+    color: var(--bc, var(--c-primary));
+    border-color: color-mix(in srgb, var(--bc, var(--c-primary)) 60%, transparent);
+    background: color-mix(in srgb, var(--bc, var(--c-primary)) 14%, transparent);
+}
+
+/* Same badge-hex legibility problem as `.proj-chip` above, for the pressed
+   stack-filter label. */
+html:not(.dark) .portfolio-page .proj-filters .proj-fchip[aria-pressed='true'] {
+    color: color-mix(in srgb, var(--bc, var(--c-primary)) 50%, var(--c-fg) 50%);
+}
+
+.proj-filters .proj-fchip[aria-pressed='true']::before {
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--bc, var(--c-primary)) 28%, transparent);
+}
+
+.proj-filters .proj-fcount {
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--c-muted);
+}
+
+.proj-filters .proj-fcount b {
+    color: var(--c-fg);
+    font-weight: var(--fw-semibold);
+}
+
+.proj-filters .proj-fclear,
+.proj-empty .proj-fclear {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--c-muted);
+    background: none;
+    border: 0;
+    border-bottom: 1px solid var(--c-primary-fade);
+    padding: 0 0 2px;
+    cursor: pointer;
+}
+
+.proj-filters .proj-fclear:hover,
+.proj-empty .proj-fclear:hover {
+    color: var(--c-primary);
+    border-color: var(--c-primary);
+}
+
+/* ── empty state ── */
+.portfolio-section .proj-empty {
+    display: grid;
+    gap: 0.9rem;
+    justify-items: start;
+    padding: 3.5rem 0 4rem;
+    border-top: 1px solid color-mix(in srgb, var(--c-primary-fade) 55%, transparent);
+}
+
+.proj-empty .proj-etitle {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: var(--fw-bold);
+}
+
+.proj-empty .proj-ebody {
+    font-size: 0.92rem;
+    font-weight: var(--fw-light);
+    color: var(--c-muted);
+    max-width: 44ch;
+}
+
+/* Filtered-out rows and their emptied year groups. */
+.proj-list .proj-item[hidden],
+.proj-list .proj-group[hidden] {
+    display: none;
+}
+
+@media (max-width: 1100px) {
+    .proj-list .proj-item {
+        grid-template-columns: 5rem 13rem 1fr;
+        gap: 1.5rem;
+    }
+
+    .proj-list .proj-shot {
+        height: 9rem;
+    }
+
+    .proj-list .proj-yhead h2 {
+        font-size: 2.1rem;
+    }
+
+    .proj-list .proj-desc {
+        max-width: none;
+    }
+
+    .proj-list .proj-act {
+        grid-column: 3;
+        justify-self: start;
+        padding-top: 0;
+    }
+}
+
+@media (max-width: 760px) {
+    .proj-list .proj-item {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        padding: 1.6rem 0;
+    }
+
+    .proj-list .proj-rail {
+        display: flex;
+        align-items: center;
+        gap: 0.9rem;
+        padding-top: 0;
+    }
+
+    .proj-list .proj-shot {
+        height: 12rem;
+    }
+
+    .proj-list .proj-yhead {
+        padding: 0.9rem 0 0.7rem;
+        top: 0;
+    }
+
+    .proj-list .proj-yhead h2 {
+        font-size: 1.9rem;
+    }
+
+    .proj-list .proj-act {
+        grid-column: 1;
+    }
+
+    .portfolio-section .proj-filters {
+        gap: 0.5rem 0.9rem;
+        padding: 0.85rem 0;
+    }
+
+    .proj-filters .proj-fcount {
+        margin-left: 0;
+        flex-basis: 100%;
+    }
+
+    /* A segmented control must never break onto two lines. */
+    .proj-filters .proj-seg {
+        max-width: 100%;
+        overflow-x: auto;
+        scrollbar-width: none;
+    }
+}
+
+.proj-list .proj-none {
+    padding: 4rem 0;
+    text-align: center;
+    color: var(--c-muted);
+}

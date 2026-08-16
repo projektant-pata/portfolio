@@ -72,9 +72,11 @@
             :title="__('home/projects.head_title')"
             :note="__('home/projects.head_note', ['url' => route('projects')])"
         />
-        @foreach ($featuredProjects as $index => $project)
-            <x-portfolio.project-row :project="$project" :locale="$locale" :reverse="$index % 2 !== 0" />
-        @endforeach
+        <div class="proj-list proj-list--compact">
+            @foreach ($featuredProjects as $project)
+                <x-portfolio.project-row :project="$project" :locale="$locale" :expandable="false" />
+            @endforeach
+        </div>
     </section>
 
     {{-- Tools --}}

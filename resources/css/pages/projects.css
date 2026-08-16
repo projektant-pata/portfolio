@@ -1,17 +1,6 @@
-@import '../components/project-row.css';
+@import '../components/project-list.css';
 @import '../components/dock-hero.css';
 
 /* ================================================================
    PROJECTS PAGE STYLES
    ================================================================ */
-
-/* ── Year group ── */
-.projects-year-group {
-    margin-bottom: var(--sp-section);
-}
-
-.projects-year-label {
-    color: var(--c-primary);
-    margin-bottom: 2.5rem;
-    text-align: left !important;
-}

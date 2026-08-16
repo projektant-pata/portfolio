@@ -130,3 +130,132 @@ test('can delete project', function () {
 
     expect(Project::count())->toBe(0);
 });
+
+test('can create project with kind, client, status and role', function () {
+    $user = User::factory()->create();
+
+    Livewire::actingAs($user)
+        ->test('pages::manage.projects')
+        ->set('header', ['en' => 'U Sladovny', 'cs' => ''])
+        ->set('slug', 'u-sladovny')
+        ->set('year', '2025')
+        ->set('kind', 'client')
+        ->set('client', 'PekneWeby')
+        ->set('status', 'live')
+        ->set('role', ['en' => 'Front-end and back-end', 'cs' => 'Front-end a back-end'])
+        ->call('save')
+        ->assertHasNoErrors();
+
+    $project = Project::first();
+
+    expect($project->kind)->toBe('client')
+        ->and($project->client)->toBe('PekneWeby')
+        ->and($project->status)->toBe('live')
+        ->and($project->role)->toEqual(['en' => 'Front-end and back-end', 'cs' => 'Front-end a back-end']);
+});
+
+test('project kind must be one of the allowed values', function () {
+    $user = User::factory()->create();
+
+    Livewire::actingAs($user)
+        ->test('pages::manage.projects')
+        ->set('header', ['en' => 'Bad kind', 'cs' => ''])
+        ->set('slug', 'bad-kind')
+        ->set('year', '2026')
+        ->set('kind', 'freelance')
+        ->call('save')
+        ->assertHasErrors(['kind']);
+});
+
+test('project status may be left empty', function () {
+    $user = User::factory()->create();
+
+    Livewire::actingAs($user)
+        ->test('pages::manage.projects')
+        ->set('header', ['en' => 'No status', 'cs' => ''])
+        ->set('slug', 'no-status')
+        ->set('year', '2026')
+        ->set('status', '')
+        ->call('save')
+        ->assertHasNoErrors();
+
+    expect(Project::first()->status)->toBeNull();
+});
+
+test('project defaults to the personal kind', function () {
+    $user = User::factory()->create();
+
+    Livewire::actingAs($user)
+        ->test('pages::manage.projects')
+        ->set('header', ['en' => 'Default kind', 'cs' => ''])
+        ->set('slug', 'default-kind')
+        ->set('year', '2026')
+        ->call('save')
+        ->assertHasNoErrors();
+
+    expect(Project::first()->kind)->toBe('personal');
+});
+
+test('links are saved with their kind', function () {
+    $user = User::factory()->create();
+
+    Livewire::actingAs($user)
+        ->test('pages::manage.projects')
+        ->set('header', ['en' => 'With links', 'cs' => ''])
+        ->set('slug', 'with-links')
+        ->set('year', '2026')
+        ->set('links', [
+            ['url' => 'https://example.com', 'kind' => 'live', 'alt' => ['en' => '', 'cs' => ''], 'img_url' => ''],
+            ['url' => 'https://github.com/a/b', 'kind' => 'repo', 'alt' => ['en' => '', 'cs' => ''], 'img_url' => ''],
+        ])
+        ->call('save')
+        ->assertHasNoErrors();
+
+    expect(Project::first()->links->pluck('kind')->all())->toBe(['live', 'repo']);
+});
+
+test('link kind must be one of the allowed values', function () {
+    $user = User::factory()->create();
+
+    Livewire::actingAs($user)
+        ->test('pages::manage.projects')
+        ->set('header', ['en' => 'Bad link kind', 'cs' => ''])
+        ->set('slug', 'bad-link-kind')
+        ->set('year', '2026')
+        ->set('links', [
+            ['url' => 'https://example.com', 'kind' => 'video', 'alt' => ['en' => '', 'cs' => ''], 'img_url' => ''],
+        ])
+        ->call('save')
+        ->assertHasErrors(['links.0.kind']);
+});
+
+test('editing a project loads its metadata into the form', function () {
+    $user = User::factory()->create();
+    $project = Project::factory()->client()->create(['status' => 'archived']);
+
+    Livewire::actingAs($user)
+        ->test('pages::manage.projects')
+        ->call('openEdit', $project->id)
+        ->assertSet('kind', 'client')
+        ->assertSet('status', 'archived')
+        ->assertSet('client', $project->client);
+});
+
+test('can create project with the school kind and wip status', function () {
+    $user = User::factory()->create();
+
+    Livewire::actingAs($user)
+        ->test('pages::manage.projects')
+        ->set('header', ['en' => 'Thesis Project', 'cs' => ''])
+        ->set('slug', 'thesis-project')
+        ->set('year', '2026')
+        ->set('kind', 'school')
+        ->set('status', 'wip')
+        ->call('save')
+        ->assertHasNoErrors();
+
+    $project = Project::first();
+
+    expect($project->kind)->toBe('school')
+        ->and($project->status)->toBe('wip');
+});
