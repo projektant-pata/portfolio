@@ -17,9 +17,13 @@ class ProjectFactory extends Factory
 
         return [
             'year' => $this->faker->numberBetween(2018, 2026),
+            'kind' => 'personal',
+            'client' => null,
+            'status' => 'live',
             'slug' => Str::slug($header) . '-' . $this->faker->unique()->numberBetween(1, 9999),
             'header' => ['en' => $header],
             'description' => ['en' => $this->faker->sentence()],
+            'role' => ['en' => 'Solo build'],
             'img_url' => null,
         ];
     }
@@ -30,5 +34,18 @@ class ProjectFactory extends Factory
             'header' => ['en' => $this->faker->sentence(3), 'cs' => $this->faker->sentence(3)],
             'description' => ['en' => $this->faker->sentence(), 'cs' => $this->faker->sentence()],
         ]);
+    }
+
+    public function client(): static
+    {
+        return $this->state(fn () => [
+            'kind' => 'client',
+            'client' => $this->faker->company(),
+        ]);
+    }
+
+    public function archived(): static
+    {
+        return $this->state(fn () => ['status' => 'archived']);
     }
 }

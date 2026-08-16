@@ -11,11 +11,15 @@ class Link extends Model
 {
     use HasFactory, HasUuids;
 
+    /** @var list<string> */
+    public const KINDS = ['live', 'repo', 'article'];
+
     protected $fillable = [
         'project_id',
         'alt',
         'img_url',
         'url',
+        'kind',
     ];
 
     protected $casts = [

@@ -20,6 +20,10 @@ new #[Title('Manage Projects')] class extends Component {
     public array $description = ['en' => '', 'cs' => ''];
     public string $slug = '';
     public string $year = '';
+    public string $kind = 'personal';
+    public string $client = '';
+    public string $status = '';
+    public array $role = ['en' => '', 'cs' => ''];
     public string $img_url = '';
     public $imageFile = null;
     public array $links = [];
@@ -93,10 +97,15 @@ new #[Title('Manage Projects')] class extends Component {
         $this->description = array_merge(['en' => '', 'cs' => ''], $project->description ?? []);
         $this->slug = $project->slug;
         $this->year = (string) $project->year;
+        $this->kind = $project->kind;
+        $this->client = $project->client ?? '';
+        $this->status = $project->status ?? '';
+        $this->role = array_merge(['en' => '', 'cs' => ''], $project->role ?? []);
         $this->img_url = $project->img_url ?? '';
         $this->imageFile = null;
         $this->links = $project->links->map(fn ($l) => [
             'url' => $l->url,
+            'kind' => $l->kind,
             'alt' => array_merge(['en' => '', 'cs' => ''], $l->alt ?? []),
             'img_url' => $l->img_url ?? '',
         ])->toArray();
@@ -113,7 +122,7 @@ new #[Title('Manage Projects')] class extends Component {
 
     public function addLink(): void
     {
-        $this->links[] = ['url' => '', 'alt' => ['en' => '', 'cs' => ''], 'img_url' => ''];
+        $this->links[] = ['url' => '', 'kind' => 'live', 'alt' => ['en' => '', 'cs' => ''], 'img_url' => ''];
     }
 
     public function removeLink(int $index): void
@@ -146,9 +155,16 @@ new #[Title('Manage Projects')] class extends Component {
             'description.cs' => ['nullable', 'string', 'max:1000'],
             'slug' => ['required', 'string', 'max:255', \Illuminate\Validation\Rule::unique('projects', 'slug')->ignore($project)],
             'year' => ['required', 'integer', 'min:1900', 'max:2100'],
+            'kind' => ['required', 'string', \Illuminate\Validation\Rule::in(Project::KINDS)],
+            'client' => ['nullable', 'string', 'max:255'],
+            'status' => ['nullable', 'string', \Illuminate\Validation\Rule::in(Project::STATUSES)],
+            'role' => ['nullable', 'array'],
+            'role.en' => ['nullable', 'string', 'max:255'],
+            'role.cs' => ['nullable', 'string', 'max:255'],
             'imageFile' => ['nullable', 'image', 'max:4096'],
             'links' => ['nullable', 'array'],
             'links.*.url' => ['nullable', 'url', 'max:500'],
+            'links.*.kind' => ['nullable', 'string', \Illuminate\Validation\Rule::in(Link::KINDS)],
             'links.*.alt' => ['nullable', 'array'],
             'links.*.alt.en' => ['nullable', 'string', 'max:100'],
             'links.*.alt.cs' => ['nullable', 'string', 'max:100'],
@@ -184,8 +200,12 @@ new #[Title('Manage Projects')] class extends Component {
         $data = [
             'header' => array_filter($validated['header'], fn ($v) => filled($v)),
             'description' => array_filter($validated['description'] ?? [], fn ($v) => filled($v)) ?: null,
+            'role' => array_filter($validated['role'] ?? [], fn ($v) => filled($v)) ?: null,
             'slug' => $validated['slug'],
             'year' => (int) $validated['year'],
+            'kind' => $validated['kind'],
+            'client' => $validated['kind'] === 'client' ? ($validated['client'] ?: null) : null,
+            'status' => $validated['status'] ?: null,
             'img_url' => $this->img_url ?: null,
         ];
 
@@ -201,6 +221,7 @@ new #[Title('Manage Projects')] class extends Component {
         foreach ($filteredLinks as $linkData) {
             $project->links()->create([
                 'url' => $linkData['url'],
+                'kind' => $linkData['kind'] ?? 'live',
                 'alt' => array_filter($linkData['alt'] ?? [], fn ($v) => filled($v)) ?: null,
                 'img_url' => $linkData['img_url'] ?: null,
             ]);
@@ -234,6 +255,10 @@ new #[Title('Manage Projects')] class extends Component {
         $this->description = ['en' => '', 'cs' => ''];
         $this->slug = '';
         $this->year = '';
+        $this->kind = 'personal';
+        $this->client = '';
+        $this->status = '';
+        $this->role = ['en' => '', 'cs' => ''];
         $this->img_url = '';
         $this->imageFile = null;
         $this->links = [];
@@ -303,6 +328,11 @@ new #[Title('Manage Projects')] class extends Component {
                         <flux:textarea wire:model="description.en" placeholder="Short project description…" rows="4" />
                         <flux:error name="description.en" />
                     </flux:field>
+                    <flux:field>
+                        <flux:label>Role</flux:label>
+                        <flux:input wire:model="role.en" placeholder="e.g. Front-end and back-end" />
+                        <flux:error name="role.en" />
+                    </flux:field>
                 </x-slot:en>
                 <x-slot:cs>
                     <flux:field>
@@ -314,6 +344,11 @@ new #[Title('Manage Projects')] class extends Component {
                         <flux:label>Description</flux:label>
                         <flux:textarea wire:model="description.cs" placeholder="Krátký popis projektu…" rows="4" />
                         <flux:error name="description.cs" />
+                    </flux:field>
+                    <flux:field>
+                        <flux:label>Role</flux:label>
+                        <flux:input wire:model="role.cs" placeholder="např. Front-end a back-end" />
+                        <flux:error name="role.cs" />
                     </flux:field>
                 </x-slot:cs>
             </x-manage.locale-tabs>
@@ -332,6 +367,35 @@ new #[Title('Manage Projects')] class extends Component {
                     <flux:error name="year" />
                 </flux:field>
 
+                <flux:field>
+                    <flux:label>Kind <flux:badge size="sm" color="yellow" inset="top bottom">Required</flux:badge></flux:label>
+                    <flux:select wire:model.live="kind">
+                        <flux:select.option value="personal">Personal</flux:select.option>
+                        <flux:select.option value="client">Client</flux:select.option>
+                        <flux:select.option value="school">School</flux:select.option>
+                    </flux:select>
+                    <flux:error name="kind" />
+                </flux:field>
+
+                <flux:field>
+                    <flux:label>Status</flux:label>
+                    <flux:select wire:model="status">
+                        <flux:select.option value="">—</flux:select.option>
+                        <flux:select.option value="live">Live</flux:select.option>
+                        <flux:select.option value="archived">Archived</flux:select.option>
+                        <flux:select.option value="wip">In progress</flux:select.option>
+                    </flux:select>
+                    <flux:error name="status" />
+                </flux:field>
+
+                @if ($kind === 'client')
+                    <flux:field class="col-span-2">
+                        <flux:label>Client name</flux:label>
+                        <flux:input wire:model="client" placeholder="e.g. PekneWeby" />
+                        <flux:error name="client" />
+                    </flux:field>
+                @endif
+
                 <flux:field class="col-span-2">
                     <flux:label>Image</flux:label>
                     <flux:input wire:model="imageFile" type="file" accept="image/*" />
@@ -344,7 +408,7 @@ new #[Title('Manage Projects')] class extends Component {
                     @endif
                 </flux:field>
 
-                <x-manage.link-repeater :links="$links" :translatable-alt="true" />
+                <x-manage.link-repeater :links="$links" :translatable-alt="true" :with-kind="true" />
 
                 <x-manage.badge-picker :selected="$selectedBadgeIds" :badges="$this->allBadges" />
             </div>
