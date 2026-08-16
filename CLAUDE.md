@@ -220,7 +220,7 @@ Bilingual (en/cs) portfolio site: public pages + authenticated admin CRUD.
 
 ## Public pages
 
-Single-action controllers `app/Http/Controllers/{Home,AboutMe,Experience,Projects}Controller.php` render `resources/views/{welcome,about-me,experience,projects}.blade.php` inside the shared `<x-portfolio-layout>` (`resources/views/components/portfolio-layout.blade.php`).
+Single-action controllers `app/Http/Controllers/{Home,AboutMe,Experience,Projects,Blog,Article}Controller.php` render `resources/views/{welcome,about-me,experience,projects,blog,article}.blade.php` inside the shared `<x-portfolio-layout>` (`resources/views/components/portfolio-layout.blade.php`). Article bodies render through `App\Support\ArticleMarkdown`; `published_at` gates an article's visibility on both `/blog` and `/blog/{slug}`.
 
 ## Admin (dashboard)
 

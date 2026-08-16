@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Setting;
+use Database\Seeders\SettingSeeder;
 
 test('the home page renders exactly one h1', function () {
     $html = $this->get(route('home'))->assertOk()->getContent();
@@ -34,16 +35,16 @@ test('the hero omits the rotator when there are fewer than two roles', function 
 });
 
 test('every public page opens with the dock hero', function (string $route) {
-    $this->seed(\Database\Seeders\SettingSeeder::class);
+    $this->seed(SettingSeeder::class);
 
     $this->get(route($route))
         ->assertOk()
         ->assertSee('class="dock-hero', false)
         ->assertDontSee('hero-page', false);
-})->with(['home', 'about-me', 'projects', 'experience']);
+})->with(['home', 'about-me', 'projects', 'experience', 'blog']);
 
 test('every public page renders exactly one h1 and one rotator', function (string $route) {
-    $this->seed(\Database\Seeders\SettingSeeder::class);
+    $this->seed(SettingSeeder::class);
 
     $html = $this->get(route($route))->assertOk()->getContent();
 
@@ -52,7 +53,7 @@ test('every public page renders exactly one h1 and one rotator', function (strin
 })->with(['home', 'about-me', 'projects', 'experience']);
 
 test('only the home hero is full height', function (string $route) {
-    $this->seed(\Database\Seeders\SettingSeeder::class);
+    $this->seed(SettingSeeder::class);
 
     $this->get(route($route))
         ->assertOk()
@@ -94,7 +95,7 @@ test('the subpage heroes carry the rotator role list in data-roles', function ()
 });
 
 test('each page renders its own wordmark and tags in both locales', function (string $route, string $wordmarkEn, string $tagEn, string $wordmarkCs, string $tagCs) {
-    $this->seed(\Database\Seeders\SettingSeeder::class);
+    $this->seed(SettingSeeder::class);
 
     $this->get(route($route))
         ->assertSee('aria-hidden="true">'.$wordmarkEn.'<', false)
@@ -122,14 +123,14 @@ test('the home hero renders its photo caption', function () {
 });
 
 test('the subpage heroes carry their own photo crop', function () {
-    $this->seed(\Database\Seeders\SettingSeeder::class);
+    $this->seed(SettingSeeder::class);
 
     $this->get(route('projects'))
         ->assertSee('--dock-hero-photo-pos: 50% 30%', false);
 });
 
 test('the sections that peek under a subpage hero opt out of the scroll-reveal fade', function (string $route, string $id) {
-    $this->seed(\Database\Seeders\SettingSeeder::class);
+    $this->seed(SettingSeeder::class);
 
     $this->get(route($route))
         ->assertSee('id="'.$id.'" class="portfolio-section portfolio-section--no-reveal"', false);
@@ -139,7 +140,7 @@ test('the sections that peek under a subpage hero opt out of the scroll-reveal f
 ]);
 
 test('the section under the full-height home hero still fades in on scroll', function () {
-    $this->seed(\Database\Seeders\SettingSeeder::class);
+    $this->seed(SettingSeeder::class);
 
     $this->get(route('home'))
         ->assertSee('id="stats" class="portfolio-section"', false);
