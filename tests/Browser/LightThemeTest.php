@@ -85,3 +85,31 @@ test('light-mode body and muted text clear WCAG AA on their own surface', functi
     expect($page->script($contrastOf('.portfolio-page h3', '.portfolio-page')))->toBeGreaterThanOrEqual(4.5)
         ->and($page->script($contrastOf('.about-me-card p', '.about-me-card')))->toBeGreaterThanOrEqual(4.5);
 });
+
+test('badge chip text clears the WCAG floor in light mode, both as a row chip and as a pressed stack filter', function () use ($goLight, $contrastOf, $themeTransition) {
+    $this->seed(\Database\Seeders\SettingSeeder::class);
+
+    // #A78BFA is the lavender badge hex that measured at 2.58:1 (row `.proj-chip`)
+    // and 1.65:1 (pressed `.proj-fchip`) against the light bg before bab43a3 —
+    // both selectors used the badge's raw --bc hex directly as text color.
+    // bab43a3 blends --bc toward --c-fg in light mode only; this pins that fix
+    // to a 3.0:1 floor so a regression (e.g. reverting the blend, or raising
+    // the badge-color share back toward 100%) fails this test.
+    $badge = \App\Models\Badge::factory()->create([
+        'slug' => 'lavender',
+        'name' => ['en' => 'Lavender'],
+        'color' => '#A78BFA',
+    ]);
+    \App\Models\Project::factory()->create()->badges()->attach($badge);
+
+    $page = visit('/projects')->resize(1440, 900);
+    $page->script($goLight);
+    $page->wait($themeTransition);
+
+    // Press the stack filter so `.proj-fchip[aria-pressed="true"]` exists —
+    // the pressed state is the only one that colors its label from --bc.
+    $page->click('[data-stack-filter="lavender"]');
+
+    expect($page->script($contrastOf('.proj-chip', '.portfolio-page')))->toBeGreaterThanOrEqual(3.0)
+        ->and($page->script($contrastOf('.proj-fchip[aria-pressed="true"]', '.portfolio-page')))->toBeGreaterThanOrEqual(3.0);
+});
