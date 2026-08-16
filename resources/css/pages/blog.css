@@ -41,6 +41,25 @@
     font-weight: 600;
 }
 
+.blog-filter {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin: 0 0.2rem 0.8rem;
+    font-size: 0.85rem;
+    color: var(--c-muted);
+}
+
+.blog-reset {
+    color: var(--c-muted);
+    text-decoration: underline;
+    transition: var(--t-fast);
+}
+
+.blog-reset:hover {
+    color: var(--c-primary);
+}
+
 /* ── Listing ── */
 
 .blog-list {

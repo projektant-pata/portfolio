@@ -34,6 +34,18 @@
             ) !!}</span>
         </div>
 
+        @if ($activeSlug !== '')
+            <p class="blog-filter">
+                <span>{{ __('pages/blog.filtered_by') }}</span>
+                @if ($activeBadge)
+                    <span class="blog-badge" style="--badge-color: {{ $activeBadge->color }}">{{ $activeBadge->getTranslation('name', $locale) }}</span>
+                @else
+                    <span class="blog-badge">{{ $activeSlug }}</span>
+                @endif
+                <a href="{{ route('blog') }}" class="blog-reset">{{ __('pages/blog.show_all') }}</a>
+            </p>
+        @endif
+
         <div class="blog-list">
             @forelse ($articles as $index => $article)
                 <x-portfolio.blog-row
@@ -43,7 +55,7 @@
                     :archive-index="$archiveIndexes[$article->id]"
                 />
             @empty
-                <p class="blog-empty">{{ __('pages/blog.empty') }}</p>
+                <p class="blog-empty">{{ $activeSlug !== '' ? __('pages/blog.empty_filtered') : __('pages/blog.empty') }}</p>
             @endforelse
         </div>
 
