@@ -2,8 +2,12 @@
  * Blog — index listing.
  *
  * From design_handoff_blog/blog.css. The hero is NOT here: /blog opens with
- * the shared <x-portfolio.dock-hero>, so dock-hero.css owns that band.
+ * the shared <x-portfolio.dock-hero>, so dock-hero.css owns that band — but
+ * every page that opens with one still has to pull it in, the same way
+ * about-me/experience/index/projects do.
  */
+
+@import '../components/dock-hero.css';
 
 :root {
     --blog-ink:        color-mix(in srgb, var(--c-fg) 88%, var(--c-bg));
