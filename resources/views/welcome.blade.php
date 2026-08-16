@@ -58,9 +58,11 @@
     {{-- Projects --}}
     <section id="projects" class="portfolio-section">
         <h2>{{ __('home/projects.title') }}</h2>
-        @foreach ($featuredProjects as $index => $project)
-            <x-portfolio.project-row :project="$project" :locale="$locale" :reverse="$index % 2 !== 0" />
-        @endforeach
+        <div class="proj-list">
+            @foreach ($featuredProjects as $project)
+                <x-portfolio.project-row :project="$project" :locale="$locale" />
+            @endforeach
+        </div>
     </section>
 
     {{-- Tools --}}
