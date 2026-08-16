@@ -17,11 +17,26 @@ class ArticleController extends Controller
 
         $article->load('badges');
 
+        $others = Article::query()
+            ->published()
+            ->with('badges')
+            ->whereKeyNot($article->getKey())
+            ->orderByDesc('date')
+            ->get();
+
+        $slugs = $article->badges->pluck('slug');
+
+        // Badge-mates first (newest first), then whatever is newest overall.
+        $readNext = $others
+            ->sortByDesc(fn (Article $other) => $other->badges->pluck('slug')->intersect($slugs)->isNotEmpty() ? 1 : 0)
+            ->values()
+            ->take(2);
+
         return view('article', [
             'article' => $article,
             'locale' => $locale,
             'body' => ArticleMarkdown::renderArticle($article, $locale),
-            'readNext' => collect(),
+            'readNext' => $readNext,
         ]);
     }
 }

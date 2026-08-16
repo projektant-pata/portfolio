@@ -58,4 +58,18 @@
         </footer>
     </article>
 
+    @if ($readNext->isNotEmpty())
+        <section class="portfolio-section portfolio-section--no-reveal">
+            <div class="blog-head">
+                <h2>{{ __('pages/blog.read_next') }}</h2>
+            </div>
+
+            <div class="blog-list">
+                @foreach ($readNext as $next)
+                    <x-portfolio.blog-row :article="$next" :locale="$locale" />
+                @endforeach
+            </div>
+        </section>
+    @endif
+
 </x-portfolio-layout>
