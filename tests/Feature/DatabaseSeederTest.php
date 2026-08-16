@@ -1,10 +1,14 @@
 <?php
 
+use App\Models\Link;
 use App\Models\Project;
 use App\Models\User;
+use Database\Seeders\BadgesSeeder;
+use Database\Seeders\DatabaseSeeder;
+use Database\Seeders\ProjectsSeeder;
 
 test('database seeder seeds the admin user and projects', function () {
-    $this->seed(Database\Seeders\DatabaseSeeder::class);
+    $this->seed(DatabaseSeeder::class);
 
     expect(User::count())->toBe(1);
     expect(Project::pluck('slug')->all())
@@ -12,16 +16,16 @@ test('database seeder seeds the admin user and projects', function () {
 });
 
 test('the projects seeder gives every project a kind, a status and a bilingual role', function () {
-    $this->seed(\Database\Seeders\BadgesSeeder::class);
-    $this->seed(\Database\Seeders\ProjectsSeeder::class);
+    $this->seed(BadgesSeeder::class);
+    $this->seed(ProjectsSeeder::class);
 
-    $projects = \App\Models\Project::all();
+    $projects = Project::all();
 
     expect($projects)->toHaveCount(3);
 
     $projects->each(function ($project) {
-        expect($project->kind)->toBeIn(\App\Models\Project::KINDS)
-            ->and($project->status)->toBeIn(\App\Models\Project::STATUSES)
+        expect($project->kind)->toBeIn(Project::KINDS)
+            ->and($project->status)->toBeIn(Project::STATUSES)
             ->and($project->role)->toHaveKeys(['en', 'cs']);
     });
 
@@ -29,11 +33,11 @@ test('the projects seeder gives every project a kind, a status and a bilingual r
 });
 
 test('the projects seeder types every link', function () {
-    $this->seed(\Database\Seeders\BadgesSeeder::class);
-    $this->seed(\Database\Seeders\ProjectsSeeder::class);
+    $this->seed(BadgesSeeder::class);
+    $this->seed(ProjectsSeeder::class);
 
-    $kinds = \App\Models\Link::pluck('kind')->unique()->values();
+    $kinds = Link::pluck('kind')->unique()->values();
 
-    expect($kinds->every(fn ($kind) => in_array($kind, \App\Models\Link::KINDS, true)))->toBeTrue();
-    expect(\App\Models\Link::where('url', 'like', '%github.com%')->pluck('kind')->unique()->all())->toBe(['repo']);
+    expect($kinds->every(fn ($kind) => in_array($kind, Link::KINDS, true)))->toBeTrue();
+    expect(Link::where('url', 'like', '%github.com%')->pluck('kind')->unique()->all())->toBe(['repo']);
 });
