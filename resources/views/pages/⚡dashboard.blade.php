@@ -4,7 +4,9 @@ use App\Models\AboutCard;
 use App\Models\Article;
 use App\Models\Badge;
 use App\Models\Experience;
+use App\Models\Interest;
 use App\Models\Link;
+use App\Models\PathNode;
 use App\Models\Project;
 use App\Models\Review;
 use App\Models\Stat;
@@ -31,6 +33,8 @@ new #[Title('Dashboard')] class extends Component {
             ['label' => __('Stats'), 'icon' => 'chart-bar', 'count' => Stat::count(), 'route' => 'manage.stats'],
             ['label' => __('Reviews'), 'icon' => 'chat-bubble-left-right', 'count' => Review::count(), 'route' => 'manage.reviews'],
             ['label' => __('About cards'), 'icon' => 'identification', 'count' => AboutCard::count(), 'route' => 'manage.about-cards'],
+            ['label' => __('Path nodes'), 'icon' => 'map', 'count' => PathNode::count(), 'route' => 'manage.path-nodes'],
+            ['label' => __('Interests'), 'icon' => 'sparkles', 'count' => Interest::count(), 'route' => 'manage.interests'],
         ];
     }
 
@@ -51,6 +55,8 @@ new #[Title('Dashboard')] class extends Component {
             ['label' => __('Add stat'), 'icon' => 'chart-bar', 'route' => 'manage.stats'],
             ['label' => __('Add review'), 'icon' => 'chat-bubble-left-right', 'route' => 'manage.reviews'],
             ['label' => __('Add about card'), 'icon' => 'identification', 'route' => 'manage.about-cards'],
+            ['label' => __('Add path node'), 'icon' => 'map', 'route' => 'manage.path-nodes'],
+            ['label' => __('Add interest'), 'icon' => 'sparkles', 'route' => 'manage.interests'],
         ];
     }
 

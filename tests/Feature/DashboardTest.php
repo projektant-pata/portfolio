@@ -80,3 +80,10 @@ test('manage pages open the create modal via the create query flag', function ()
         ->test('pages::manage.projects')
         ->assertDispatched('modal-show');
 });
+
+test('the dashboard links to the path node and interest managers', function () {
+    $this->actingAs(User::factory()->create())
+        ->get(route('dashboard'))
+        ->assertSee(route('manage.path-nodes'), false)
+        ->assertSee(route('manage.interests'), false);
+});

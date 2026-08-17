@@ -49,6 +49,12 @@
                     <flux:sidebar.item icon="identification" :href="route('manage.about-cards')" :current="request()->routeIs('manage.about-cards')" wire:navigate>
                         {{ __('About cards') }}
                     </flux:sidebar.item>
+                    <flux:sidebar.item icon="map" :href="route('manage.path-nodes')" :current="request()->routeIs('manage.path-nodes')" wire:navigate>
+                        {{ __('Path nodes') }}
+                    </flux:sidebar.item>
+                    <flux:sidebar.item icon="sparkles" :href="route('manage.interests')" :current="request()->routeIs('manage.interests')" wire:navigate>
+                        {{ __('Interests') }}
+                    </flux:sidebar.item>
                 </flux:sidebar.group>
             </flux:sidebar.nav>
 
