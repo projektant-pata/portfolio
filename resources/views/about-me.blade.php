@@ -34,7 +34,12 @@
 
     {{-- Stats --}}
     <section id="about-me-stats" class="portfolio-section">
-        <h2>{{ \App\Models\Setting::text('stats_title', $locale) }}</h2>
+        <x-portfolio.section-head
+            :ghost="__('pages/about-me.stats_head_ghost')"
+            :eyebrow="__('pages/about-me.stats_head_eyebrow')"
+            :title="\App\Models\Setting::text('stats_title', $locale)"
+            :note="__('pages/about-me.stats_head_note')"
+        />
         <article class="about-me-stats-cards">
             @foreach ($stats as $stat)
                 <x-portfolio.stats-card :value="$stat->displayValue($locale)" :text="$stat->getTranslation('text', $locale)" :value-id="$stat->value_id" />

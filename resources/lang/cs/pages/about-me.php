@@ -7,6 +7,10 @@ return [
     'head_eyebrow' => 'Kdo jsem',
     'head_note' => 'Delší verze úvodu. Spěcháš? Čísla jsou hned pod tím.',
 
+    'stats_head_ghost' => 'Čísla',
+    'stats_head_eyebrow' => 'V číslech',
+    'stats_head_note' => 'Celá sada — na úvodní stránce jsou jen první čtyři.',
+
     'title' => 'O mně',
     'card1_title' => 'O mně',
     'card1_text' => 'Ahoj! Jsem Richard Hývl, začínající softwarový vývojář a freelancer s vášní.

@@ -7,6 +7,10 @@ return [
     'head_eyebrow' => 'Who I am',
     'head_note' => 'Longer version of the hero. In a hurry? The numbers are right below.',
 
+    'stats_head_ghost' => 'Numbers',
+    'stats_head_eyebrow' => 'By the numbers',
+    'stats_head_note' => 'The full set — the home page only shows the first four.',
+
     'title' => 'About me',
     'card1_title' => 'About me',
     'card1_text' => 'Hi there! I’m Richard Hývl, a starting software developer and freelancer with a passion.

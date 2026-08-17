@@ -33,3 +33,19 @@ test('the about me intro head carries no ghost under the hero', function () {
     expect($html)->toContain('sechead--noghost')
         ->and($html)->not->toContain('<div class="sechead-ghost" aria-hidden="true">About me</div>');
 });
+
+test('the about me stats section is introduced by a ghosted section head', function () {
+    $this->seed(SettingSeeder::class);
+
+    $this->get(route('about-me'))
+        ->assertSee('<div class="sechead-ghost" aria-hidden="true">Numbers</div>', false)
+        ->assertSee('<p class="sechead-eyebrow">By the numbers</p>', false);
+});
+
+test('the about me page carries exactly one ghost wordmark', function () {
+    $this->seed(SettingSeeder::class);
+
+    $html = $this->get(route('about-me'))->getContent();
+
+    expect(preg_match_all('/<div class="sechead-ghost"/', $html))->toBe(1);
+});
