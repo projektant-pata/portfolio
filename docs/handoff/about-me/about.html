@@ -1,0 +1,327 @@
+<!-- @dsCard group="Handoff" name="About page" viewport="1440x2400" subtitle="Recomposed About-me body: intro, stack, path, stats bento, off-screen, show-ups, references, contact" -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>About me — reference</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../styles.css">
+<link rel="stylesheet" href="about.css">
+<style>
+/* page shell — existing site chrome, NOT part of this handoff.
+   Included only so the redesigned sections can be judged in context. */
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);background:var(--c-bg);color:var(--c-fg)}
+.page{max-width:var(--layout-max);margin:0 auto;display:grid;grid-template-columns:300px 1fr;gap:3rem;padding:2.5rem var(--layout-padding) 0}
+.dock{position:sticky;top:2.5rem;align-self:start;display:flex;flex-direction:column;align-items:center;gap:1rem}
+.dock img{width:230px;filter:drop-shadow(0 24px 50px rgba(0,0,0,.55))}
+.dock-l{font-size:10px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--c-muted)}
+.hero-ghost{font-family:var(--font-display);font-size:clamp(56px,8vw,124px);font-weight:700;letter-spacing:-.04em;line-height:1;color:transparent;-webkit-text-stroke:1px color-mix(in srgb,var(--c-primary-fade) 85%,transparent);margin-bottom:2.5rem}
+.foot-wrap{max-width:var(--layout-max);margin:var(--sp-section) auto 0;padding:0 var(--layout-padding)}
+.theme-toggle{position:fixed;top:16px;right:16px;z-index:60;width:34px;height:34px;display:flex;align-items:center;justify-content:center;border:1px solid var(--c-primary-fade);border-radius:50%;background:var(--c-surface);color:var(--c-fg);font-size:15px;cursor:pointer;transition:var(--t-fast)}
+.theme-toggle:hover{border-color:var(--c-primary);color:var(--c-primary)}
+@media (max-width:1100px){.page{grid-template-columns:1fr;gap:2rem}.dock{position:static;flex-direction:row;align-items:flex-end;gap:1.2rem}.dock img{width:130px}}
+</style>
+</head>
+<body>
+<div class="page">
+  <aside class="dock">
+    <div class="dock-l">Navigate</div>
+    <img src="assets/phone.png" alt="Phone showing the portfolio home-screen navigation">
+  </aside>
+  <main>
+    <h1 class="hero-ghost">About me</h1>
+    <div class="ab-page">
+
+      <section class="ab-intro" data-screen-label="Intro">
+        <div class="ab-intro-copy">
+          <p class="ab-eyebrow">Who's writing</p>
+          <p class="ab-intro-lead">Nineteen, from Pardubice, and usually somewhere between a <em>keyboard</em> and a <em>chessboard</em>.</p>
+          <div class="ab-intro-cols">
+            <p>I'm <b>Richard Hyvl</b> — a starting software developer and freelancer. I study at SPŠE Pardubice and help lead <a href="#">Prezz</a>, a web development group where we ship real projects for real people.</p>
+            <p>What drives me is curiosity and the itch to be useful. I like problems that force me to learn something on the way — and I'd rather ship a small thing that works than plan a big thing that doesn't.</p>
+          </div>
+          <p class="ab-sign">Richard Hyvl</p>
+        </div>
+        <figure class="ab-intro-portrait ab-slot"><span>portrait · 900×1200 · replace</span></figure>
+        <div class="ab-intro-facts">
+          <div class="ab-fact"><span class="ab-fact-l">Based in</span><span class="ab-fact-v">Pardubice, CZ</span></div>
+          <div class="ab-fact"><span class="ab-fact-l">Studying</span><span class="ab-fact-v">SPŠE Pardubice</span></div>
+          <div class="ab-fact"><span class="ab-fact-l">Leading</span><span class="ab-fact-v">Prezz · web dev group</span></div>
+          <div class="ab-fact"><span class="ab-fact-l">Right now</span><span class="ab-fact-v"><i class="ab-dot"></i>Open to freelance</span></div>
+        </div>
+      </section>
+
+      <section data-screen-label="Tech stack">
+        <div class="ab-sec-head">
+          <div>
+            <p class="ab-eyebrow">What I work with</p>
+            <h2>The <em>toolbox</em></h2>
+          </div>
+          <p class="ab-sec-note">Ordered by how much I actually reach for it — not by what looks good in a list.</p>
+        </div>
+        <div class="ab-stack">
+          <div class="ab-stack-cols">
+            <div class="ab-stack-col">
+              <h3>Backend</h3>
+              <div class="ab-stack-list">
+                <span class="ab-item" style="--bc:#6DB33F">Spring Boot<small>daily</small></span>
+                <span class="ab-item" style="--bc:#F97316">Java<small>daily</small></span>
+                <span class="ab-item" style="--bc:#FF2D20">Laravel<small>often</small></span>
+                <span class="ab-item" style="--bc:#A78BFA">PHP<small>often</small></span>
+                <span class="ab-item" style="--bc:#2DD4BF">Python<small>sometimes</small></span>
+              </div>
+            </div>
+            <div class="ab-stack-col">
+              <h3>Frontend</h3>
+              <div class="ab-stack-list">
+                <span class="ab-item" style="--bc:#F7DF1E">JavaScript<small>daily</small></span>
+                <span class="ab-item" style="--bc:#38BDF8">HTML &amp; CSS<small>daily</small></span>
+                <span class="ab-item" style="--bc:#818CF8">Blade / Twig<small>often</small></span>
+                <span class="ab-item" style="--bc:#60A5FA">Tailwind<small>often</small></span>
+              </div>
+            </div>
+            <div class="ab-stack-col">
+              <h3>Data &amp; infra</h3>
+              <div class="ab-stack-list">
+                <span class="ab-item" style="--bc:#34D399">MySQL<small>daily</small></span>
+                <span class="ab-item" style="--bc:#22D3EE">PostgreSQL<small>often</small></span>
+                <span class="ab-item" style="--bc:#60A5FA">Docker<small>often</small></span>
+                <span class="ab-item" style="--bc:#64748B">Linux servers<small>often</small></span>
+              </div>
+            </div>
+            <div class="ab-stack-col">
+              <h3>Hardware &amp; homelab</h3>
+              <div class="ab-stack-list">
+                <span class="ab-item" style="--bc:#F59E0B">Raspberry Pi<small>often</small></span>
+                <span class="ab-item" style="--bc:#EAB308">Proxmox<small>often</small></span>
+                <span class="ab-item" style="--bc:#818CF8">Sensors &amp; MQTT<small>sometimes</small></span>
+                <span class="ab-item" style="--bc:#A3A3A3">3D printing<small>sometimes</small></span>
+              </div>
+            </div>
+          </div>
+          <div class="ab-stack-foot"><b>Learning now</b><span class="ab-chip">Kotlin</span><span class="ab-chip">Message queues</span><span class="ab-chip">Postgres tuning</span><span>— the homelab is my test bench for all three.</span></div>
+        </div>
+      </section>
+
+      <section data-screen-label="Path">
+        <div class="ab-sec-head">
+          <div>
+            <p class="ab-eyebrow">How did we get here</p>
+            <h2>The <em>short</em> version</h2>
+          </div>
+          <p class="ab-sec-note">Five turns that decided what I do with my days.</p>
+        </div>
+        <div class="ab-path">
+          <div class="ab-node">
+            <div class="ab-node-year">2019</div>
+            <div class="ab-node-body"><h3>Back to elementary school</h3><p>Health issues pulled me out of gymnasium. The school I returned to happened to teach extended IT — the luckiest bad break I've had.</p></div>
+          </div>
+          <div class="ab-node">
+            <div class="ab-node-year">2020</div>
+            <div class="ab-node-body"><h3>First website, then no website</h3><p>Fell for the idea that you can just build things. Shipped my first site, lost it to a dead hosting account, and learned about backups the expensive way.</p></div>
+          </div>
+          <div class="ab-node">
+            <div class="ab-node-year">2022</div>
+            <div class="ab-node-body"><h3>SPŠE Pardubice</h3><p>Chose the school that would keep pushing me. Backend clicked here — Java first, then everything around it.</p></div>
+          </div>
+          <div class="ab-node">
+            <div class="ab-node-year">2024</div>
+            <div class="ab-node-body"><h3>Competitions and a jury to face</h3><p>Hackathon wins, a national final, and the first time I had to explain my own architecture to strangers under a clock.</p></div>
+          </div>
+          <div class="ab-node ab-node--now">
+            <div class="ab-node-year">Now</div>
+            <div class="ab-node-body"><h3>Freelance and Prezz</h3><p>Paid client work, a web dev group to help lead, and a production platform that people use without knowing my name. Exactly where I wanted to be at 19.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="ab-stats" data-screen-label="Stats">
+        <div class="ab-ghost" aria-hidden="true">My stats</div>
+        <div class="ab-sec-head">
+          <div>
+            <p class="ab-eyebrow">By the numbers</p>
+            <h2>Some of it is <em>serious</em></h2>
+          </div>
+          <p class="ab-sec-note">Two numbers I'd defend in an interview, and a few I definitely wouldn't.</p>
+        </div>
+        <div class="ab-bento">
+          <div class="ab-tile ab-tile--hero"><span class="ab-tile-n">5+</span><span class="ab-tile-l">Projects shipped</span><p>Client work, school projects and one platform running in production.</p></div>
+          <div class="ab-tile ab-tile--hero"><span class="ab-tile-n">4+</span><span class="ab-tile-l">Years writing code</span><p>Started in 2020 and haven't found a reason to stop.</p></div>
+          <div class="ab-tile"><span class="ab-tile-n">Junior</span><span class="ab-tile-l">Professional level</span></div>
+          <div class="ab-tile"><span class="ab-tile-n">19</span><span class="ab-tile-l">Years old</span></div>
+          <div class="ab-tile"><span class="ab-tile-n">2</span><span class="ab-tile-l">Countries worked in</span></div>
+          <div class="ab-tile"><span class="ab-tile-n">18</span><span class="ab-tile-l">GitHub repositories</span></div>
+          <div class="ab-tile"><span class="ab-tile-n">1684</span><span class="ab-tile-l">Highest chess elo</span></div>
+          <div class="ab-tile"><span class="ab-tile-n">4</span><span class="ab-tile-l">Hackathons won</span></div>
+          <div class="ab-tile ab-tile--soft"><span class="ab-tile-n">∞</span><span class="ab-tile-l">Coffee consumed</span></div>
+          <div class="ab-tile ab-tile--soft"><span class="ab-tile-n">404</span><span class="ab-tile-l">Hours slept, not found</span></div>
+        </div>
+      </section>
+
+      <section data-screen-label="Off screen">
+        <div class="ab-sec-head">
+          <div>
+            <p class="ab-eyebrow">Off the screen</p>
+            <h2>What I do when the <em>laptop</em> closes</h2>
+          </div>
+          <p class="ab-sec-note">The parts of me that keep showing up in how I work.</p>
+        </div>
+        <div class="ab-beyond">
+          <div class="ab-beyond-cell">
+            <figure class="ab-slot"><span>chess · 1200×900 · replace</span></figure>
+            <div class="ab-beyond-txt">
+              <h3>Chess since <span>2nd grade</span></h3>
+              <p>Local tournaments against high-schoolers taught me to think three moves out and to lose without falling apart. Knight is the piece.</p>
+              <p class="ab-beyond-meta">1684 elo · patience, strategy</p>
+            </div>
+          </div>
+          <div class="ab-beyond-cell">
+            <figure class="ab-slot"><span>music · 1200×900 · replace</span></figure>
+            <div class="ab-beyond-txt">
+              <h3>Rock, <span>loud</span></h3>
+              <p>Most of my code was written with a guitar in one ear. Live shows whenever the calendar lets me.</p>
+              <p class="ab-beyond-meta">Concerts · playlists · headphones</p>
+            </div>
+          </div>
+          <div class="ab-beyond-cell">
+            <figure class="ab-slot"><span>homelab / catfish · 1200×900 · replace</span></figure>
+            <div class="ab-beyond-txt">
+              <h3>Homelab and <span>catfish</span></h3>
+              <p>A rack of Raspberry Pis I break on purpose, and yes — catfish. Both are hobbies I get asked about more than my job.</p>
+              <p class="ab-beyond-meta">Sensors · self-hosting · fishing</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section data-screen-label="Show ups">
+        <div class="ab-sec-head">
+          <div>
+            <p class="ab-eyebrow">Not sitting still</p>
+            <h2>Things I <em>show up</em> for</h2>
+          </div>
+          <p class="ab-sec-note">Not a trophy shelf — the full record lives on the <a href="#">Experience page</a>. Just proof the weeks are full.</p>
+        </div>
+        <div class="ab-showups">
+          <div class="ab-show" style="--bc:#EAB308">
+            <div class="ab-show-top"><span class="ab-show-k">Competition</span><span class="ab-show-y">2024</span></div>
+            <h3>Tour de App finals</h3>
+            <p>Presented a booking platform to a regional jury. Terrifying, then addictive.</p>
+          </div>
+          <div class="ab-show" style="--bc:#34D399">
+            <div class="ab-show-top"><span class="ab-show-k">Volunteering</span><span class="ab-show-y">2023 — now</span></div>
+            <h3>PEER program</h3>
+            <p>Trained to teach teenagers about drugs and bullying, then presented to my own peers.</p>
+          </div>
+          <div class="ab-show" style="--bc:#F59E0B">
+            <div class="ab-show-top"><span class="ab-show-k">Volunteering</span><span class="ab-show-y">2023</span></div>
+            <h3>Czech Day Against Cancer</h3>
+            <p>Sold flower badges on the street for cancer patients. Best public-speaking practice there is.</p>
+          </div>
+          <div class="ab-show" style="--bc:#818CF8">
+            <div class="ab-show-top"><span class="ab-show-k">Community</span><span class="ab-show-y">2023 — now</span></div>
+            <h3>Prezz</h3>
+            <p>Helping lead a web dev group: reviews, onboarding, and keeping projects moving.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="tcar" data-screen-label="References">
+        <div class="tcar-head">
+          <div>
+            <p class="ab-eyebrow">In other words</p>
+            <h3>What people I've <span>worked with</span> say</h3>
+            <p>Teachers, teammates and clients — placeholder quotes until the real ones are collected.</p>
+          </div>
+          <div class="tcar-nav"><button class="tcar-btn" id="tprev" aria-label="Previous">‹</button><button class="tcar-btn" id="tnext" aria-label="Next">›</button></div>
+        </div>
+        <div class="tcar-track" id="ttrack">
+          <article class="tcar-card">
+            <div class="tcar-mark">“</div>
+            <blockquote>Richard took the part of the project nobody wanted and came back two days later with it <span>done and documented</span>.</blockquote>
+            <div class="tcar-who"><div class="tcar-ava">JN</div><div><p class="tcar-name">Jan Novák</p><p class="tcar-role">Teammate · Prezz</p></div></div>
+          </article>
+          <article class="tcar-card">
+            <div class="tcar-mark">“</div>
+            <blockquote>He asks the questions I expect from someone with five more years of experience. <span>Rare at nineteen.</span></blockquote>
+            <div class="tcar-who"><div class="tcar-ava">PK</div><div><p class="tcar-name">Petra Kolářová</p><p class="tcar-role">Teacher · SPŠE Pardubice</p></div></div>
+          </article>
+          <article class="tcar-card">
+            <div class="tcar-mark">“</div>
+            <blockquote>Fast, honest about what he doesn't know yet, and the site has been up <span>ever since</span>.</blockquote>
+            <div class="tcar-who"><div class="tcar-ava">MS</div><div><p class="tcar-name">Martin Sedláček</p><p class="tcar-role">Freelance client</p></div></div>
+          </article>
+        </div>
+        <div class="tcar-dots" id="tdots"><button class="tcar-dot active" aria-label="Slide 1"></button><button class="tcar-dot" aria-label="Slide 2"></button><button class="tcar-dot" aria-label="Slide 3"></button></div>
+      </section>
+
+      <section class="ab-cta" data-screen-label="Contact">
+        <div>
+          <p class="ab-cta-avail"><i class="ab-dot"></i>Open to freelance projects</p>
+          <h2>Got something that needs <em>building</em>?</h2>
+          <p class="ab-cta-sub">Backend, a small web app, or a Raspberry Pi doing something odd — tell me what it should do and I'll tell you honestly if I'm the right person.</p>
+        </div>
+        <div class="ab-cta-actions">
+          <div class="ab-cta-row">
+            <a class="ab-btn ab-btn--gold" href="mailto:richard.hyvl@gmail.com">richard.hyvl@gmail.com</a>
+            <a class="ab-btn ab-btn--ghost" href="#" download>Download CV</a>
+          </div>
+          <div class="ab-cta-row">
+            <a class="ab-btn ab-btn--ghost" href="#">GitHub</a>
+            <a class="ab-btn ab-btn--ghost" href="#">LinkedIn</a>
+          </div>
+          <p class="ab-cta-fine">Replies within 24 hours · CET</p>
+        </div>
+      </section>
+
+    </div>
+  </main>
+</div>
+
+<div class="foot-wrap">
+  <footer class="portfolio-footer">
+    <div class="portfolio-footer-inner">
+      <div class="portfolio-footer-brand">
+        <h4>projektant-pata</h4>
+        <p>© 2026 | All rights reserved.</p>
+      </div>
+      <div class="portfolio-footer-nav">
+        <p class="col-head">Navigate</p>
+        <div class="portfolio-footer-nav-links">
+          <a class="nav-link" href="#"><span class="ico">⌂</span><p>Home</p></a>
+          <a class="nav-link" href="#"><span class="ico">◍</span><p>About me</p></a>
+          <a class="nav-link" href="#"><span class="ico">▤</span><p>Experience</p></a>
+          <a class="nav-link" href="#"><span class="ico">◆</span><p>Projects</p></a>
+          <a class="nav-link" href="#"><span class="ico">✎</span><p>Blog</p></a>
+        </div>
+      </div>
+      <div class="portfolio-footer-social">
+        <p class="col-head">Follow me</p>
+        <div class="portfolio-footer-social-links">
+          <a class="social-link" href="mailto:richard.hyvl@gmail.com"><span class="ico">✉</span><p>Email</p></a>
+          <a class="social-link" href="#"><span class="ico">◎</span><p>Instagram</p></a>
+          <a class="social-link" href="#"><span class="ico">✕</span><p>X</p></a>
+          <a class="social-link" href="#"><span class="ico">in</span><p>LinkedIn</p></a>
+          <a class="social-link" href="#"><span class="ico">☍</span><p>GitHub</p></a>
+          <a class="social-link" href="#"><span class="ico">♞</span><p>Chess</p></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<button class="theme-toggle" onclick="document.documentElement.classList.toggle('light')" title="Toggle light / dark" aria-label="Toggle light / dark theme">◐</button>
+<script>
+const track=document.getElementById('ttrack'),dots=[...document.getElementById('tdots').children];
+function step(){const c=track.firstElementChild;return c.offsetWidth+parseFloat(getComputedStyle(track).columnGap||0)}
+document.getElementById('tprev').onclick=()=>track.scrollBy({left:-step(),behavior:'smooth'});
+document.getElementById('tnext').onclick=()=>track.scrollBy({left:step(),behavior:'smooth'});
+dots.forEach((d,i)=>d.onclick=()=>track.scrollTo({left:i*step(),behavior:'smooth'}));
+track.addEventListener('scroll',()=>{const i=Math.round(track.scrollLeft/step());dots.forEach((d,j)=>d.classList.toggle('active',j===i))},{passive:true});
+</script>
+</body>
+</html>
