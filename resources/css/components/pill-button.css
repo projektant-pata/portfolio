@@ -25,6 +25,10 @@
     color: var(--c-bg);
 }
 
+/* #fff, not a token: the hover face is --c-primary-dk, which is dark
+   bronze in both themes (#9B870C dark, #7C400A light), so the label
+   stays white either way. --c-fg would invert to warm ink in light
+   mode and lose contrast against that dark background. */
 .pill-button--gold:hover {
     background: var(--c-primary-dk);
     color: #fff;
