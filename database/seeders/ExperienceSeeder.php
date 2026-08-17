@@ -137,6 +137,7 @@ class ExperienceSeeder extends Seeder
             [
                 'type' => 'work',
                 'is_special' => false,
+                'show_on_about' => true,
                 'sort_order' => 9,
                 'year' => ['en' => '2024', 'cs' => '2024'],
                 'title' => ['en' => 'AstroPi Hackathon 2024', 'cs' => 'AstroPi Hackathon 2024'],
@@ -148,6 +149,7 @@ class ExperienceSeeder extends Seeder
             [
                 'type' => 'life',
                 'is_special' => false,
+                'show_on_about' => true,
                 'sort_order' => 10,
                 'image_path' => 'storage/experiences/4SUoVWLWnEj9MKXeJCVrKfdADgVxUTkyBMlZ1ffV.png',
                 'year' => ['en' => '2026', 'cs' => '2026'],
@@ -156,6 +158,34 @@ class ExperienceSeeder extends Seeder
                 'content' => ['en' => '', 'cs' => ''],
                 'links' => [['url' => 'https://www.spse.cz/clanky/2026-regionalni-sampionat-skol-sachovy-turnaj', 'alt' => 'SPSE']],
                 'badges' => ['competition'],
+            ],
+            [
+                'type' => 'life',
+                'is_special' => false,
+                'show_on_about' => true,
+                'sort_order' => 11,
+                'year' => ['en' => '2023 — now', 'cs' => '2023 — nyní'],
+                'title' => ['en' => 'PEER program', 'cs' => 'Program PEER'],
+                'subtitle' => [
+                    'en' => 'Trained to teach teenagers about drugs and bullying, then presented to my own peers.',
+                    'cs' => 'Vyškolen, abych učil teenagery o drogách a šikaně, a pak jsem prezentoval vlastním vrstevníkům.',
+                ],
+                'content' => ['en' => '', 'cs' => ''],
+                'badges' => ['certificate'],
+            ],
+            [
+                'type' => 'life',
+                'is_special' => false,
+                'show_on_about' => true,
+                'sort_order' => 12,
+                'year' => ['en' => '2023', 'cs' => '2023'],
+                'title' => ['en' => 'Czech Day Against Cancer', 'cs' => 'Český den proti rakovině'],
+                'subtitle' => [
+                    'en' => 'Sold flower badges on the street for cancer patients. The best public-speaking practice there is.',
+                    'cs' => 'Prodával jsem květinové odznaky na ulici pro pacienty s rakovinou. Nejlepší trénink veřejného projevu, jaký existuje.',
+                ],
+                'content' => ['en' => '', 'cs' => ''],
+                'badges' => ['it'],
             ],
         ];
 

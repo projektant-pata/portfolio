@@ -20,6 +20,8 @@ class DatabaseSeeder extends Seeder
             SettingSeeder::class,
             StatSeeder::class,
             ReviewSeeder::class,
+            PathNodeSeeder::class,
+            InterestSeeder::class,
             AboutCardSeeder::class,
         ]);
     }

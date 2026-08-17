@@ -1,7 +1,11 @@
 <?php
 
+use App\Models\Experience;
+use App\Models\Interest;
 use App\Models\Link;
+use App\Models\PathNode;
 use App\Models\Project;
+use App\Models\Stat;
 use App\Models\User;
 use Database\Seeders\BadgesSeeder;
 use Database\Seeders\DatabaseSeeder;
@@ -40,4 +44,39 @@ test('the projects seeder types every link', function () {
 
     expect($kinds->every(fn ($kind) => in_array($kind, Link::KINDS, true)))->toBeTrue();
     expect(Link::where('url', 'like', '%github.com%')->pluck('kind')->unique()->all())->toBe(['repo']);
+});
+
+test('the database seeder fills the about page with path nodes, interests and settings', function () {
+    $this->seed(DatabaseSeeder::class);
+
+    expect(PathNode::count())->toBe(5)
+        ->and(PathNode::where('is_now', true)->count())->toBe(1)
+        ->and(Interest::count())->toBe(3)
+        ->and(Experience::where('show_on_about', true)->count())->toBeGreaterThanOrEqual(4)
+        ->and(Stat::where('tier', 'hero')->count())->toBe(2)
+        ->and(Stat::where('tier', 'soft')->count())->toBe(2);
+});
+
+test('every seeded about row carries both locales', function () {
+    $this->seed(DatabaseSeeder::class);
+
+    PathNode::all()->each(function (PathNode $node) {
+        expect($node->year)->toHaveKeys(['en', 'cs'])
+            ->and($node->title)->toHaveKeys(['en', 'cs'])
+            ->and($node->body)->toHaveKeys(['en', 'cs']);
+    });
+
+    Interest::all()->each(function (Interest $interest) {
+        expect($interest->title)->toHaveKeys(['en', 'cs'])
+            ->and($interest->body)->toHaveKeys(['en', 'cs'])
+            ->and($interest->meta)->toHaveKeys(['en', 'cs']);
+    });
+});
+
+test('the hero stats carry a supporting note in both locales', function () {
+    $this->seed(DatabaseSeeder::class);
+
+    Stat::where('tier', 'hero')->get()->each(
+        fn (Stat $stat) => expect($stat->note)->toHaveKeys(['en', 'cs'])
+    );
 });

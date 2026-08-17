@@ -45,6 +45,23 @@ return [
 
         /* No blog crop exists yet — the Experience portrait stands in. */
         'blog' => 'images/experience-hero.webp',
+
+        /* Intro portrait on the about page. Empty until the 900×1200 crop
+           lands — the intro renders the placeholder plate meanwhile. */
+        'portrait' => '',
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | CV
+    |--------------------------------------------------------------------------
+    |
+    | Path (relative to public/) of the downloadable CV. The about page's
+    | contact band renders its "Download CV" button only when this is set —
+    | a download button pointing at nothing is worse than no button.
+    |
+    */
+
+    'cv_path' => '',
 
 ];
