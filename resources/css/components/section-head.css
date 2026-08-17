@@ -124,15 +124,9 @@
     flex-shrink: 0;
 }
 
-/* Overrides the global watermark h2 (app.css:348) for heads only. That
-   rule still dresses the h2 on about-me / experience / projects; when
-   the component reaches those pages, delete it there and drop the four
-   reset declarations here. */
+/* The global watermark h2 (formerly app.css) is gone — the component reaches
+   every page now, so there is nothing left to reset here. */
 .sechead .sechead-row h2 {
-    text-align: left;
-    margin-bottom: 0;
-    color: var(--c-fg);
-    -webkit-text-stroke: 0;
     font-family: var(--font-display);
     font-size: clamp(1.9rem, 1.2rem + 2vw, 2.6rem);
     font-weight: var(--fw-bold);

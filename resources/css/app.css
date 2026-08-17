@@ -231,13 +231,6 @@ html:not(.dark) {
     --border-w:       1px;
 }
 
-/* h2 watermark: solid sand fill in light mode — a stroke this thin disappears
-   on bone, and gold at this size overpowers the content it sits behind. */
-html:not(.dark) .portfolio-page h2 {
-    color: var(--c-watermark);
-    -webkit-text-stroke: 0;
-}
-
 /* Special card frame: the white sweeps vanish on a white card face, so light
    mode sweeps through amber-400 instead and dims the glow.
    See pages/experience.css for the rest. */
@@ -338,20 +331,6 @@ html:not(.dark) .exp-card--special {
     /* "projektant-pata" must wrap as one unit — without this, the literal
        hyphen is itself a soft break opportunity and splits the name. */
     white-space: nowrap;
-}
-
-/* Giant watermark heading used as section label — same outline treatment.
-   The overlap is set in `em` so it scales with the fluid font size — a
-   fixed -50px swallowed the whole label under the card on small screens. */
-.portfolio-page h2 {
-    text-align: center;
-    margin-bottom: -0.45em;
-    font-size: var(--fs-h2);
-    font-weight: 500;
-    font-family: var(--font-display);
-    color: color-mix(in srgb, var(--c-watermark) 12%, transparent);
-    -webkit-text-stroke: 1px var(--c-watermark);
-    overflow-wrap: anywhere;
 }
 
 .portfolio-page h3 {
@@ -528,10 +507,25 @@ html:not(.dark) .exp-card--special {
 }
 
 .portfolio-footer-watermark {
-    /* generic .portfolio-page h2 already gives the outlined watermark look,
-       centring, display font and the -0.45em overlap that pulls the footer up
-       over the letters. Just drop it under the footer in the stack. */
+    /* Was inherited from the global `.portfolio-page h2` watermark rule, which
+       the section-head component replaced everywhere else. The -0.45em overlap
+       is what pulls the footer up over the letters. */
     z-index: 0;
+    text-align: center;
+    margin-bottom: -0.45em;
+    font-size: var(--fs-h2);
+    font-weight: 500;
+    font-family: var(--font-display);
+    color: color-mix(in srgb, var(--c-watermark) 12%, transparent);
+    -webkit-text-stroke: 1px var(--c-watermark);
+    overflow-wrap: anywhere;
+}
+
+/* Mirrors the light-theme reset the old global rule used to apply: solid sand
+   fill, no stroke — a stroke this thin disappears on bone. */
+html:not(.dark) .portfolio-footer-watermark {
+    color: var(--c-watermark);
+    -webkit-text-stroke: 0;
 }
 
 .portfolio-footer {
