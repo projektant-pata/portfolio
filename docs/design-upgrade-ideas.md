@@ -47,6 +47,18 @@ The watermark-behind-card treatment is a great signature, but it currently eats 
   (≈ `-0.25em`), or apply the overlap only on headings without descenders, or switch the
   watermark to an all-caps style (`MY STATS`) where no descenders exist. All-caps is the
   safest fix and looks more like a classic watermark.
+
+  > **Closed 2026-08-17** — every public section heading now renders through
+  > `<x-portfolio.section-head>`; the ghost wordmark is `aria-hidden` and is no longer
+  > the accessible heading itself (the real `h2` is), so a clipped descender on the ghost
+  > is no longer a misreading of the section's name. The global `.portfolio-page h2`
+  > watermark rule this bullet's line reference points at is gone entirely — retired, not
+  > moved, so the `app.css:330` citation above is now dead; there is no successor line to
+  > repoint it to. This closes the "My Stats" bullet specifically. It does **not** close
+  > the next two bullets: the footer wordmark (`.portfolio-footer-watermark`) keeps the
+  > same negative-margin/descender-clip treatment **by design** — it now carries its own
+  > copy of the old rule rather than inheriting it — and the mobile edge-clipping bullet
+  > below was not touched by this rollout either.
 - **Footer name `projektant-pata`** has its `j`/`p` descenders clipped by the footer card —
   same cause, same fix.
 - **Mobile: watermark headings clip at the viewport edges** ("Projects", "Reviews", footer

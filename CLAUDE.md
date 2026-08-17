@@ -242,6 +242,7 @@ Laravel Fortify: registration disabled, 2FA and password resets enabled, **email
 - Tailwind v4 + Flux UI (free tier — no Pro components like tabs). Custom Flux icons published under `resources/views/flux/icon/`.
 - Design tokens live once in the `@theme` block of `resources/css/app.css`; `--c-*` are aliases only. Theme = `.dark` on `<html>`, driven by the `theme` cookie (`dark|light|system`, default dark) and applied pre-paint by `partials/theme.blade.php`; `resources/js/app.js` owns the toggle.
 - Page-CSS loading is still inconsistent (three different loading patterns); see `docs/design-audit-findings.md` before touching CSS. Vite entries are listed in `vite.config.js`.
+- Every public section opens with `<x-portfolio.section-head>` (ghost wordmark, eyebrow, h2, optional note). Ghost is decorative and `aria-hidden`; copy lives in `resources/lang/{en,cs}/pages/*.php` for the subpages and `resources/lang/{en,cs}/home/*.php` for home, except about-me's two titles, which stay admin-editable via `App\Models\Setting`. Rules: `resources/css/components/section-head.css`.
 
 # Project Docs
 

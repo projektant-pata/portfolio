@@ -7,10 +7,13 @@
    Ported from the design handoff (design_handoff_section_start).
    No new tokens, no new colours.
 
-   Rules that collide with the global `.portfolio-page h2` / `p`
-   rules (app.css:348, :376) are written double-classed — those
-   globals are 0,1,1 and would otherwise win. Same trick as
-   dock-hero.css:142.
+   The global `.portfolio-page h2` watermark rule this file used to
+   collide with is gone — retired repo-wide, not moved (see the h2
+   rule below). The `.portfolio-page p` rule (app.css:353) still
+   applies to the eyebrow/note `<p>` tags below, so those stay
+   written double-classed (`.sechead .sechead-eyebrow`, `.sechead
+   .sechead-note`, 0,2,0) to outrank its 0,1,1. Same trick as
+   dock-hero.css's eyebrow rule.
    ================================================================ */
 
 .sechead {

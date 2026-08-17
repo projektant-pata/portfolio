@@ -3,7 +3,7 @@
    is a group divider — printed once per year, never per row.
    Every selector carries an ancestor class so it clears the
    `.portfolio-page *` reset (0,1,0) and the element rules
-   `.portfolio-page h2 / h3 / p` (0,1,1). No new tokens. */
+   `.portfolio-page h3 / p` (0,1,1). No new tokens. */
 
 .proj-list {
     display: grid;
