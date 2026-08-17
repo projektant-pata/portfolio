@@ -60,9 +60,10 @@
 
     @if ($readNext->isNotEmpty())
         <section class="portfolio-section portfolio-section--no-reveal">
-            <div class="blog-head">
-                <h2>{{ __('pages/blog.read_next') }}</h2>
-            </div>
+            <x-portfolio.section-head
+                :eyebrow="__('pages/blog.read_next_eyebrow')"
+                :title="__('pages/blog.read_next')"
+            />
 
             <div class="blog-list">
                 @foreach ($readNext as $next)

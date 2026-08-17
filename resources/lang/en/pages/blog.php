@@ -5,6 +5,8 @@ return [
     'hero_tags' => ['Build logs', 'Homelab', 'Competitions', 'Backend', 'Postmortems'],
 
     'list_title' => 'All posts',
+    'head_eyebrow' => 'Archive',
+    'head_title' => 'Everything I <em>published</em>',
     'count_one' => ':count of :total post',
     'count_few' => ':count of :total posts',
     'count_many' => ':count of :total posts',
@@ -20,6 +22,7 @@ return [
     'reading_time' => ':minutes min read',
     'back' => 'All posts',
     'read_next' => 'Read next',
+    'read_next_eyebrow' => 'Keep reading',
     'foot_written' => 'Written in Markdown, published with Laravel.',
     'foot_mistake' => 'Found a mistake? <a href=":url">Tell me</a>.',
 ];

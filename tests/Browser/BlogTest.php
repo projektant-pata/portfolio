@@ -11,7 +11,7 @@ test('the blog listing renders without console errors and stacks responsively', 
 
     visit(route('blog'))->resize(1440, 900)
         ->assertNoJavascriptErrors()
-        ->assertSee('All posts')
+        ->assertSee('Everything I published')
         ->assertPresent('.blog-row--lead');
 
     visit(route('blog'))->resize(390, 844)

@@ -8,6 +8,7 @@
  */
 
 @import '../components/dock-hero.css';
+@import '../components/section-head.css';
 
 :root {
     --blog-ink:        color-mix(in srgb, var(--c-fg) 88%, var(--c-bg));
@@ -26,36 +27,6 @@
 html:not(.dark) {
     --blog-code-fg:    #92400E;
     --blog-link-hover: #92400E;
-}
-
-/* ── Section head ── */
-
-.blog-head {
-    display: flex;
-    align-items: baseline;
-    flex-wrap: wrap;
-    gap: 0.4rem 0.9rem;
-    margin: 0 0.2rem 1rem;
-}
-
-.blog-head h2 {
-    font-family: var(--font-display);
-    font-size: 14px;
-    font-weight: 700;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--c-muted);
-}
-
-.blog-head-count {
-    font-family: var(--font-mono);
-    font-size: 0.85rem;
-    color: var(--c-muted);
-}
-
-.blog-head-count b {
-    color: var(--c-primary);
-    font-weight: 600;
 }
 
 .blog-filter {

@@ -57,3 +57,11 @@ test('read next is omitted when there is nothing else published', function () {
 
     $this->get(route('blog.show', $only->slug))->assertDontSee('Read next');
 });
+
+test('the read next block is introduced by a section head', function () {
+    $articles = Article::factory()->published()->count(3)->create();
+
+    $this->get(route('blog.show', $articles->first()->slug))
+        ->assertSee('<p class="sechead-eyebrow">Keep reading</p>', false)
+        ->assertSee('Read next', false);
+});

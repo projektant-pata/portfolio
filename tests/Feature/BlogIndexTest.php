@@ -79,3 +79,13 @@ test('the page renders exactly one h1', function () {
 
     expect(substr_count($html, '<h1'))->toBe(1);
 });
+
+test('the blog archive is introduced by a section head carrying the count', function () {
+    Article::factory()->published()->create();
+
+    $this->get(route('blog'))
+        ->assertSee('<p class="sechead-eyebrow">Archive</p>', false)
+        ->assertSee('Everything I <em>published</em>', false)
+        ->assertSee('sechead-note', false)
+        ->assertSee('of 1 post', false);
+});

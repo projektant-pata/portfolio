@@ -24,14 +24,15 @@
             $countKey = $total === 1 ? 'count_one' : ($total <= 4 ? 'count_few' : 'count_many');
         @endphp
 
-        <div class="blog-head">
-            <h2>{{ __('pages/blog.list_title') }}</h2>
-            <span class="blog-head-count">{!! str_replace(
+        <x-portfolio.section-head
+            :eyebrow="__('pages/blog.head_eyebrow')"
+            :title="__('pages/blog.head_title')"
+            :note="str_replace(
                 [':count', ':total'],
                 ['<b>'.$articles->count().'</b>', $total],
                 __('pages/blog.'.$countKey)
-            ) !!}</span>
-        </div>
+            )"
+        />
 
         @if ($activeSlug !== '')
             <p class="blog-filter">
