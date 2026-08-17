@@ -1,0 +1,47 @@
+/* ── Pill button ──────────────────────────────────────────────
+   Public gold / ghost call-to-action link.                    */
+
+.pill-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    font-weight: var(--fw-semibold);
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--r-pill);
+    border: 1px solid transparent;
+    text-decoration: none;
+    cursor: pointer;
+    transition:
+        background-color var(--t-fast),
+        color var(--t-fast),
+        border-color var(--t-fast),
+        transform var(--t-fast);
+}
+
+.pill-button--gold {
+    background: var(--c-primary);
+    color: var(--c-bg);
+}
+
+.pill-button--gold:hover {
+    background: var(--c-primary-dk);
+    color: #fff;
+    box-shadow: 0 0 12px color-mix(in srgb, var(--c-primary) 40%, transparent);
+}
+
+.pill-button--ghost {
+    border-color: var(--c-primary-fade);
+    color: var(--c-fg);
+    background: transparent;
+}
+
+.pill-button--ghost:hover {
+    border-color: var(--c-primary);
+    color: var(--c-primary);
+}
+
+.pill-button:active {
+    transform: translateY(1px);
+}

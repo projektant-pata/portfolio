@@ -1,0 +1,26 @@
+/* ── Availability dot ─────────────────────────────────────────
+   The page's only ambient motion. The pulse is declared only
+   inside the no-preference query, so reduced-motion users get
+   a static dot rather than an overridden animation.           */
+
+.availability-dot {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--c-available);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--c-available) 22%, transparent);
+    flex-shrink: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .availability-dot {
+        animation: availability-pulse 2.4s ease-in-out infinite;
+    }
+}
+
+@keyframes availability-pulse {
+    50% {
+        box-shadow: 0 0 0 6px color-mix(in srgb, var(--c-available) 0%, transparent);
+    }
+}

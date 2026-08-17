@@ -43,6 +43,7 @@
     --color-portfolio-watermark:       #FED7AA;  /* giant ghost headings (h2)    */
     --color-selection-bg:              #FFB347;  /* ::selection background       */
     --color-selection-fg:              #000000;  /* ::selection text             */
+    --color-available:                 #4ADE80;  /* availability dot (about page) */
 
     --color-zinc-50: #fafafa;
     --color-zinc-100: #f5f5f5;
@@ -139,6 +140,7 @@ select:focus[data-flux-control] {
     --c-watermark:      var(--color-portfolio-watermark);
     --c-selection-bg:   var(--color-selection-bg);
     --c-selection-fg:   var(--color-selection-fg);
+    --c-available:      var(--color-available);
 
     --border-w:        1px;        /* card / component border width    */
 
@@ -226,6 +228,10 @@ html:not(.dark) {
     /* Selection */
     --color-selection-bg: #E6C063;
     --color-selection-fg: #14130E;
+
+    /* Availability green: emerald-500 is illegible on bone — green-600 holds
+       the same meaning and passes as a 7px dot on white. */
+    --color-available: #16A34A;
 
     /* Borders stay hairline — a 2px gold frame on a white card reads as candy */
     --border-w:       1px;

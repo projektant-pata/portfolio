@@ -1,0 +1,33 @@
+/* ── Image slot ───────────────────────────────────────────────
+   The real picture, or the striped plate naming the asset that
+   is still missing. Both fill the box the caller sizes with
+   --image-slot-h.                                             */
+
+.image-slot {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-start;
+    height: var(--image-slot-h, auto);
+    background: var(--c-surface-sunken);
+    background-image: repeating-linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--c-primary-fade) 26%, transparent) 0 1px,
+        transparent 1px 9px
+    );
+}
+
+.image-slot span {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.06em;
+    color: var(--c-muted);
+    padding: 0.7rem 0.9rem;
+}
+
+.image-slot-img {
+    display: block;
+    width: 100%;
+    height: var(--image-slot-h, auto);
+    object-fit: cover;
+}
