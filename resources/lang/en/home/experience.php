@@ -4,6 +4,7 @@ return [
     'title' => 'Experience',
 
     'title_home' => 'Work & Life',
+    'head_ghost' => 'Experience',
     'head_eyebrow' => 'Track record',
     'head_title' => "Where I've <em>been</em> since 2021",
     'head_note' => 'Toggle the two lists. Full record on the <a href=":url">Experience page</a>.',

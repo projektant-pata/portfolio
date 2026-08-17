@@ -23,7 +23,7 @@
             :ghost="__('home/stats.head_ghost')"
             :eyebrow="__('home/stats.head_eyebrow')"
             :title="__('home/stats.head_title')"
-            :note="__('home/stats.head_note')"
+            :note="__('home/stats.head_note', ['url' => route('about-me')])"
         />
         <article class="stats-cards">
             @foreach ($stats as $stat)
@@ -35,6 +35,7 @@
     {{-- Work & Life --}}
     <section class="work portfolio-section">
         <x-portfolio.section-head
+            :ghost="__('home/experience.head_ghost')"
             :eyebrow="__('home/experience.head_eyebrow')"
             :title="__('home/experience.head_title')"
             :note="__('home/experience.head_note', ['url' => route('experience')])"
@@ -82,6 +83,7 @@
     {{-- Tools --}}
     <section id="tools" class="portfolio-section">
         <x-portfolio.section-head
+            :ghost="__('home/tools.head_ghost')"
             :eyebrow="__('home/tools.head_eyebrow')"
             :title="__('home/tools.head_title')"
             :note="__('home/tools.head_note')"

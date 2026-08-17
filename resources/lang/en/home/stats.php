@@ -5,7 +5,7 @@ return [
     'head_ghost' => 'My stats',
     'head_eyebrow' => 'By the numbers',
     'head_title' => 'Some of it is <em>serious</em>',
-    'head_note' => "Two numbers I'd defend in an interview, and one I wouldn't.",
+    'head_note' => "Two numbers I'd defend in an interview, and one I wouldn't. More on the <a href=\":url\">About me page</a>.",
     'card1_title' => 'Junior',
     'card1_text' => 'Professional Level',
     'card2_title' => '5+',

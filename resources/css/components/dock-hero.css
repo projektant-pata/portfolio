@@ -100,6 +100,9 @@
 .dock-hero-copy {
     position: relative;
     z-index: 2;
+    /* Named once so the eyebrow can offset itself against the ghost's
+       size — the two must move together. */
+    --dock-hero-ghost-size: 132px;
     /* Sizing anchor for the title below: the copy column is what is left of
        the row after the fixed photo and the fixed nav, so it — not the
        viewport — is the width the title has to fit inside. */
@@ -113,16 +116,15 @@
     padding: 3.4rem 3.4rem 3.4rem 0;
 }
 
-/* Outlined page word behind the copy. Lives inside the copy column, not
-   the grid: anchored to the grid it gets clipped or collides with the
-   bottom edge. */
+/* Outlined page word, worn as a hat by the copy — same relation the
+   section heads use (section-head.css). In flow, not absolute: absolute
+   pinned it to the top of the copy column, which left it stranded far
+   above the eyebrow and the h1. In flow it sits directly on them, and
+   the column's own padding handles its left edge at every width. */
 .dock-hero .dock-hero-ghost {
-    position: absolute;
-    left: 0;
-    top: -0.5rem;
     z-index: 0;
     font-family: var(--font-display);
-    font-size: 132px;
+    font-size: var(--dock-hero-ghost-size);
     font-weight: 700;
     letter-spacing: -0.04em;
     line-height: 1;
@@ -139,7 +141,17 @@ html:not(.dark) .dock-hero .dock-hero-ghost {
     -webkit-text-stroke: 0;
 }
 
+/* Rides across the ghost's lower half instead of clearing it. The
+   negative top margin eats the column's 1.5rem gap plus most of the
+   ghost's box; the bottom margin puts the gap back between the ghost's
+   baseline and the h1's cap line. Both are fractions of
+   --dock-hero-ghost-size so they track the ghost through its clamp.
+   z-index keeps the eyebrow's letters over the ghost's stroke. */
 .dock-hero .dock-hero-eyebrow {
+    position: relative;
+    z-index: 1;
+    margin-top: calc(var(--dock-hero-ghost-size) * -0.428 - 1.5rem);
+    margin-bottom: calc(var(--dock-hero-ghost-size) * 0.16);
     font-size: 13.5px;
     font-weight: 600;
     color: var(--c-muted);
@@ -338,21 +350,11 @@ html:not(.dark) .dock-hero .dock-hero-ghost {
         width: 130px;
     }
 
-    /* Clears the ghost wordmark below: top offset + font-size at their
-       largest (near the 1200px edge) is ~112px, so padding-top leaves an
-       8px margin on top of that instead of letting the eyebrow run through
-       the outline strokes. */
+    /* No ghost clearance needed in the top padding any more — the ghost is
+       in flow and the eyebrow lies on it. */
     .dock-hero-copy {
-        padding: 7.5rem 2rem 3rem;
-    }
-
-    /* Flush with the copy column's own left padding (2rem here) instead of
-       the desktop rule's left: 0 — desktop gets away with 0 because its
-       copy column has no left padding, but stacked mobile does. */
-    .dock-hero .dock-hero-ghost {
-        left: 2rem;
-        top: 0.5rem;
-        font-size: clamp(56px, 9vw, 96px);
+        padding: 3rem 2rem 3rem;
+        --dock-hero-ghost-size: clamp(56px, 9vw, 96px);
     }
 
     .dock-hero-photo {
@@ -369,15 +371,8 @@ html:not(.dark) .dock-hero .dock-hero-ghost {
         font-size: 16px;
     }
 
-    /* Top clearance for the ghost wordmark stays the value set at 1200px —
-       only the side/bottom padding shrinks here. */
     .dock-hero-copy {
-        padding: 7.5rem 1.4rem 2.5rem;
-    }
-
-    /* Follows the copy column's narrower left padding above. */
-    .dock-hero .dock-hero-ghost {
-        left: 1.4rem;
+        padding: 3rem 1.4rem 2.5rem;
     }
 
     .dock-hero-cap {

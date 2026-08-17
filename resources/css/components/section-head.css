@@ -1,8 +1,8 @@
 /* ================================================================
    SECTION HEAD (.sechead)
    ================================================================
-   The site-wide opener for a page section: ghost wordmark above,
-   gold-rule eyebrow, the real h2, optional right-hand note.
+   The site-wide opener for a page section: gold-rule eyebrow, the
+   ghost wordmark, the real h2, optional right-hand note.
 
    Ported from the design handoff (design_handoff_section_start).
    No new tokens, no new colours.
@@ -16,19 +16,31 @@
 .sechead {
     position: relative;
     margin-bottom: 1.875rem;
+
+    /* Named once so the eyebrow can offset itself against the ghost's
+       size (see .sechead-eyebrow) — the two must move together. */
+    --sechead-ghost-size: clamp(64px, 9vw, 118px);
 }
 
-/* Outlined page word above the head. Decorative: aria-hidden in the
-   markup, never selectable, never a click target.
+/* Outlined page word, worn as a hat by the h2 right below it. Decorative:
+   aria-hidden in the markup, never selectable, never a click target.
+   In flow, not absolute — `nowrap` still overflows the column on narrow
+   viewports, and .portfolio-col clips it (app.css:433).
+
    `line-height: 1.12` + `padding-bottom: .1em` are load-bearing — at
-   line-height 1 the descenders clip and `My stats` renders as
-   `Mu stats`. */
+   line-height 1 the descenders clip and `My stats` renders as `Mu stats`.
+
+   The bottom margin sets the gap under the ghost: -0.341em would cancel
+   the half-leading, the padding and the font's descent and drop the
+   ghost's BASELINE onto the h2's cap line; -0.09em leaves the handoff's
+   breathing room between the two. Baseline, not ink bottom, so `Tools`
+   and `My stats` sit at the same height; a `y` tail runs into the gap.
+   Re-measure if --font-display changes: the value is that font's
+   metrics, not a round number. */
 .sechead .sechead-ghost {
-    position: absolute;
-    left: -0.2rem;
-    top: -4.6rem;
+    margin: -0.18em 0 -0.09em -0.2rem;
     font-family: var(--font-display);
-    font-size: clamp(64px, 9vw, 118px);
+    font-size: var(--sechead-ghost-size);
     font-weight: var(--fw-bold);
     letter-spacing: -0.04em;
     line-height: 1.12;
@@ -61,9 +73,30 @@
 .sechead .sechead-row > div:first-child {
     flex: 1 1 0%;
     min-width: 0;
+
+    /* Positioning context for the absolute eyebrow below. */
+    position: relative;
 }
 
+/* Laid over the ghost's lower half instead of sitting above it. Absolute,
+   NOT a negative margin: a margin pulls the ghost up out of the head box
+   and `.portfolio-section` clips it (overflow: hidden, app.css) — the top
+   half of `Experience` was being cut off. Out of flow the ghost stays the
+   first thing in the box, so nothing overflows.
+
+   `top` is a fraction of --sechead-ghost-size, not a fixed rem, so the
+   eyebrow tracks the ghost through its clamp.
+
+   z-index 3 keeps the eyebrow's letters over the ghost's stroke — the
+   global reset puts every element at z-index 1 (app.css:287), so 3 is
+   what it takes to win. Still far under the nav (1000/1001) and the
+   mobile nav (999). */
 .sechead .sechead-eyebrow {
+    position: absolute;
+    top: calc(var(--sechead-ghost-size) * 0.46);
+    left: 0;
+    right: 0;
+    z-index: 3;
     display: flex;
     align-items: center;
     gap: 0.6rem;
@@ -72,6 +105,12 @@
     letter-spacing: 0.18em;
     text-transform: uppercase;
     color: var(--c-muted);
+    margin-bottom: 0;
+}
+
+/* No ghost to lie on: back into flow above the h2. */
+.sechead--noghost .sechead-eyebrow {
+    position: static;
     margin-bottom: 0.7rem;
 }
 
@@ -133,14 +172,6 @@
 
 /* ── Variants ── */
 
-/* Tight gaps and heads inside a card: the ghost overlaps the head
-   instead of sitting above it. */
-.sechead--behind .sechead-ghost {
-    top: -0.5rem;
-    left: -0.4rem;
-    opacity: 0.75;
-}
-
 /* Kept for continuity with pages that still centre their heads. The
    home page does not use it — the note needs a right column. */
 .sechead--center {
@@ -157,8 +188,7 @@
 }
 
 .sechead--center .sechead-ghost {
-    left: 50%;
-    transform: translateX(-50%);
+    margin-left: 0;
 }
 
 /* ── Responsive ── */
@@ -172,13 +202,11 @@
 }
 
 @media (max-width: 760px) {
+    /* The ghost shrinks through the variable, not on the ghost rule, so
+       the eyebrow's overlap shrinks with it. */
     .sechead {
         margin-bottom: 1.4rem;
-    }
-
-    .sechead .sechead-ghost {
-        top: -2.6rem;
-        font-size: clamp(44px, 13vw, 72px);
+        --sechead-ghost-size: clamp(44px, 13vw, 72px);
     }
 
     .sechead .sechead-row h2 {

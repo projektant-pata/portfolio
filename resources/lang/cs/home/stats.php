@@ -5,7 +5,7 @@ return [
     'head_ghost' => 'Statistiky',
     'head_eyebrow' => 'V číslech',
     'head_title' => 'Něco z toho je <em>vážně</em>',
-    'head_note' => 'Dvě čísla bych obhájil u pohovoru, jedno ne.',
+    'head_note' => 'Dvě čísla bych obhájil u pohovoru, jedno ne. Víc na <a href=":url">stránce O mně</a>.',
     'card1_title' => 'Junior',
     'card1_text' => 'Profesionální úroveň',
     'card2_title' => '5+',
