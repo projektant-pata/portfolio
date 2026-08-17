@@ -17,7 +17,11 @@
     {{-- About Me. No fade-up: the hero leaves this section's top edge inside
          the first viewport, so it must already be there when the page paints. --}}
     <section id="about-me" class="portfolio-section portfolio-section--no-reveal">
-        <h2>{!! \App\Models\Setting::text('about_title', $locale) !!}</h2>
+        <x-portfolio.section-head
+            :eyebrow="__('pages/about-me.head_eyebrow')"
+            :title="\App\Models\Setting::text('about_title', $locale)"
+            :note="__('pages/about-me.head_note')"
+        />
         <div class="about-me-content">
             @foreach ($aboutCards as $card)
                 <div class="about-me-card">

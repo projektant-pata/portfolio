@@ -4,6 +4,9 @@ return [
     'hero_wordmark' => 'About me',
     'hero_tags' => ['Chess', 'Rock music', 'Volunteering', 'Freelance', 'SPŠE Pardubice'],
 
+    'head_eyebrow' => 'Who I am',
+    'head_note' => 'Longer version of the hero. In a hurry? The numbers are right below.',
+
     'title' => 'About me',
     'card1_title' => 'About me',
     'card1_text' => 'Hi there! I’m Richard Hývl, a starting software developer and freelancer with a passion.

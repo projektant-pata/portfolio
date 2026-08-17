@@ -4,6 +4,9 @@ return [
     'hero_wordmark' => 'O mně',
     'hero_tags' => ['Šachy', 'Rocková hudba', 'Dobrovolnictví', 'Freelance', 'SPŠE Pardubice'],
 
+    'head_eyebrow' => 'Kdo jsem',
+    'head_note' => 'Delší verze úvodu. Spěcháš? Čísla jsou hned pod tím.',
+
     'title' => 'O mně',
     'card1_title' => 'O mně',
     'card1_text' => 'Ahoj! Jsem Richard Hývl, začínající softwarový vývojář a freelancer s vášní.
