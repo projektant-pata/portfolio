@@ -22,7 +22,13 @@ class ExperienceFactory extends Factory
             'image_path' => null,
             'links' => null,
             'sort_order' => 0,
+            'show_on_about' => false,
         ];
+    }
+
+    public function onAbout(): static
+    {
+        return $this->state(fn () => ['show_on_about' => true]);
     }
 
     public function withTranslatedYear(): static

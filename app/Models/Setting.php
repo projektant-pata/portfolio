@@ -56,10 +56,11 @@ class Setting extends Model
     }
 
     /**
-     * Localized list value for a key (e.g. the rotating hero roles), falling
-     * back to the `en` list, then an empty array.
+     * Localized list value for a key (e.g. the rotating hero roles, or the
+     * about page's fact strip, whose entries are {label, value} maps),
+     * falling back to the `en` list, then an empty array.
      *
-     * @return array<int, string>
+     * @return array<int, mixed>
      */
     public static function list(string $key, ?string $locale = null): array
     {

@@ -18,6 +18,8 @@ class StatFactory extends Factory
             'value_id' => null,
             'source' => null,
             'sort_order' => 0,
+            'tier' => 'normal',
+            'note' => null,
         ];
     }
 
@@ -27,5 +29,18 @@ class StatFactory extends Factory
             'value' => ['en' => 'Junior', 'cs' => 'Junior'],
             'text' => ['en' => $this->faker->words(2, true), 'cs' => $this->faker->words(2, true)],
         ]);
+    }
+
+    public function hero(): static
+    {
+        return $this->state(fn () => [
+            'tier' => 'hero',
+            'note' => ['en' => $this->faker->sentence(), 'cs' => $this->faker->sentence()],
+        ]);
+    }
+
+    public function soft(): static
+    {
+        return $this->state(fn () => ['tier' => 'soft']);
     }
 }

@@ -20,6 +20,7 @@ class Experience extends Model
         'image_path',
         'links',
         'sort_order',
+        'show_on_about',
     ];
 
     protected $casts = [
@@ -30,6 +31,7 @@ class Experience extends Model
         'subtitle' => 'array',
         'content' => 'array',
         'year' => 'array',
+        'show_on_about' => 'boolean',
     ];
 
     public function getTranslation(string $field, string $locale, string $fallback = 'en'): string

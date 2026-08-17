@@ -17,18 +17,24 @@ class Stat extends Model
     /** Year the developer journey started, for the "years of experience" stat. */
     private const CAREER_START_YEAR = 2022;
 
+    /** Bento weights: hero tiles span two columns and carry a note; soft tiles are the jokes. */
+    public const TIERS = ['hero', 'normal', 'soft'];
+
     protected $fillable = [
         'value',
         'text',
         'value_id',
         'source',
         'sort_order',
+        'tier',
+        'note',
     ];
 
     protected $casts = [
         'value' => 'array',
         'text' => 'array',
         'sort_order' => 'integer',
+        'note' => 'array',
     ];
 
     public function getTranslation(string $field, string $locale, string $fallback = 'en'): string
