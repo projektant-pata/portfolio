@@ -3,6 +3,9 @@
 return [
     'hero_wordmark' => 'Projekty',
     'hero_tags' => ['Webové aplikace', 'API', 'Hackathony', 'Open source', 'Freelance'],
+    'head_eyebrow' => 'Vybraná práce',
+    'head_title' => 'Všechno, co stojí za <em>ukázání</em>',
+    'head_note' => 'Filtruj podle typu nebo technologie. Seznam je dělený po letech, od nejnovějších.',
     'kind_personal' => 'Vlastní',
     'kind_client' => 'Klientský',
     'kind_school' => 'Školní',

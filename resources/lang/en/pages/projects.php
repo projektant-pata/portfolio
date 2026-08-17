@@ -3,6 +3,9 @@
 return [
     'hero_wordmark' => 'Projects',
     'hero_tags' => ['Web apps', 'APIs', 'Hackathons', 'Open source', 'Freelance'],
+    'head_eyebrow' => 'Selected work',
+    'head_title' => 'Everything worth <em>showing</em>',
+    'head_note' => 'Filter by kind or stack. The list is split by year, newest first.',
     'kind_personal' => 'Personal',
     'kind_client' => 'Client',
     'kind_school' => 'School',

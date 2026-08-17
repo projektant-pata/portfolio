@@ -16,6 +16,12 @@
     {{-- No fade-up: the hero leaves this section's top edge inside the first
          viewport, so it must already be there when the page paints. --}}
     <section id="projects" class="portfolio-section portfolio-section--no-reveal">
+        <x-portfolio.section-head
+            :eyebrow="__('pages/projects.head_eyebrow')"
+            :title="__('pages/projects.head_title')"
+            :note="__('pages/projects.head_note')"
+        />
+
         <div class="proj-filters" id="proj-filters">
             <div class="proj-fgroup" role="group" aria-labelledby="proj-flabel-kind">
                 <span class="proj-flabel" id="proj-flabel-kind">{{ __('pages/projects.filter_kind') }}</span>

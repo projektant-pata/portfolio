@@ -184,3 +184,15 @@ test('the empty state ships hidden with a clear-filters action', function () {
     expect($html)->toContain('<div class="proj-empty" id="proj-empty" hidden>')
         ->toContain('Clear filters');
 });
+
+test('the projects list is introduced by a section head', function () {
+    $this->get(route('projects'))
+        ->assertSee('<p class="sechead-eyebrow">Selected work</p>', false)
+        ->assertSee('Everything worth <em>showing</em>', false);
+});
+
+test('the projects head sits above the filter bar', function () {
+    $html = $this->get(route('projects'))->getContent();
+
+    expect(strpos($html, 'sechead-eyebrow'))->toBeLessThan(strpos($html, 'proj-filters'));
+});
