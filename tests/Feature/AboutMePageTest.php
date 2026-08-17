@@ -4,23 +4,7 @@ use App\Models\Badge;
 use App\Models\Experience;
 use App\Models\Interest;
 use App\Models\PathNode;
-use App\Models\Review;
 use App\Models\Setting;
-use Database\Seeders\InterestSeeder;
-use Database\Seeders\PathNodeSeeder;
-use Database\Seeders\SettingSeeder;
-use Database\Seeders\StatSeeder;
-
-/** Seeds everything the seven sections read. */
-function seedAboutPage(): void
-{
-    test()->seed(SettingSeeder::class);
-    test()->seed(StatSeeder::class);
-    test()->seed(PathNodeSeeder::class);
-    test()->seed(InterestSeeder::class);
-    Experience::factory()->onAbout()->create(['title' => ['en' => 'PEER program', 'cs' => 'Program PEER']]);
-    Review::factory()->create(['name' => 'Jan Novák']);
-}
 
 test('about me page returns 200', function () {
     $response = $this->get(route('about-me'));

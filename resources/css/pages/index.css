@@ -1,6 +1,7 @@
 @import '../components/project-list.css';
 @import '../components/dock-hero.css';
 @import '../components/section-head.css';
+@import '../components/reviews-carousel.css';
 
 /* ================================================================
    INDEX (HOME) PAGE STYLES
@@ -157,146 +158,19 @@ html:not(.dark) .tool-github-light { display: block; }
     font-size: var(--fs-h4);
 }
 
-/* ── Reviews carousel ── */
-.reviews-carousel {
-    --reviews-gap: 1.25rem;
-    --reviews-per-view: 3;
-    position: relative;
-}
-
-/* Auto-advancing only: no user scrolling, JS scrolls the viewport on a timer. */
-.reviews-carousel-viewport {
-    overflow: hidden;
-    scroll-behavior: smooth;
-}
-
-.reviews-row {
-    display: flex;
-    gap: var(--reviews-gap);
-}
-
-.reviews-row-card {
-    /* -2px keeps the last card's right border off the clipped viewport
-       edge — flush against it, subpixel rounding erases the hairline. */
-    flex: 0 0 calc((100% - (var(--reviews-per-view) - 1) * var(--reviews-gap) - 2px) / var(--reviews-per-view));
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: var(--sp-card-pad);
-    border: var(--border-w) solid var(--c-primary-lt);
-    background-color: var(--c-surface);
-    border-radius: var(--r-card-sm);
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .reviews-carousel-viewport { scroll-behavior: auto; }
-}
-
-.reviews-carousel-dots {
-    display: flex;
-    justify-content: center;
-    gap: 0.5rem;
-    margin-top: 1.25rem;
-}
-
-.reviews-carousel-dot {
-    width: 0.5rem;
-    height: 0.5rem;
-    padding: 0;
-    border: 0;
-    border-radius: 999px;
-    background-color: var(--c-primary-lt);
-    opacity: 0.4;
-    cursor: pointer;
-    transition: opacity var(--t-fast), background-color var(--t-fast), width var(--t-fast);
-}
-
-.reviews-carousel-dot[aria-current="true"] {
-    width: 1.625rem;
-    opacity: 1;
-    background-color: var(--c-primary);
-}
-
-/* JS adds this once the track fits the viewport without scrolling (few reviews
-   or a very wide screen) — dots would otherwise be no-ops. */
-.reviews-carousel.is-static .reviews-carousel-dots {
-    display: none;
-}
-
-/* ── Scroll reveal (fade-up) — tools + reviews grid items ── */
-.tools-row-card,
-.reviews-row-card {
+/* ── Scroll reveal (fade-up) — tools grid items.
+   .reviews-row-card carries the same rule from reviews-carousel.css. */
+.tools-row-card {
     opacity: 0;
     translate: 0 24px;
     transition: opacity var(--t-base) calc(var(--i, 0) * 0.06s),
                 translate var(--t-fast);
 }
 
-.tools-row-card.is-visible,
-.reviews-row-card.is-visible {
+.tools-row-card.is-visible {
     opacity: 1;
     translate: 0;
     transition-delay: calc(var(--i, 0) * 0.06s);
-}
-
-.reviews-row-card p {
-    font-weight: var(--fw-regular);
-    text-align: justify;
-}
-
-.reviews-row-card-mark {
-    font-family: var(--font-display);
-    font-size: 2.4rem;
-    font-weight: var(--fw-bold);
-    line-height: 0.7;
-    color: var(--c-primary);
-    margin-bottom: 0.5rem;
-}
-
-.reviews-row-card-who {
-    margin-top: 20px;
-    padding-top: 1rem;
-    border-top: 1px solid var(--c-primary-fade);
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-}
-
-.reviews-row-card-avatar {
-    width: 2.75rem;
-    height: 2.75rem;
-    flex-shrink: 0;
-    border-radius: 50%;
-    background: linear-gradient(135deg, var(--c-primary), var(--c-primary-fade));
-    color: #1C1B17;
-    font-family: var(--font-display);
-    font-weight: var(--fw-bold);
-    font-size: 0.95rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.reviews-row-card-text {
-    min-width: 0;
-}
-
-.reviews-row-card-name {
-    color: var(--c-primary);
-    font-weight: var(--fw-regular);
-}
-
-.reviews-row-card-badge {
-    margin-left: auto;
-    flex-shrink: 0;
-    font-size: var(--fs-mini);
-    line-height: 1;
-    padding: 0.3rem 0.75rem;
-    border-radius: 999px;
-    border: 1px solid color-mix(in srgb, var(--badge-color, var(--c-primary)) 45%, transparent);
-    color: var(--badge-color, var(--c-primary));
-    background: color-mix(in srgb, var(--badge-color, var(--c-primary)) 12%, transparent);
 }
 
 /* ── Responsive ── */
@@ -321,9 +195,6 @@ html:not(.dark) .tool-github-light { display: block; }
 
     .projects-row       { height: auto; }
     .projects-row > img { height: 220px; max-width: 300px; }
-
-    /* 2 reviews per view */
-    .reviews-carousel { --reviews-per-view: 2; }
 }
 
 @media (max-width: 576px) {
@@ -338,7 +209,4 @@ html:not(.dark) .tool-github-light { display: block; }
 
     .tools-row      { grid-template-columns: repeat(2, 1fr); }
     .tools-row-card { width: auto; }
-
-    /* 1 review per view */
-    .reviews-carousel { --reviews-per-view: 1; }
 }

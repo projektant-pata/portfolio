@@ -1,5 +1,11 @@
 <?php
 
+use App\Models\Experience;
+use App\Models\Review;
+use Database\Seeders\InterestSeeder;
+use Database\Seeders\PathNodeSeeder;
+use Database\Seeders\SettingSeeder;
+use Database\Seeders\StatSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Pest\Browser\Playwright\Playwright;
 use Tests\TestCase;
@@ -62,4 +68,15 @@ expect()->extend('toBeOne', function () {
 function something()
 {
     // ..
+}
+
+/** Seeds everything the about-me page's seven sections read. */
+function seedAboutPage(): void
+{
+    test()->seed(SettingSeeder::class);
+    test()->seed(StatSeeder::class);
+    test()->seed(PathNodeSeeder::class);
+    test()->seed(InterestSeeder::class);
+    Experience::factory()->onAbout()->create(['title' => ['en' => 'PEER program', 'cs' => 'Program PEER']]);
+    Review::factory()->create(['name' => 'Jan Novák']);
 }

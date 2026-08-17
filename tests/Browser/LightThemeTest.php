@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\AboutCard;
 use App\Models\Badge;
 use App\Models\Project;
 use Database\Seeders\SettingSeeder;
@@ -82,15 +81,14 @@ test('project year labels keep the accent they inherit the watermark style from'
 });
 
 test('light-mode body and muted text clear WCAG AA on their own surface', function () use ($goLight, $contrastOf, $themeTransition) {
-    $this->seed(SettingSeeder::class);
-    AboutCard::factory()->create();
+    seedAboutPage();
 
     $page = visit('/about-me')->resize(1440, 900);
     $page->script($goLight);
     $page->wait($themeTransition);
 
     expect($page->script($contrastOf('.portfolio-page h3', '.portfolio-page')))->toBeGreaterThanOrEqual(4.5)
-        ->and($page->script($contrastOf('.about-me-card p', '.about-me-card')))->toBeGreaterThanOrEqual(4.5);
+        ->and($page->script($contrastOf('.about-me-intro-cols p', '.about-me-intro')))->toBeGreaterThanOrEqual(4.5);
 });
 
 test('badge chip text clears the WCAG floor in light mode, both as a row chip and as a pressed stack filter', function () use ($goLight, $contrastOf, $themeTransition) {

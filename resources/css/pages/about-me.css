@@ -1,112 +1,529 @@
 @import '../components/dock-hero.css';
 @import '../components/section-head.css';
+@import '../components/image-slot.css';
+@import '../components/availability-dot.css';
+@import '../components/pill-button.css';
+@import '../components/reviews-carousel.css';
 
 /* ================================================================
-   ABOUT ME PAGE STYLES
+   ABOUT ME PAGE
+   ================================================================
+   Seven sections, seven silhouettes: a bordered intro frame, a
+   borderless timeline, a bento, three photo cells in one frame, a
+   flat tile strip, the shared reviews carousel and a tinted
+   contact band. Section rhythm comes from .portfolio-section.
    ================================================================ */
 
-
-/* ── About Me cards — Pinterest masonry ── */
-.about-me-content {
-    column-count: 2;
-    column-gap: 2rem;
-}
-
-.about-me-card {
-    break-inside: avoid;
-    margin-bottom: 2rem;
-    border: var(--border-w) solid var(--c-primary-lt);
-    background-color: var(--c-surface);
+/* ── 1 · Intro ─────────────────────────────────────────────── */
+.about-me-intro {
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    grid-template-rows: 1fr auto;
+    border: var(--border-w) solid var(--c-primary-fade);
     border-radius: var(--r-card);
-    padding: 2.5rem;
+    /* --c-bg, not --c-surface: it reads as a frame on the page, not a card. */
+    background: var(--c-bg);
+    overflow: hidden;
 }
 
-.about-me-card h3 {
+.about-me-intro-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 1.6rem;
+    padding: 3.4rem 3.2rem 3rem;
+}
+
+.about-me-intro-lead {
+    font-family: var(--font-display);
+    font-size: clamp(1.7rem, 1rem + 1.9vw, 2.35rem);
+    font-weight: var(--fw-bold);
+    line-height: 1.14;
+    letter-spacing: -0.02em;
+    max-width: 26ch;
+    text-wrap: pretty;
+}
+
+.about-me-intro-lead em {
+    font-style: normal;
+    font-weight: 500;
     color: var(--c-primary);
-    margin-bottom: 1.25rem;
-    font-size: var(--fs-h3);
 }
 
-.about-me-card p {
+.about-me-intro-cols {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.6rem 2.4rem;
+}
+
+.about-me-intro-cols p {
+    font-size: 0.95rem;
+    font-weight: var(--fw-light);
+    line-height: 1.7;
+    color: var(--c-muted);
+    text-wrap: pretty;
+}
+
+.about-me-intro-cols p b {
+    color: var(--c-fg);
+    font-weight: var(--fw-semibold);
+}
+
+.about-me-sign {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: auto;
+    padding-top: 0.4rem;
+    font-family: var(--font-display);
+    font-size: 1rem;
+    color: var(--c-fg);
+}
+
+.about-me-sign::before {
+    content: '';
+    width: 34px;
+    height: 1px;
+    background: var(--c-primary-fade);
+}
+
+.about-me-intro-portrait {
+    position: relative;
+    min-height: 420px;
+    border-left: 1px solid color-mix(in srgb, var(--c-primary-fade) 55%, transparent);
+}
+
+.about-me-intro-portrait .image-slot,
+.about-me-intro-portrait .image-slot-img {
+    width: 100%;
+    height: 100%;
+}
+
+.about-me-intro-facts {
+    grid-column: 1 / -1;
+    display: flex;
+    background: var(--c-surface);
+    border-top: var(--border-w) solid var(--c-primary-fade);
+}
+
+.about-me-fact {
+    flex: 1;
+    display: grid;
+    align-content: start;
+    gap: 0.2rem;
+    padding: 1.05rem 1.6rem;
+    border-left: 1px solid color-mix(in srgb, var(--c-primary-fade) 45%, transparent);
+}
+
+.about-me-fact:first-child {
+    border-left: 0;
+}
+
+.about-me-fact-label {
+    font-size: 10.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--c-muted);
+}
+
+.about-me-fact-value {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.95rem;
+    font-weight: var(--fw-semibold);
+}
+
+/* ── 2 · The short version ─────────────────────────────────── */
+.about-me-path {
+    display: flex;
+    flex-direction: column;
+}
+
+.about-me-node {
+    position: relative;
+    display: grid;
+    grid-template-columns: 88px 1fr;
+    gap: 2rem;
+    padding: 1.6rem 0;
+    border-top: 1px solid color-mix(in srgb, var(--c-primary-fade) 50%, transparent);
+}
+
+.about-me-node:first-of-type {
+    border-top: 0;
+}
+
+/* The rail, clipped at the first and last node so it starts and ends on a dot. */
+.about-me-node::before {
+    content: '';
+    position: absolute;
+    left: calc(88px + 1rem - 1px);
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: color-mix(in srgb, var(--c-primary-fade) 60%, transparent);
+}
+
+.about-me-node:first-of-type::before {
+    top: 2.35rem;
+}
+
+.about-me-node:last-of-type::before {
+    bottom: auto;
+    height: 2.35rem;
+}
+
+.about-me-node::after {
+    content: '';
+    position: absolute;
+    left: calc(88px + 1rem - 5px);
+    top: 2rem;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--c-primary);
+    box-shadow: 0 0 0 4px var(--c-bg);
+}
+
+.about-me-node-year {
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    letter-spacing: 0.04em;
+    color: var(--c-primary);
+    padding-top: 1.4rem;
+}
+
+.about-me-node-body {
+    padding-top: 1.15rem;
+    max-width: 62ch;
+}
+
+.about-me-node-body h3 {
+    font-size: 1.25rem;
+    font-weight: var(--fw-regular);
+    line-height: 1.25;
+    margin-bottom: 0.4rem;
+}
+
+.about-me-node-body p {
+    font-size: 0.95rem;
+    font-weight: var(--fw-light);
+    line-height: 1.7;
+    color: var(--c-muted);
+    text-wrap: pretty;
+}
+
+.about-me-node--now .about-me-node-body h3 {
+    color: var(--c-primary);
+}
+
+/* ── 3 · Stats bento ───────────────────────────────────────── */
+.about-me-bento {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.75rem;
+}
+
+.about-me-tile {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 0.3rem;
+    padding: 1.3rem 1.4rem;
+    min-height: 118px;
+    border: var(--border-w) solid color-mix(in srgb, var(--c-primary-fade) 80%, transparent);
+    border-radius: var(--r-card-sm);
+    background: var(--c-surface);
+    transition: border-color var(--t-fast);
+}
+
+.about-me-tile:hover {
+    border-color: var(--c-primary);
+}
+
+.about-me-tile-value {
+    font-family: var(--font-display);
+    font-size: 2.1rem;
+    font-weight: var(--fw-bold);
+    line-height: 1;
+    color: var(--c-primary);
+}
+
+.about-me-tile-label {
+    font-size: 0.85rem;
+    font-weight: var(--fw-light);
+    color: var(--c-muted);
+}
+
+.about-me-tile--hero {
+    grid-column: span 2;
+    min-height: 186px;
+    background: var(--c-surface-sunken);
+    border-color: var(--c-primary-lt);
+}
+
+.about-me-tile--hero .about-me-tile-value {
+    font-size: clamp(3rem, 2rem + 2.6vw, 4.4rem);
+}
+
+.about-me-tile--hero .about-me-tile-label {
+    font-size: 0.95rem;
+    color: var(--c-fg);
+}
+
+.about-me-tile--hero p {
+    font-size: 0.85rem;
     font-weight: var(--fw-light);
     line-height: 1.6;
+    color: var(--c-muted);
+    max-width: 30ch;
+    margin-top: 0.3rem;
 }
 
-.about-me-card ul {
-    margin-top: 1rem;
-    padding-left: 1.25rem;
+/* The jokes: an aside in the mix, not fenced off in their own box. */
+.about-me-tile--soft {
+    background: transparent;
 }
 
-.about-me-card ul li {
-    list-style: circle;
-    margin-bottom: 0.75rem;
+.about-me-tile--soft .about-me-tile-value {
+    color: var(--c-fg);
+    opacity: 0.55;
 }
 
-/* ── About Me stats grid (11 cards) — staggered 4:3:4 ────────
-   Flexbox approach. All cards same width = (100% - 3×gap) / 4.
-   Row 2 (items 5–7) offset by (card_width + gap) / 2 so each
-   card's centre lands exactly on a gap-centre from row above.
+/* ── 4 · Off the screen ────────────────────────────────────── */
+.about-me-beyond {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border: var(--border-w) solid var(--c-primary-fade);
+    border-radius: var(--r-card);
+    overflow: hidden;
+    background: var(--c-surface);
+}
 
-   card_width = 25% - 1.40625rem  (gap = 1.875rem)
-   offset     = 12.5% + 0.234375rem                           */
-.about-me-stats-cards {
+.about-me-beyond-cell {
     display: flex;
+    flex-direction: column;
+    border-left: 1px solid color-mix(in srgb, var(--c-primary-fade) 45%, transparent);
+}
+
+.about-me-beyond-cell:first-child {
+    border-left: 0;
+}
+
+.about-me-beyond-text {
+    padding: 1.5rem 1.5rem 1.7rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    flex: 1;
+}
+
+.about-me-beyond-text h3 {
+    font-size: 1.15rem;
+    font-weight: var(--fw-regular);
+}
+
+.about-me-beyond-text h3 span {
+    color: var(--c-primary);
+}
+
+.about-me-beyond-text p {
+    font-size: 0.9rem;
+    font-weight: var(--fw-light);
+    line-height: 1.65;
+    color: var(--c-muted);
+    text-wrap: pretty;
+}
+
+/* margin-top:auto pins the metas to the bottom so they align across cells
+   regardless of how long the copy above them runs. */
+.about-me-beyond-meta {
+    margin-top: auto;
+    padding-top: 0.9rem;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--c-primary);
+}
+
+/* ── 5 · Things I show up for ──────────────────────────────── */
+.about-me-showups {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 0.75rem;
+}
+
+/* Transparent and hairline on purpose — lighter than every card above, so
+   this reads as a list of facts rather than a set of achievements. */
+.about-me-show {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    padding: 1.2rem 1.3rem;
+    border: 1px solid color-mix(in srgb, var(--c-primary-fade) 70%, transparent);
+    border-radius: var(--r-card-sm);
+    background: transparent;
+    transition: border-color var(--t-fast), background var(--t-fast);
+}
+
+.about-me-show:hover {
+    border-color: var(--c-primary);
+    background: var(--c-surface);
+}
+
+.about-me-show-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.about-me-show-kind {
+    font-size: 10.5px;
+    font-weight: var(--fw-semibold);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--show-color, var(--c-primary));
+}
+
+.about-me-show-year {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    color: var(--c-muted);
+}
+
+.about-me-show h3 {
+    font-size: 1.05rem;
+    font-weight: var(--fw-regular);
+    line-height: 1.3;
+}
+
+.about-me-show p {
+    font-size: 0.875rem;
+    font-weight: var(--fw-light);
+    line-height: 1.6;
+    color: var(--c-muted);
+    text-wrap: pretty;
+}
+
+/* ── 7 · Contact ───────────────────────────────────────────── */
+.about-me-cta {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 2.5rem;
+    padding: 2.8rem 3rem;
+    border: var(--border-w) solid var(--c-primary-lt);
+    border-radius: var(--r-card);
+    /* The page's only tinted surface, so it lands as the end punctuation. */
+    background: linear-gradient(
+        120deg,
+        color-mix(in srgb, var(--c-primary) 9%, var(--c-surface)),
+        var(--c-surface) 62%
+    );
+}
+
+.about-me-cta-available {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 11px;
+    font-weight: var(--fw-semibold);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--c-fg);
+    margin-bottom: 0.9rem;
+}
+
+.about-me-cta h2 {
+    font-family: var(--font-display);
+    font-size: clamp(1.8rem, 1.1rem + 2vw, 2.5rem);
+    font-weight: var(--fw-bold);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+}
+
+.about-me-cta h2 em {
+    font-style: normal;
+    font-weight: 500;
+    color: var(--c-primary);
+}
+
+.about-me-cta-sub {
+    margin-top: 0.7rem;
+    font-size: 0.95rem;
+    font-weight: var(--fw-light);
+    color: var(--c-muted);
+    max-width: 44ch;
+}
+
+.about-me-cta-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.8rem;
+}
+
+.about-me-cta-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
     flex-wrap: wrap;
-    gap: 1.875rem;
+    justify-content: flex-end;
 }
 
-.about-me-stats-cards > div {
-    flex: 0 0 calc(25% - 1.40625rem);
-    width: auto;
-    margin: 0;
+.about-me-cta-fine {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.05em;
+    color: var(--c-muted);
 }
 
-.about-me-stats-cards > div:nth-child(5) {
-    margin-left: calc(12.5% + 0.234375rem);
+/* ── Responsive ────────────────────────────────────────────── */
+@media (max-width: 1100px) {
+    .about-me-intro { grid-template-columns: 1fr; }
+
+    .about-me-intro-portrait {
+        min-height: 300px;
+        border-left: 0;
+        border-top: 1px solid color-mix(in srgb, var(--c-primary-fade) 55%, transparent);
+        order: -1;
+    }
+
+    .about-me-bento { grid-template-columns: repeat(3, 1fr); }
+    .about-me-tile--hero { grid-column: span 3; }
+
+    .about-me-beyond { grid-template-columns: 1fr; }
+
+    .about-me-beyond-cell {
+        border-left: 0;
+        border-top: 1px solid color-mix(in srgb, var(--c-primary-fade) 45%, transparent);
+    }
+
+    .about-me-beyond-cell:first-child { border-top: 0; }
+
+    .about-me-cta { grid-template-columns: 1fr; }
+    .about-me-cta-actions { align-items: flex-start; }
+    .about-me-cta-row { justify-content: flex-start; }
 }
 
-/* ── Responsive ── */
+@media (max-width: 760px) {
+    .about-me-intro-copy { padding: 2.2rem 1.5rem 2rem; }
+    .about-me-intro-cols { grid-template-columns: 1fr; }
+    .about-me-intro-facts { flex-wrap: wrap; }
 
-/* 1440px: 3:2 staggered pattern
-   card_width = 33.333% - 1.25rem  (gap = 1.875rem)
-   offset     = 16.667% + 0.3125rem                          */
-@media (max-width: 1440px) {
-    .about-me-stats-cards > div {
-        flex: 0 0 calc(33.333% - 1.25rem);
+    .about-me-fact {
+        flex: 1 1 50%;
+        border-left: 0;
+        border-top: 1px solid color-mix(in srgb, var(--c-primary-fade) 40%, transparent);
     }
 
-    /* reset desktop offset */
-    .about-me-stats-cards > div:nth-child(5) { margin-left: 0; }
+    .about-me-bento { grid-template-columns: repeat(2, 1fr); }
+    .about-me-tile--hero { grid-column: span 2; }
 
-    /* row 2 starts at item 4 */
-    .about-me-stats-cards > div:nth-child(4) {
-        margin-left: calc(16.667% + 0.3125rem);
-    }
+    .about-me-node { grid-template-columns: 64px 1fr; gap: 1.1rem; }
+    .about-me-node::before { left: calc(64px + 0.55rem); }
+    .about-me-node::after { left: calc(64px + 0.55rem - 4px); }
 
-    /* row 4 starts at item 9 */
-    .about-me-stats-cards > div:nth-child(9) {
-        margin-left: calc(16.667% + 0.3125rem);
-    }
-
-    /* item 11 alone — centre it */
-    .about-me-stats-cards > div:nth-child(11) {
-        margin-left: calc(33.333% + 0.625rem);
-    }
-}
-
-@media (max-width: 992px) {
-    .about-me-content { column-count: 1; }
-
-    .about-me-stats-cards > div {
-        flex: 0 0 calc(50% - 0.9375rem);
-    }
-
-    /* reset all offsets */
-    .about-me-stats-cards > div:nth-child(n) { margin-left: 0; }
-}
-
-@media (max-width: 576px) {
-    .about-me-stats-cards > div {
-        flex: 0 0 100%;
-    }
+    .about-me-cta { padding: 2rem 1.5rem; }
 }

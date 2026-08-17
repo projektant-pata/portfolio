@@ -127,6 +127,46 @@ test('renders the reviews carousel without JS errors', function () {
     visit('/')->assertNoJavascriptErrors()->assertSee('Ada Lovelace');
 });
 
+test('the about page bento lays the hero tiles across two columns', function () {
+    seedAboutPage();
+
+    $page = visit('/about-me')->resize(1440, 900);
+
+    $columns = <<<'JS'
+        getComputedStyle(document.querySelector('.about-me-bento')).gridTemplateColumns.split(' ').length
+    JS;
+
+    $heroSpan = <<<'JS'
+        getComputedStyle(document.querySelector('.about-me-tile--hero')).gridColumnStart
+    JS;
+
+    expect($page->script($columns))->toBe(4)
+        ->and($page->script($heroSpan))->toContain('span 2');
+});
+
+test('the about page availability dot animates when motion is allowed', function () {
+    seedAboutPage();
+
+    $page = visit('/about-me')->resize(1440, 900);
+
+    expect($page->script("getComputedStyle(document.querySelector('.availability-dot')).animationName"))
+        ->toBe('availability-pulse');
+});
+
+test('the about page reviews carousel advances on its own', function () {
+    seedAboutPage();
+    Review::query()->delete();
+    foreach (range(0, 4) as $i) {
+        Review::factory()->create(['sort_order' => $i, 'name' => "Reviewer $i"]);
+    }
+
+    $page = visit('/about-me')->resize(1280, 900);
+    $page->wait(6);
+
+    expect($page->script("document.querySelector('#about-me-references .reviews-carousel-viewport').scrollLeft"))
+        ->toBeGreaterThan(0);
+});
+
 test('footer renders as a card on desktop and a full-bleed band on mobile', function () {
     $page = visit('/')->resize(1280, 900);
 
