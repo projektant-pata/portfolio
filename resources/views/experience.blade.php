@@ -19,7 +19,11 @@
     {{-- No fade-up: the hero leaves this section's top edge inside the first
          viewport, so it must already be there when the page paints. --}}
     <section id="experience" class="portfolio-section portfolio-section--no-reveal">
-        <h2>{{ __('home/experience.title') }}</h2>
+        <x-portfolio.section-head
+            :eyebrow="__('pages/experience.head_eyebrow')"
+            :title="__('pages/experience.head_title')"
+            :note="__('pages/experience.head_note')"
+        />
 
         {{-- Filter bar --}}
         <div class="exp-filterbar" id="exp-filterbar">

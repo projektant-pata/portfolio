@@ -66,3 +66,16 @@ test('ordinary experiences render no glow element', function () {
 
     $this->get(route('experience'))->assertDontSee('exp-card-glow', false);
 });
+
+test('the experience list is introduced by a section head', function () {
+    $this->get(route('experience'))
+        ->assertSee('<p class="sechead-eyebrow">Full record</p>', false)
+        ->assertSee('Everything, <em>filterable</em>', false)
+        ->assertSee('Filter by scope, badge or search', false);
+});
+
+test('the experience page does not repeat its hero wordmark as a ghost', function () {
+    $html = $this->get(route('experience'))->getContent();
+
+    expect($html)->not->toContain('<div class="sechead-ghost"');
+});
