@@ -13,6 +13,8 @@ new #[Title('Manage Stats')] class extends Component {
     public array $text = ['en' => '', 'cs' => ''];
     public string $valueId = '';
     public string $source = '';
+    public string $tier = 'normal';
+    public array $note = ['en' => '', 'cs' => ''];
 
     public ?string $deletingId = null;
 
@@ -66,6 +68,8 @@ new #[Title('Manage Stats')] class extends Component {
         $this->text = array_merge(['en' => '', 'cs' => ''], $stat->text ?? []);
         $this->valueId = $stat->value_id ?? '';
         $this->source = $stat->source ?? '';
+        $this->tier = $stat->tier ?? 'normal';
+        $this->note = array_merge(['en' => '', 'cs' => ''], $stat->note ?? []);
         $this->modal('form')->show();
     }
 
@@ -82,6 +86,10 @@ new #[Title('Manage Stats')] class extends Component {
             'text.cs' => ['nullable', 'string', 'max:100'],
             'valueId' => ['nullable', 'string', 'max:50'],
             'source' => ['nullable', 'in:age,years_experience'],
+            'tier' => ['required', 'in:'.implode(',', Stat::TIERS)],
+            'note' => ['nullable', 'array'],
+            'note.en' => ['nullable', 'string', 'max:300'],
+            'note.cs' => ['nullable', 'string', 'max:300'],
         ]);
 
         $data = [
@@ -89,6 +97,10 @@ new #[Title('Manage Stats')] class extends Component {
             'text' => array_filter($validated['text'], fn ($v) => filled($v)),
             'value_id' => $validated['valueId'] ?: null,
             'source' => $validated['source'] ?: null,
+            'tier' => $validated['tier'],
+            'note' => $validated['tier'] === 'hero'
+                ? (array_filter($validated['note'] ?? [], fn ($v) => filled($v)) ?: null)
+                : null,
         ];
 
         if ($stat) {
@@ -126,6 +138,8 @@ new #[Title('Manage Stats')] class extends Component {
         $this->text = ['en' => '', 'cs' => ''];
         $this->valueId = '';
         $this->source = '';
+        $this->tier = 'normal';
+        $this->note = ['en' => '', 'cs' => ''];
         $this->resetValidation();
     }
 }; ?>
@@ -144,6 +158,7 @@ new #[Title('Manage Stats')] class extends Component {
             <flux:table.column></flux:table.column>
             <flux:table.column>Value</flux:table.column>
             <flux:table.column>Caption (EN)</flux:table.column>
+            <flux:table.column>Tier</flux:table.column>
             <flux:table.column>Source</flux:table.column>
             <flux:table.column></flux:table.column>
         </flux:table.columns>
@@ -162,6 +177,7 @@ new #[Title('Manage Stats')] class extends Component {
                         @endif
                     </flux:table.cell>
                     <flux:table.cell>{{ $stat->text['en'] ?? '—' }}</flux:table.cell>
+                    <flux:table.cell>{{ $stat->tier }}</flux:table.cell>
                     <flux:table.cell>
                         @if ($stat->value_id)
                             <span class="font-mono text-xs">#{{ $stat->value_id }}</span>
@@ -177,7 +193,7 @@ new #[Title('Manage Stats')] class extends Component {
                     </flux:table.cell>
                 </flux:table.row>
             @empty
-                <x-manage.empty-row colspan="5" message="No stats found." />
+                <x-manage.empty-row colspan="6" message="No stats found." />
             @endforelse
         </flux:table.rows>
     </flux:table>
@@ -201,6 +217,13 @@ new #[Title('Manage Stats')] class extends Component {
                         <flux:input wire:model="text.en" placeholder="e.g. Projects Completed" />
                         <flux:error name="text.en" />
                     </flux:field>
+                    @if ($tier === 'hero')
+                        <flux:field>
+                            <flux:label>Supporting line</flux:label>
+                            <flux:textarea wire:model="note.en" rows="2" placeholder="e.g. Client work, school projects and one platform in production." />
+                            <flux:error name="note.en" />
+                        </flux:field>
+                    @endif
                 </x-slot:en>
                 <x-slot:cs>
                     <flux:field>
@@ -213,6 +236,13 @@ new #[Title('Manage Stats')] class extends Component {
                         <flux:input wire:model="text.cs" placeholder="např. Projektů dokončeno" />
                         <flux:error name="text.cs" />
                     </flux:field>
+                    @if ($tier === 'hero')
+                        <flux:field>
+                            <flux:label>Supporting line</flux:label>
+                            <flux:textarea wire:model="note.cs" rows="2" placeholder="např. Zakázky, školní projekty a jedna platforma v provozu." />
+                            <flux:error name="note.cs" />
+                        </flux:field>
+                    @endif
                 </x-slot:cs>
             </x-manage.locale-tabs>
 
@@ -233,6 +263,16 @@ new #[Title('Manage Stats')] class extends Component {
                     <flux:input wire:model="valueId" placeholder="e.g. elo, github-repos" />
                     <flux:description>Filled client-side (chess elo, GitHub repos).</flux:description>
                     <flux:error name="valueId" />
+                </flux:field>
+
+                <flux:field>
+                    <flux:label>Bento tier</flux:label>
+                    <flux:select wire:model.live="tier">
+                        <flux:select.option value="hero">Hero — spans two columns, carries a note</flux:select.option>
+                        <flux:select.option value="normal">Normal</flux:select.option>
+                        <flux:select.option value="soft">Soft — the jokes, dimmed</flux:select.option>
+                    </flux:select>
+                    <flux:error name="tier" />
                 </flux:field>
             </div>
 

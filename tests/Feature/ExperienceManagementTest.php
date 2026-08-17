@@ -131,6 +131,19 @@ test('reorder is a no-op while a type filter is active', function () {
         ->and($life->fresh()->sort_order)->toBe(1);
 });
 
+test('an experience can be flagged onto the about page', function () {
+    $experience = Experience::factory()->create();
+
+    Livewire::actingAs(User::factory()->create())
+        ->test('pages::manage.experiences')
+        ->call('openEdit', $experience->id)
+        ->set('show_on_about', true)
+        ->call('save')
+        ->assertHasNoErrors();
+
+    expect($experience->fresh()->show_on_about)->toBeTrue();
+});
+
 test('uploading a new experience image deletes the previous file', function () {
     Storage::fake('public');
     $user = User::factory()->create();

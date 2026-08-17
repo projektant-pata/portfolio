@@ -23,6 +23,7 @@ new #[Title('Manage Experiences')] class extends Component {
     public $imageFile = null;
     public string $image_path = '';
     public bool $is_special = false;
+    public bool $show_on_about = false;
     public int $sort_order = 0;
     public array $links = [];
     public array $selectedBadgeIds = [];
@@ -96,6 +97,7 @@ new #[Title('Manage Experiences')] class extends Component {
         $this->content = array_merge(['en' => '', 'cs' => ''], $experience->content ?? []);
         $this->year = array_merge(['en' => '', 'cs' => ''], $experience->year ?? []);
         $this->is_special = (bool) $experience->is_special;
+        $this->show_on_about = (bool) $experience->show_on_about;
         $this->sort_order = $experience->sort_order ?? 0;
         $this->image_path = $experience->image_path ?? '';
         $this->links = $experience->links ?? [];
@@ -130,6 +132,7 @@ new #[Title('Manage Experiences')] class extends Component {
         $validated = $this->validate([
             'type' => ['required', 'in:work,life'],
             'is_special' => ['boolean'],
+            'show_on_about' => ['boolean'],
             'title' => ['required', 'array'],
             'title.en' => ['required', 'string', 'max:255'],
             'title.cs' => ['nullable', 'string', 'max:255'],
@@ -181,6 +184,7 @@ new #[Title('Manage Experiences')] class extends Component {
         $data = [
             'type' => $validated['type'],
             'is_special' => $this->is_special,
+            'show_on_about' => $this->show_on_about,
             'title' => array_filter($validated['title'], fn ($v) => filled($v)),
             'subtitle' => array_filter($validated['subtitle'] ?? [], fn ($v) => filled($v)) ?: null,
             'content' => array_filter($validated['content'] ?? [], fn ($v) => filled($v)) ?: null,
@@ -228,6 +232,7 @@ new #[Title('Manage Experiences')] class extends Component {
         $this->content = ['en' => '', 'cs' => ''];
         $this->year = ['en' => '', 'cs' => ''];
         $this->is_special = false;
+        $this->show_on_about = false;
         $this->sort_order = 0;
         $this->imageFile = null;
         $this->image_path = '';
@@ -388,6 +393,11 @@ new #[Title('Manage Experiences')] class extends Component {
                     <flux:label>Special</flux:label>
                     <flux:checkbox wire:model="is_special" label="Mark as special" />
                     <flux:error name="is_special" />
+                </flux:field>
+
+                <flux:field>
+                    <flux:checkbox wire:model="show_on_about" label="Show on the about page" />
+                    <flux:error name="show_on_about" />
                 </flux:field>
 
                 {{-- Image upload --}}
