@@ -75,20 +75,34 @@ hint of color inside, not a hollow frame. See `docs/frontend-headings-and-mobile
 
 ### `h2` — Watermark / section label
 
+> **History:** this section originally documented a global `.portfolio-page h2`
+> rule that gave every `h2` on the site the giant outlined-watermark treatment,
+> plus a light-mode override (`html:not(.dark) .portfolio-page h2`) that filled
+> it solid. The `feat/section-head-rollout` branch moved every public section
+> heading onto `<x-portfolio.section-head>` (`resources/css/components/section-head.css`),
+> which has its own, much smaller `h2` rule — see that file's `.sechead .sechead-row h2`.
+> With no heading left relying on the global watermark look, both the rule and
+> its light-mode override were deleted from `app.css`.
+
+The watermark treatment itself survives in exactly one place: the
+`.portfolio-footer-watermark` heading (`resources/views/components/portfolio-footer.blade.php`),
+which now carries the declarations directly instead of inheriting them:
+
 ```css
 font-size:      var(--fs-h2);   /* clamp → 6.56rem max */
 font-weight:    500;
 font-family:    var(--font-display);          /* Space Grotesk */
-color:          color-mix(in srgb, var(--c-primary-lt) 12%, transparent);
--webkit-text-stroke: 1px var(--c-primary-lt);  /* outlined watermark */
+color:          color-mix(in srgb, var(--c-watermark) 12%, transparent);
+-webkit-text-stroke: 1px var(--c-watermark);  /* outlined watermark */
 text-align:     center;
 margin-bottom:  -0.45em;        /* overlap scales with the fluid font size */
 ```
 
-Dark mode is **outlined** (as above); the **light-mode override**
-(`html:not(.dark) .portfolio-page h2`) fills it solid with `--c-primary-lt` because
-a thin stroke is too faint on the light parchment background. Change the display
-look via the `--font-display` token.
+Dark mode is **outlined** (as above); a light-mode override
+(`html:not(.dark) .portfolio-footer-watermark`, mirroring the old global reset)
+fills it solid with `--c-watermark` because a thin stroke is too faint on the
+light parchment background. Change the display look via the `--font-display`
+token.
 
 ---
 

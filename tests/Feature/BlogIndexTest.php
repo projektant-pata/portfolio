@@ -87,5 +87,8 @@ test('the blog archive is introduced by a section head carrying the count', func
         ->assertSee('<p class="sechead-eyebrow">Archive</p>', false)
         ->assertSee('Everything I <em>published</em>', false)
         ->assertSee('sechead-note', false)
-        ->assertSee('of 1 post', false);
+        // The note prop renders unescaped ({!! !!} in section-head.blade.php)
+        // so the count's <b> reaches the page as real markup, not entities —
+        // assert the raw tag to catch a regression to {{ }} escaping it.
+        ->assertSee('<b>1</b> of 1 post', false);
 });

@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\AboutCard;
+use App\Models\Badge;
 use App\Models\Project;
 use Database\Seeders\SettingSeeder;
 
@@ -49,7 +50,7 @@ test('the light page sits on bone, not cream', function (string $path) use ($goL
     expect($page->script($colorOf('.portfolio-page', 'backgroundColor')))->toBe('rgb(250, 249, 246)');
 })->with(['/', '/about-me', '/projects', '/experience', '/blog']);
 
-test('section watermarks are sand in light mode, never the gold accent', function () use ($goLight, $colorOf, $themeTransition) {
+test('the footer wordmark is sand in light mode, never the gold accent', function () use ($goLight, $colorOf, $themeTransition) {
     $this->seed(SettingSeeder::class);
 
     $page = visit('/')->resize(1440, 900);
@@ -57,9 +58,11 @@ test('section watermarks are sand in light mode, never the gold accent', functio
     $page->wait($themeTransition);
 
     // Gold at watermark size reads as a highlighter slab over the content it
-    // sits behind; sand keeps it as background texture.
-    expect($page->script($colorOf('.portfolio-page h2', 'color')))->toBe('rgb(230, 224, 208)')
-        ->and($page->script($colorOf('.portfolio-page h2', 'webkitTextStrokeWidth')))->toBe('0px');
+    // sits behind; sand keeps it as background texture. Section headings moved
+    // onto <x-portfolio.section-head> and no longer carry this watermark
+    // treatment — .portfolio-footer-watermark is the only element left that does.
+    expect($page->script($colorOf('.portfolio-footer-watermark', 'color')))->toBe('rgb(230, 224, 208)')
+        ->and($page->script($colorOf('.portfolio-footer-watermark', 'webkitTextStrokeWidth')))->toBe('0px');
 });
 
 test('project year labels keep the accent they inherit the watermark style from', function () use ($goLight, $colorOf, $themeTransition) {
@@ -91,7 +94,7 @@ test('light-mode body and muted text clear WCAG AA on their own surface', functi
 });
 
 test('badge chip text clears the WCAG floor in light mode, both as a row chip and as a pressed stack filter', function () use ($goLight, $contrastOf, $themeTransition) {
-    $this->seed(\Database\Seeders\SettingSeeder::class);
+    $this->seed(SettingSeeder::class);
 
     // #A78BFA is the lavender badge hex that measured at 2.58:1 (row `.proj-chip`)
     // and 1.65:1 (pressed `.proj-fchip`) against the light bg before bab43a3 —
@@ -99,12 +102,12 @@ test('badge chip text clears the WCAG floor in light mode, both as a row chip an
     // bab43a3 blends --bc toward --c-fg in light mode only; this pins that fix
     // to a 3.0:1 floor so a regression (e.g. reverting the blend, or raising
     // the badge-color share back toward 100%) fails this test.
-    $badge = \App\Models\Badge::factory()->create([
+    $badge = Badge::factory()->create([
         'slug' => 'lavender',
         'name' => ['en' => 'Lavender'],
         'color' => '#A78BFA',
     ]);
-    \App\Models\Project::factory()->create()->badges()->attach($badge);
+    Project::factory()->create()->badges()->attach($badge);
 
     $page = visit('/projects')->resize(1440, 900);
     $page->script($goLight);

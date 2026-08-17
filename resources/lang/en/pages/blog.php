@@ -4,7 +4,6 @@ return [
     'hero_wordmark' => 'Blog',
     'hero_tags' => ['Build logs', 'Homelab', 'Competitions', 'Backend', 'Postmortems'],
 
-    'list_title' => 'All posts',
     'head_eyebrow' => 'Archive',
     'head_title' => 'Everything I <em>published</em>',
     'count_one' => ':count of :total post',

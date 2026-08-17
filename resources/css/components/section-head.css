@@ -167,6 +167,16 @@
     border-color: var(--c-primary);
 }
 
+/* Blog's archive count (`<b>5</b> of 5 posts`) used to get its gold accent
+   from `.blog-head-count b`, deleted along with the rest of `.blog-head*`
+   when the count moved into the `note` prop. Without a replacement the `<b>`
+   fell through to `.portfolio-page *` (app.css) and rendered in --c-fg —
+   brighter than the muted note around it, and the wrong colour. */
+.sechead .sechead-note b {
+    color: var(--c-primary);
+    font-weight: var(--fw-semibold);
+}
+
 /* ── Variants ── */
 
 /* Kept for continuity with pages that still centre their heads. The

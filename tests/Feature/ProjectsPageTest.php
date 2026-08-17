@@ -188,7 +188,8 @@ test('the empty state ships hidden with a clear-filters action', function () {
 test('the projects list is introduced by a section head', function () {
     $this->get(route('projects'))
         ->assertSee('<p class="sechead-eyebrow">Selected work</p>', false)
-        ->assertSee('Everything worth <em>showing</em>', false);
+        ->assertSee('Everything worth <em>showing</em>', false)
+        ->assertSee('Filter by kind or stack. The list is split by year, newest first.', false);
 });
 
 test('the projects head sits above the filter bar', function () {

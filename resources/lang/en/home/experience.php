@@ -1,8 +1,6 @@
 <?php
 
 return [
-    'title' => 'Experience',
-
     'title_home' => 'Work & Life',
     'head_ghost' => 'Experience',
     'head_eyebrow' => 'Track record',

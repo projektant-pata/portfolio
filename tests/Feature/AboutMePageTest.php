@@ -39,7 +39,8 @@ test('the about me stats section is introduced by a ghosted section head', funct
 
     $this->get(route('about-me'))
         ->assertSee('<div class="sechead-ghost" aria-hidden="true">Numbers</div>', false)
-        ->assertSee('<p class="sechead-eyebrow">By the numbers</p>', false);
+        ->assertSee('<p class="sechead-eyebrow">By the numbers</p>', false)
+        ->assertSee('The full set — the home page only shows the first four.', false);
 });
 
 test('the about me page carries exactly one ghost wordmark', function () {

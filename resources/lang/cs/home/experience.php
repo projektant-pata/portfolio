@@ -1,8 +1,6 @@
 <?php
 
 return [
-    'title' => 'Zkušenosti',
-
     'title_home' => 'Práce & Život',
     'head_ghost' => 'Zkušenosti',
     'head_eyebrow' => 'Dosavadní dráha',

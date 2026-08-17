@@ -7,6 +7,19 @@
 This note documents three linked frontend fixes and, more importantly, the
 **gotchas** behind them so future changes don't reintroduce the same bugs.
 
+> **Update (2026-08-17, `feat/section-head-rollout`):** the global
+> `.portfolio-page h2` rule this note describes — and its light-mode override —
+> no longer exist. Every public section heading now renders through
+> `<x-portfolio.section-head>` (`resources/css/components/section-head.css`,
+> `.sechead .sechead-row h2`), which is scoped to the component, not global.
+> The one heading that kept the giant outlined-watermark look is
+> `.portfolio-footer-watermark` (`resources/css/app.css`), which now carries
+> those declarations — including its own `html:not(.dark)` light-mode fill —
+> directly instead of inheriting them from the old global rule. The history
+> below (font/overflow/mobile-nav root causes, the fixes as originally shipped)
+> is left intact; only the claims about `h2` still carrying this styling today
+> are called out inline as superseded.
+
 ---
 
 ## What was wrong (reported)
@@ -36,8 +49,10 @@ This note documents three linked frontend fixes and, more importantly, the
 (a generic system font) together with `color: transparent` + `-webkit-text-stroke`.
 The outline itself is fine/wanted; the **generic font** is what looked broken, and
 purely `transparent` fill made the letters read as empty frames. Note: **light mode
-already filled `h2` solid** (`html:not(.dark) .portfolio-page h2`); that override is
-kept because the stroke is too faint on the light parchment background.
+already filled `h2` solid** (`html:not(.dark) .portfolio-page h2`); that override
+was kept at the time this note was written, for the reason above. It — and the
+global `h2` rule it modified — were later deleted by `feat/section-head-rollout`;
+see the update note at the top of this file.
 
 ### 2. Horizontal overflow
 `--fs-h1` (4.1rem / 66px) and `--fs-h2` (6.56rem / 105px) were **fixed**. The long
@@ -69,6 +84,9 @@ subtree generates no boxes at all. So `#toggle-mobile-nav` and `#mobile-nav` had
      `-webkit-text-stroke: 2px var(--c-primary)`, and a faint fill
      `color: color-mix(in srgb, var(--c-primary) 16%, transparent)`.
    - `.portfolio-page h2` → same idea with `--c-primary-lt`, 1px stroke, 12% fill.
+     (This global `h2` rule is gone as of `feat/section-head-rollout`; the same
+     stroke/fill idea now lives on `.portfolio-footer-watermark` specifically,
+     using `--c-watermark`.)
    - **To change the heading font**, edit the one `--font-display` token (and the
      `family=` param in the two Blade `<link>`s if the new font needs loading).
 
@@ -90,11 +108,15 @@ subtree generates no boxes at all. So `#toggle-mobile-nav` and `#mobile-nav` had
 
 - **Never `display: none` an ancestor of something you positioned `fixed`/`absolute`
   to "pull out".** Use `display: contents` (unwrap) or move the element in the DOM.
-- **All portfolio heading styles are global and scoped to `.portfolio-page`**
-  (on `<body>`). Changing `h1/h2/h3/h4` in `app.css` affects every public page.
+- **`h1`/`h3`/`h4` styles are still global, scoped to `.portfolio-page`** (on
+  `<body>`) in `app.css`. `h2` is no longer among them: every section heading
+  now goes through `<x-portfolio.section-head>` (`resources/css/components/section-head.css`),
+  and the one heading that kept the watermark look, `.portfolio-footer-watermark`,
+  has its own rule in `app.css` — see the update note at the top of this file.
 - **Two themes.** Dark is default (`.dark` on `<html>`); light is
-  `html:not(.dark)`. `h2` has a **separate light-mode color override** — change
-  both if you retune the watermark.
+  `html:not(.dark)`. `.portfolio-footer-watermark` has a **separate light-mode
+  color override** (`html:not(.dark) .portfolio-footer-watermark`) — change both
+  if you retune the watermark.
 - **Assets are pre-built, not dev-served.** The portfolio container serves
   `public/build/*`. After editing any CSS/JS you **must** run `npm run build`
   (`vite build`) or the change won't show. There is no vite dev server running

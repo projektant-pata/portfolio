@@ -4,7 +4,6 @@ return [
     'hero_wordmark' => 'Blog',
     'hero_tags' => ['Zápisky ze stavění', 'Homelab', 'Soutěže', 'Backend', 'Postmortemy'],
 
-    'list_title' => 'Všechny články',
     'head_eyebrow' => 'Archiv',
     'head_title' => 'Všechno, co jsem <em>vydal</em>',
     'count_one' => ':count z :total článku',
