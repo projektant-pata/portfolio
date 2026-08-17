@@ -1,6 +1,14 @@
 <x-portfolio-layout :title="__('layout/header.about_title')" :description="__('layout/header.about_desc')" :styles="['resources/css/pages/about-me.css']">
 
-    @php $locale = app()->getLocale(); @endphp
+    @php
+        $locale = app()->getLocale();
+        $introLead = \App\Models\Setting::text('about_intro_lead', $locale);
+        $introBody = \App\Models\Setting::list('about_intro_body', $locale);
+        $facts = \App\Models\Setting::list('about_facts', $locale);
+        $available = \App\Models\Setting::text('about_available', $locale);
+        $ctaTitle = \App\Models\Setting::text('about_cta_title', $locale);
+        $ctaSub = \App\Models\Setting::text('about_cta_sub', $locale);
+    @endphp
 
     {{-- Hero --}}
     <x-portfolio.dock-hero
@@ -14,37 +22,226 @@
         photo-position="50% 25%"
     />
 
-    {{-- About Me. No fade-up: the hero leaves this section's top edge inside
+    {{-- 1 · Intro. No fade-up: the hero leaves this section's top edge inside
          the first viewport, so it must already be there when the page paints. --}}
-    <section id="about-me" class="portfolio-section portfolio-section--no-reveal">
-        <x-portfolio.section-head
-            :eyebrow="__('pages/about-me.head_eyebrow')"
-            :title="\App\Models\Setting::text('about_title', $locale)"
-            :note="__('pages/about-me.head_note')"
-        />
-        <div class="about-me-content">
-            @foreach ($aboutCards as $card)
-                <div class="about-me-card">
-                    <h3>{!! $card->getTranslation('title', $locale) !!}</h3>
-                    <p>{!! $card->getTranslation('text', $locale) !!}</p>
+    @if ($introLead !== '' || $introBody !== [])
+        <section id="about-me" class="portfolio-section portfolio-section--no-reveal">
+            <x-portfolio.section-head
+                :eyebrow="__('pages/about-me.head_eyebrow')"
+                :title="\App\Models\Setting::text('about_title', $locale)"
+                :note="__('pages/about-me.head_note')"
+            />
+            <div class="about-me-intro">
+                <div class="about-me-intro-copy">
+                    @if ($introLead !== '')
+                        <p class="about-me-intro-lead">{!! $introLead !!}</p>
+                    @endif
+                    <div class="about-me-intro-cols">
+                        @foreach ($introBody as $paragraph)
+                            <p>{!! $paragraph !!}</p>
+                        @endforeach
+                    </div>
+                    <p class="about-me-sign">{{ __('pages/about-me.intro_sign') }}</p>
                 </div>
-            @endforeach
-        </div>
-    </section>
 
-    {{-- Stats --}}
-    <section id="about-me-stats" class="portfolio-section">
-        <x-portfolio.section-head
-            :ghost="__('pages/about-me.stats_head_ghost')"
-            :eyebrow="__('pages/about-me.stats_head_eyebrow')"
-            :title="\App\Models\Setting::text('stats_title', $locale)"
-            :note="__('pages/about-me.stats_head_note')"
-        />
-        <article class="about-me-stats-cards">
-            @foreach ($stats as $stat)
-                <x-portfolio.stats-card :value="$stat->displayValue($locale)" :text="$stat->getTranslation('text', $locale)" :value-id="$stat->value_id" />
-            @endforeach
-        </article>
-    </section>
+                <div class="about-me-intro-portrait">
+                    <x-portfolio.image-slot
+                        :path="config('portfolio.hero_images.portrait')"
+                        :caption="__('pages/about-me.portrait_slot')"
+                        :alt="__('pages/about-me.portrait_alt')"
+                        height="100%"
+                    />
+                </div>
+
+                @if ($facts !== [] || $available !== '')
+                    <div class="about-me-intro-facts">
+                        @foreach ($facts as $fact)
+                            <div class="about-me-fact">
+                                <span class="about-me-fact-label">{{ $fact['label'] ?? '' }}</span>
+                                <span class="about-me-fact-value">{{ $fact['value'] ?? '' }}</span>
+                            </div>
+                        @endforeach
+                        @if ($available !== '')
+                            <div class="about-me-fact">
+                                <span class="about-me-fact-label">{{ __('pages/about-me.fact_available_label') }}</span>
+                                <span class="about-me-fact-value">
+                                    <x-portfolio.availability-dot />{{ $available }}
+                                </span>
+                            </div>
+                        @endif
+                    </div>
+                @endif
+            </div>
+        </section>
+    @endif
+
+    {{-- 2 · The short version --}}
+    @if ($pathNodes->isNotEmpty())
+        <section id="about-me-path" class="portfolio-section">
+            <x-portfolio.section-head
+                :eyebrow="__('pages/about-me.path_head_eyebrow')"
+                :title="__('pages/about-me.path_head_title')"
+                :note="__('pages/about-me.path_head_note')"
+            />
+            <div class="about-me-path">
+                @foreach ($pathNodes as $node)
+                    <div @class(['about-me-node', 'about-me-node--now' => $node->is_now])>
+                        <div class="about-me-node-year">{{ $node->getTranslation('year', $locale) }}</div>
+                        <div class="about-me-node-body">
+                            <h3>{{ $node->getTranslation('title', $locale) }}</h3>
+                            <p>{{ $node->getTranslation('body', $locale) }}</p>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </section>
+    @endif
+
+    {{-- 3 · Stats bento — the page's single ghost wordmark --}}
+    @if ($stats->isNotEmpty())
+        <section id="about-me-stats" class="portfolio-section">
+            <x-portfolio.section-head
+                :ghost="__('pages/about-me.stats_head_ghost')"
+                :eyebrow="__('pages/about-me.stats_head_eyebrow')"
+                :title="\App\Models\Setting::text('stats_title', $locale)"
+                :note="__('pages/about-me.stats_head_note')"
+            />
+            <div class="about-me-bento">
+                @foreach ($stats as $stat)
+                    <div @class([
+                        'about-me-tile',
+                        'about-me-tile--hero' => $stat->tier === 'hero',
+                        'about-me-tile--soft' => $stat->tier === 'soft',
+                    ])>
+                        <span class="about-me-tile-value" @if ($stat->value_id) id="{{ $stat->value_id }}" @endif>{{ $stat->displayValue($locale) }}</span>
+                        <span class="about-me-tile-label">{{ $stat->getTranslation('text', $locale) }}</span>
+                        @if ($stat->tier === 'hero' && $stat->getTranslation('note', $locale) !== '')
+                            <p>{{ $stat->getTranslation('note', $locale) }}</p>
+                        @endif
+                    </div>
+                @endforeach
+            </div>
+        </section>
+    @endif
+
+    {{-- 4 · Off the screen --}}
+    @if ($interests->isNotEmpty())
+        <section id="about-me-interests" class="portfolio-section">
+            <x-portfolio.section-head
+                :eyebrow="__('pages/about-me.interests_head_eyebrow')"
+                :title="__('pages/about-me.interests_head_title')"
+                :note="__('pages/about-me.interests_head_note')"
+            />
+            <div class="about-me-beyond">
+                @foreach ($interests as $interest)
+                    <div class="about-me-beyond-cell">
+                        <x-portfolio.image-slot
+                            :path="$interest->image_path"
+                            :caption="__('pages/about-me.interests_slot', ['title' => $interest->getTranslation('title', $locale)])"
+                            :alt="$interest->getTranslation('title', $locale)"
+                            height="230px"
+                        />
+                        <div class="about-me-beyond-text">
+                            <h3>{!! $interest->highlightedTitle($locale) !!}</h3>
+                            <p>{{ $interest->getTranslation('body', $locale) }}</p>
+                            <p class="about-me-beyond-meta">{{ $interest->getTranslation('meta', $locale) }}</p>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </section>
+    @endif
+
+    {{-- 5 · Things I show up for --}}
+    @if ($showUps->isNotEmpty())
+        <section id="about-me-showups" class="portfolio-section">
+            <x-portfolio.section-head
+                :eyebrow="__('pages/about-me.showups_head_eyebrow')"
+                :title="__('pages/about-me.showups_head_title')"
+                :note="__('pages/about-me.showups_head_note', ['url' => route('experience')])"
+            />
+            <div class="about-me-showups">
+                @foreach ($showUps as $showUp)
+                    @php $badge = $showUp->badges->first(); @endphp
+                    <div class="about-me-show" @if ($badge?->color) style="--show-color: {{ $badge->color }}" @endif>
+                        <div class="about-me-show-top">
+                            @if ($badge)
+                                <span class="about-me-show-kind">{{ $badge->getTranslation('name', $locale) }}</span>
+                            @endif
+                            <span class="about-me-show-year">{{ $showUp->getTranslation('year', $locale) }}</span>
+                        </div>
+                        <h3>{{ $showUp->getTranslation('title', $locale) }}</h3>
+                        <p>{{ $showUp->getTranslation('subtitle', $locale) }}</p>
+                    </div>
+                @endforeach
+            </div>
+        </section>
+    @endif
+
+    {{-- 6 · References — the home page's carousel, same markup and JS --}}
+    @if ($reviews->isNotEmpty())
+        <section id="about-me-references" class="portfolio-section">
+            <x-portfolio.section-head
+                :eyebrow="__('pages/about-me.references_head_eyebrow')"
+                :title="__('pages/about-me.references_head_title')"
+                :note="__('pages/about-me.references_head_note')"
+            />
+            <div class="reviews-carousel" data-reviews-carousel>
+                <div class="reviews-carousel-viewport">
+                    <article class="reviews-row" role="list">
+                        @foreach ($reviews as $review)
+                            <div class="reviews-row-card" role="listitem">
+                                <div class="reviews-row-card-mark" aria-hidden="true">&ldquo;</div>
+                                <p>{!! $review->highlightedText($locale) !!}</p>
+                                <div class="reviews-row-card-who">
+                                    <div class="reviews-row-card-avatar" aria-hidden="true">{{ $review->initials() }}</div>
+                                    <div class="reviews-row-card-text">
+                                        <p class="reviews-row-card-name">{{ $review->name }}</p>
+                                        <p class="mini">{{ $review->getTranslation('position', $locale) }}</p>
+                                    </div>
+                                    @if ($review->source)
+                                        <span class="reviews-row-card-badge" style="--badge-color: {{ $review->source_color ?? 'var(--c-primary)' }}">{{ $review->source }}</span>
+                                    @endif
+                                </div>
+                            </div>
+                        @endforeach
+                    </article>
+                </div>
+                <div class="reviews-carousel-dots"></div>
+            </div>
+        </section>
+    @endif
+
+    {{-- 7 · Contact — the page's end punctuation, the only tinted surface --}}
+    @if ($ctaTitle !== '')
+        <section id="about-me-contact" class="portfolio-section">
+            <div class="about-me-cta">
+                <div>
+                    @if ($available !== '')
+                        <p class="about-me-cta-available">
+                            <x-portfolio.availability-dot />{{ $available }}
+                        </p>
+                    @endif
+                    <h2>{!! $ctaTitle !!}</h2>
+                    @if ($ctaSub !== '')
+                        <p class="about-me-cta-sub">{{ $ctaSub }}</p>
+                    @endif
+                </div>
+                <div class="about-me-cta-actions">
+                    <div class="about-me-cta-row">
+                        <x-portfolio.pill-button :href="config('portfolio.social.email')">{{ __('pages/about-me.cta_email') }}</x-portfolio.pill-button>
+                        @if (config('portfolio.cv_path'))
+                            <x-portfolio.pill-button :href="asset(config('portfolio.cv_path'))" variant="ghost" :download="true">{{ __('pages/about-me.cta_cv') }}</x-portfolio.pill-button>
+                        @endif
+                    </div>
+                    <div class="about-me-cta-row">
+                        <x-portfolio.pill-button :href="config('portfolio.social.github')" variant="ghost">GitHub</x-portfolio.pill-button>
+                        <x-portfolio.pill-button :href="config('portfolio.social.linkedin')" variant="ghost">LinkedIn</x-portfolio.pill-button>
+                    </div>
+                    <p class="about-me-cta-fine">{{ __('pages/about-me.cta_fine') }}</p>
+                </div>
+            </div>
+        </section>
+    @endif
 
 </x-portfolio-layout>

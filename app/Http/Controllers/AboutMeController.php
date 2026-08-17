@@ -2,16 +2,29 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\AboutCard;
+use App\Models\Experience;
+use App\Models\Interest;
+use App\Models\PathNode;
+use App\Models\Review;
 use App\Models\Stat;
 
 class AboutMeController extends Controller
 {
     public function __invoke()
     {
-        $aboutCards = AboutCard::orderBy('sort_order')->get();
+        $pathNodes = PathNode::orderBy('sort_order')->get();
+        $interests = Interest::orderBy('sort_order')->get();
         $stats = Stat::orderBy('sort_order')->get();
 
-        return view('about-me', compact('aboutCards', 'stats'));
+        /* Eager loaded: each tile reads its first badge for the kind label and
+           the accent colour, so four tiles would otherwise mean four queries. */
+        $showUps = Experience::where('show_on_about', true)
+            ->with('badges')
+            ->orderBy('sort_order')
+            ->get();
+
+        $reviews = Review::orderBy('sort_order')->get();
+
+        return view('about-me', compact('pathNodes', 'interests', 'stats', 'showUps', 'reviews'));
     }
 }
