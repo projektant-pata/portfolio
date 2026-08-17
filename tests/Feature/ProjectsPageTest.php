@@ -192,7 +192,6 @@ test('the projects list is introduced by a section head', function () {
 });
 
 test('the projects head sits above the filter bar', function () {
-    $html = $this->get(route('projects'))->getContent();
-
-    expect(strpos($html, 'sechead-eyebrow'))->toBeLessThan(strpos($html, 'proj-filters'));
+    $this->get(route('projects'))
+        ->assertSeeInOrder(['sechead-eyebrow', 'proj-filters']);
 });
