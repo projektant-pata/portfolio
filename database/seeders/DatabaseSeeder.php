@@ -22,7 +22,6 @@ class DatabaseSeeder extends Seeder
             ReviewSeeder::class,
             PathNodeSeeder::class,
             InterestSeeder::class,
-            AboutCardSeeder::class,
         ]);
     }
 }

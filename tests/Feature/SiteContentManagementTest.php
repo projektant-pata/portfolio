@@ -1,12 +1,12 @@
 <?php
 
-use App\Models\AboutCard;
 use App\Models\Review;
 use App\Models\Setting;
 use App\Models\Stat;
 use App\Models\User;
 use Carbon\CarbonImmutable;
 use Database\Seeders\SettingSeeder;
+use Illuminate\Support\Facades\Route;
 use Livewire\Livewire;
 
 test('stats manage page renders for admins', function () {
@@ -88,15 +88,9 @@ test('a review requires a name and english quote', function () {
         ->assertHasErrors(['name', 'text.en']);
 });
 
-test('can create an about card', function () {
-    Livewire::actingAs(User::factory()->create())
-        ->test('pages::manage.about-cards')
-        ->set('cardTitle', ['en' => 'About me', 'cs' => 'O mně'])
-        ->set('text', ['en' => 'Hi there!', 'cs' => 'Ahoj!'])
-        ->call('save')
-        ->assertHasNoErrors();
-
-    expect(AboutCard::first()->title['en'])->toBe('About me');
+test('the about cards manager is retired', function () {
+    expect(Route::has('manage.about-cards'))->toBeFalse()
+        ->and(class_exists('App\Models\AboutCard', false))->toBeFalse();
 });
 
 test('site content editor persists settings and every rotating role list', function () {

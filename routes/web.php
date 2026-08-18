@@ -28,7 +28,6 @@ Route::middleware(['auth', 'verified', 'admin'])->group(function () {
     Route::livewire('dashboard/links', 'pages::manage.links')->name('manage.links');
     Route::livewire('dashboard/stats', 'pages::manage.stats')->name('manage.stats');
     Route::livewire('dashboard/reviews', 'pages::manage.reviews')->name('manage.reviews');
-    Route::livewire('dashboard/about-cards', 'pages::manage.about-cards')->name('manage.about-cards');
     Route::livewire('dashboard/site-content', 'pages::manage.site-content')->name('manage.site-content');
     Route::livewire('dashboard/path-nodes', 'pages::manage.path-nodes')->name('manage.path-nodes');
     Route::livewire('dashboard/interests', 'pages::manage.interests')->name('manage.interests');
