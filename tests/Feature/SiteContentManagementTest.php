@@ -90,7 +90,7 @@ test('a review requires a name and english quote', function () {
 
 test('the about cards manager is retired', function () {
     expect(Route::has('manage.about-cards'))->toBeFalse()
-        ->and(class_exists('App\Models\AboutCard', false))->toBeFalse();
+        ->and(file_exists(app_path('Models/AboutCard.php')))->toBeFalse();
 });
 
 test('site content editor persists settings and every rotating role list', function () {
