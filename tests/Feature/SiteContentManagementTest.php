@@ -155,10 +155,27 @@ test('the site content editor persists the about page copy and the fact strip', 
     $component->call('save')->assertHasNoErrors();
 
     expect(Setting::list('about_intro_body', 'en'))->toBe(['First paragraph.', 'Second paragraph.'])
-        ->and(Setting::list('about_facts', 'cs'))->toBe([
+        ->and(Setting::list('about_facts', 'cs'))->toEqual([
             ['label' => 'Bydliště', 'value' => 'Pardubice, ČR'],
             ['label' => 'Zaměření', 'value' => 'Backend'],
         ]);
+});
+
+test('malformed fact lines are dropped rather than stored half-empty', function () {
+    $this->seed(SettingSeeder::class);
+
+    Livewire::actingAs(User::factory()->create())
+        ->test('pages::manage.site-content')
+        ->set('facts.about_facts', [
+            'en' => "Based in | Pardubice, CZ\nno pipe here\nEmpty value | \n | Empty label",
+            'cs' => 'Bydliště | Pardubice, ČR',
+        ])
+        ->call('save')
+        ->assertHasNoErrors();
+
+    expect(Setting::list('about_facts', 'en'))->toEqual([
+        ['label' => 'Based in', 'value' => 'Pardubice, CZ'],
+    ]);
 });
 
 test('an empty availability line is allowed and means unavailable', function () {
