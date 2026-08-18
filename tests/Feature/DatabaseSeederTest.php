@@ -10,6 +10,7 @@ use App\Models\User;
 use Database\Seeders\BadgesSeeder;
 use Database\Seeders\DatabaseSeeder;
 use Database\Seeders\ProjectsSeeder;
+use Database\Seeders\StatSeeder;
 
 test('database seeder seeds the admin user and projects', function () {
     $this->seed(DatabaseSeeder::class);
@@ -79,4 +80,19 @@ test('the hero stats carry a supporting note in both locales', function () {
     Stat::where('tier', 'hero')->get()->each(
         fn (Stat $stat) => expect($stat->note)->toHaveKeys(['en', 'cs'])
     );
+});
+
+test('the stat seeder fills the about-me bento to a whole number of rows', function () {
+    // .about-me-bento is a 4-column CSS grid with no grid-auto-flow: dense.
+    // Hero tiles span 2 columns, every other tier spans 1. If the column
+    // units don't add up to a multiple of 4, the last row goes ragged.
+    $this->seed(StatSeeder::class);
+
+    $stats = Stat::all();
+    $columnUnits = $stats->sum(fn (Stat $stat) => $stat->tier === 'hero' ? 2 : 1);
+
+    expect($columnUnits % 4)->toBe(0)
+        ->and($stats->where('tier', 'hero')->count())->toBe(2)
+        ->and($stats->where('tier', 'normal')->count())->toBe(6)
+        ->and($stats->where('tier', 'soft')->count())->toBe(2);
 });

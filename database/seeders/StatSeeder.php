@@ -37,7 +37,6 @@ class StatSeeder extends Seeder
             ['value' => ['en' => '18', 'cs' => '18'], 'value_id' => 'github-repos', 'text' => ['en' => 'GitHub repositories', 'cs' => 'GitHub repozitářů']],
             ['value' => ['en' => 'Loading..', 'cs' => 'Načítání..'], 'value_id' => 'elo', 'text' => ['en' => 'Highest chess elo', 'cs' => 'Nejvyšší šachové elo']],
             ['value' => ['en' => '4', 'cs' => '4'], 'text' => ['en' => 'Hackathons won', 'cs' => 'Vyhraných hackathonů']],
-            ['value' => ['en' => '♞', 'cs' => '♞'], 'text' => ['en' => 'Favorite piece', 'cs' => 'Nejoblíbenější figura']],
             ['value' => ['en' => '∞', 'cs' => '∞'], 'text' => ['en' => 'Coffee consumed', 'cs' => 'Vypitých šálků kávy'], 'tier' => 'soft'],
             ['value' => ['en' => '404', 'cs' => '404'], 'text' => ['en' => 'Hours slept, not found', 'cs' => 'Hodin spánku, nenalezeno'], 'tier' => 'soft'],
         ];
