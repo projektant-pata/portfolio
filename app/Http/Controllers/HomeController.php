@@ -6,6 +6,7 @@ use App\Models\Experience;
 use App\Models\Project;
 use App\Models\Review;
 use App\Models\Stat;
+use App\Models\Tool;
 
 class HomeController extends Controller
 {
@@ -31,6 +32,14 @@ class HomeController extends Controller
         $stats = Stat::orderBy('sort_order')->take(4)->get();
         $reviews = Review::orderBy('sort_order')->get();
 
-        return view('welcome', compact('workExperiences', 'lifeExperiences', 'featuredProjects', 'stats', 'reviews'));
+        // The home toolbox is deliberately less than the about-me one: the
+        // weekly drivers as cells, everything else folded into three chips.
+        $tools = Tool::where('placement', 'grid')
+            ->where('show_on_home', true)
+            ->orderBy('sort_order')
+            ->get();
+        $toolChips = Tool::where('placement', 'rotation')->orderBy('sort_order')->get();
+
+        return view('welcome', compact('workExperiences', 'lifeExperiences', 'featuredProjects', 'stats', 'reviews', 'tools', 'toolChips'));
     }
 }

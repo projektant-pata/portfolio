@@ -2,12 +2,22 @@
 
     @php
         $locale = app()->getLocale();
-        $introLead = \App\Models\Setting::text('about_intro_lead', $locale);
-        $introBody = \App\Models\Setting::list('about_intro_body', $locale);
-        $facts = \App\Models\Setting::list('about_facts', $locale);
         $available = \App\Models\Setting::text('about_available', $locale);
         $ctaTitle = \App\Models\Setting::text('about_cta_title', $locale);
         $ctaSub = \App\Models\Setting::text('about_cta_sub', $locale);
+
+        /* The hero leaves the first section's top edge inside the first
+           viewport, so whichever section renders first must already be painted
+           — it never fades up. Which one that is depends on the data. */
+        $firstSection = collect([
+            'stats' => $stats->isNotEmpty(),
+            'path' => $pathNodes->isNotEmpty(),
+            'tools' => $tools->isNotEmpty() || $toolChips->isNotEmpty(),
+            'interests' => $interests->isNotEmpty(),
+            'showups' => $showUps->isNotEmpty(),
+            'reviews' => $reviews->isNotEmpty(),
+            'contact' => $ctaTitle !== '',
+        ])->filter()->keys()->first();
     @endphp
 
     {{-- Hero --}}
@@ -22,84 +32,9 @@
         photo-position="50% 25%"
     />
 
-    {{-- 1 · Intro. No fade-up: the hero leaves this section's top edge inside
-         the first viewport, so it must already be there when the page paints. --}}
-    @if ($introLead !== '' || $introBody !== [])
-        <section id="about-me" class="portfolio-section portfolio-section--no-reveal">
-            <x-portfolio.section-head
-                :eyebrow="__('pages/about-me.head_eyebrow')"
-                :title="\App\Models\Setting::text('about_title', $locale)"
-                :note="__('pages/about-me.head_note')"
-            />
-            <div class="about-me-intro">
-                <div class="about-me-intro-copy">
-                    @if ($introLead !== '')
-                        <p class="about-me-intro-lead">{!! $introLead !!}</p>
-                    @endif
-                    <div class="about-me-intro-cols">
-                        @foreach ($introBody as $paragraph)
-                            <p>{!! $paragraph !!}</p>
-                        @endforeach
-                    </div>
-                    <p class="about-me-sign">{{ __('pages/about-me.intro_sign') }}</p>
-                </div>
-
-                <div class="about-me-intro-portrait">
-                    <x-portfolio.image-slot
-                        :path="config('portfolio.hero_images.portrait')"
-                        :caption="__('pages/about-me.portrait_slot')"
-                        :alt="__('pages/about-me.portrait_alt')"
-                        height="100%"
-                    />
-                </div>
-
-                @if ($facts !== [] || $available !== '')
-                    <div class="about-me-intro-facts">
-                        @foreach ($facts as $fact)
-                            <div class="about-me-fact">
-                                <span class="about-me-fact-label">{{ $fact['label'] ?? '' }}</span>
-                                <span class="about-me-fact-value">{{ $fact['value'] ?? '' }}</span>
-                            </div>
-                        @endforeach
-                        @if ($available !== '')
-                            <div class="about-me-fact">
-                                <span class="about-me-fact-label">{{ __('pages/about-me.fact_available_label') }}</span>
-                                <span class="about-me-fact-value">
-                                    <x-portfolio.availability-dot />{{ $available }}
-                                </span>
-                            </div>
-                        @endif
-                    </div>
-                @endif
-            </div>
-        </section>
-    @endif
-
-    {{-- 2 · The short version --}}
-    @if ($pathNodes->isNotEmpty())
-        <section id="about-me-path" class="portfolio-section">
-            <x-portfolio.section-head
-                :eyebrow="__('pages/about-me.path_head_eyebrow')"
-                :title="__('pages/about-me.path_head_title')"
-                :note="__('pages/about-me.path_head_note')"
-            />
-            <div class="about-me-path">
-                @foreach ($pathNodes as $node)
-                    <div @class(['about-me-node', 'about-me-node--now' => $node->is_now])>
-                        <div class="about-me-node-year">{{ $node->getTranslation('year', $locale) }}</div>
-                        <div class="about-me-node-body">
-                            <h3>{{ $node->getTranslation('title', $locale) }}</h3>
-                            <p>{{ $node->getTranslation('body', $locale) }}</p>
-                        </div>
-                    </div>
-                @endforeach
-            </div>
-        </section>
-    @endif
-
-    {{-- 3 · Stats bento — the page's single ghost wordmark --}}
+    {{-- 1 · Stats bento — the page's single ghost wordmark --}}
     @if ($stats->isNotEmpty())
-        <section id="about-me-stats" class="portfolio-section">
+        <section id="about-me-stats" @class(['portfolio-section', 'portfolio-section--no-reveal' => $firstSection === 'stats'])>
             <x-portfolio.section-head
                 :ghost="__('pages/about-me.stats_head_ghost')"
                 :eyebrow="__('pages/about-me.stats_head_eyebrow')"
@@ -124,9 +59,48 @@
         </section>
     @endif
 
+    {{-- 2 · The short version --}}
+    @if ($pathNodes->isNotEmpty())
+        <section id="about-me-path" @class(['portfolio-section', 'portfolio-section--no-reveal' => $firstSection === 'path'])>
+            <x-portfolio.section-head
+                :eyebrow="__('pages/about-me.path_head_eyebrow')"
+                :title="__('pages/about-me.path_head_title')"
+                :note="__('pages/about-me.path_head_note')"
+            />
+            <div class="about-me-path">
+                @foreach ($pathNodes as $node)
+                    <div @class(['about-me-node', 'about-me-node--now' => $node->is_now])>
+                        <div class="about-me-node-year">{{ $node->getTranslation('year', $locale) }}</div>
+                        <div class="about-me-node-body">
+                            <h3>{{ $node->getTranslation('title', $locale) }}</h3>
+                            <p>{{ $node->getTranslation('body', $locale) }}</p>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </section>
+    @endif
+
+    {{-- 3 · Toolbox — the home page's atom, grouped into columns --}}
+    @if ($tools->isNotEmpty() || $toolChips->isNotEmpty())
+        <section id="about-me-tools" @class(['portfolio-section', 'portfolio-section--no-reveal' => $firstSection === 'tools'])>
+            <x-portfolio.section-head
+                :eyebrow="__('pages/about-me.tools_head_eyebrow')"
+                :title="__('pages/about-me.tools_head_title')"
+                :note="__('pages/about-me.tools_head_note')"
+            />
+            <x-portfolio.toolbox
+                :tools="$tools"
+                variant="cols"
+                :chips="$toolChips"
+                :chips-label="__('pages/toolbox.learning_label')"
+            />
+        </section>
+    @endif
+
     {{-- 4 · Off the screen --}}
     @if ($interests->isNotEmpty())
-        <section id="about-me-interests" class="portfolio-section">
+        <section id="about-me-interests" @class(['portfolio-section', 'portfolio-section--no-reveal' => $firstSection === 'interests'])>
             <x-portfolio.section-head
                 :eyebrow="__('pages/about-me.interests_head_eyebrow')"
                 :title="__('pages/about-me.interests_head_title')"
@@ -154,7 +128,7 @@
 
     {{-- 5 · Things I show up for --}}
     @if ($showUps->isNotEmpty())
-        <section id="about-me-showups" class="portfolio-section">
+        <section id="about-me-showups" @class(['portfolio-section', 'portfolio-section--no-reveal' => $firstSection === 'showups'])>
             <x-portfolio.section-head
                 :eyebrow="__('pages/about-me.showups_head_eyebrow')"
                 :title="__('pages/about-me.showups_head_title')"
@@ -180,7 +154,7 @@
 
     {{-- 6 · References — the home page's carousel, same markup and JS --}}
     @if ($reviews->isNotEmpty())
-        <section id="about-me-references" class="portfolio-section">
+        <section id="about-me-references" @class(['portfolio-section', 'portfolio-section--no-reveal' => $firstSection === 'reviews'])>
             <x-portfolio.section-head
                 :eyebrow="__('pages/about-me.references_head_eyebrow')"
                 :title="__('pages/about-me.references_head_title')"
@@ -214,7 +188,7 @@
 
     {{-- 7 · Contact — the page's end punctuation, the only tinted surface --}}
     @if ($ctaTitle !== '')
-        <section id="about-me-contact" class="portfolio-section">
+        <section id="about-me-contact" @class(['portfolio-section', 'portfolio-section--no-reveal' => $firstSection === 'contact'])>
             <div class="about-me-cta">
                 <div>
                     @if ($available !== '')

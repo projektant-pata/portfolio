@@ -88,7 +88,8 @@ test('light-mode body and muted text clear WCAG AA on their own surface', functi
     $page->wait($themeTransition);
 
     expect($page->script($contrastOf('.portfolio-page h3', '.portfolio-page')))->toBeGreaterThanOrEqual(4.5)
-        ->and($page->script($contrastOf('.about-me-intro-cols p', '.about-me-intro')))->toBeGreaterThanOrEqual(4.5);
+        ->and($page->script($contrastOf('.about-me-node-body p', '.portfolio-page')))->toBeGreaterThanOrEqual(4.5)
+        ->and($page->script($contrastOf('.tk-item', '.tk')))->toBeGreaterThanOrEqual(4.5);
 });
 
 test('badge chip text clears the WCAG floor in light mode, both as a row chip and as a pressed stack filter', function () use ($goLight, $contrastOf, $themeTransition) {

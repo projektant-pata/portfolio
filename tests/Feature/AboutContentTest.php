@@ -4,6 +4,7 @@ use App\Models\Experience;
 use App\Models\Interest;
 use App\Models\PathNode;
 use App\Models\Stat;
+use App\Models\Tool;
 
 test('a path node stores both locales and the now flag', function () {
     $node = PathNode::factory()->create([
@@ -53,4 +54,17 @@ test('stats group by tier without losing sort order', function () {
 test('an experience defaults to hidden on the about page', function () {
     expect(Experience::factory()->create()->fresh()->show_on_about)->toBeFalse()
         ->and(Experience::factory()->create(['show_on_about' => true])->fresh()->show_on_about)->toBeTrue();
+});
+
+test('grid tools bucket by their english group and chips never form a column', function () {
+    Tool::factory()->create(['name' => 'Java', 'group' => ['en' => 'Backend', 'cs' => 'Backend'], 'sort_order' => 0]);
+    Tool::factory()->create(['name' => 'Tailwind', 'group' => ['en' => 'Frontend', 'cs' => 'Frontend'], 'sort_order' => 1]);
+    Tool::factory()->create(['name' => 'Laravel', 'group' => ['en' => 'Backend', 'cs' => 'Backend'], 'sort_order' => 2]);
+    Tool::factory()->chip('learning')->create(['name' => 'Kotlin', 'sort_order' => 3]);
+
+    $columns = Tool::groupColumns(Tool::orderBy('sort_order')->get());
+
+    expect($columns->keys()->all())->toBe(['Backend', 'Frontend'])
+        ->and($columns['Backend']->pluck('name')->all())->toBe(['Java', 'Laravel'])
+        ->and($columns['Backend']->first()->getTranslation('group', 'cs'))->toBe('Backend');
 });

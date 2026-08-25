@@ -88,49 +88,14 @@
             :title="__('home/tools.head_title')"
             :note="__('home/tools.head_note')"
         />
-        <article class="tools-row">
-            <div class="tools-row-card">
-                <img src="{{ asset('images/tools/laravel.png') }}" alt="Laravel">
-                <h4>Laravel</h4>
-            </div>
-            <div class="tools-row-card">
-                <img src="{{ asset('images/tools/springboot.png') }}" alt="Spring Boot">
-                <h4>Spring Boot</h4>
-            </div>
-            <div class="tools-row-card">
-                <img src="{{ asset('images/tools/typescript.png') }}" alt="TypeScript">
-                <h4>TypeScript</h4>
-            </div>
-            <div class="tools-row-card">
-                <img src="{{ asset('images/tools/docker.png') }}" alt="Docker">
-                <h4>Docker</h4>
-            </div>
-            <div class="tools-row-card">
-                <img src="{{ asset('images/tools/postgresql.png') }}" alt="PostgreSQL">
-                <h4>PostgreSQL</h4>
-            </div>
-            <div class="tools-row-card">
-                <img src="{{ asset('images/tools/githubw.png') }}" alt="GitHub" class="tool-github-dark">
-                <img src="{{ asset('images/tools/githubb.png') }}" alt="GitHub" class="tool-github-light">
-                <h4>GitHub</h4>
-            </div>
-            <div class="tools-row-card">
-                <img src="{{ asset('images/tools/figma.png') }}" alt="Figma">
-                <h4>Figma</h4>
-            </div>
-            <div class="tools-row-card">
-                <img src="{{ asset('images/tools/vscode.png') }}" alt="VS Code">
-                <h4>VS Code</h4>
-            </div>
-            <div class="tools-row-card">
-                <img src="{{ asset('images/tools/arch.png') }}" alt="Arch Linux">
-                <h4>Arch Linux</h4>
-            </div>
-            <div class="tools-row-card">
-                <img src="{{ asset('images/tools/claudecode.png') }}" alt="Claude Code">
-                <h4>Claude Code</h4>
-            </div>
-        </article>
+        <x-portfolio.toolbox
+            :tools="$tools"
+            variant="cells"
+            :chips="$toolChips"
+            :chips-label="__('pages/toolbox.rotation_label')"
+            :link="route('about-me').'#about-me-tools'"
+            :link-label="__('pages/toolbox.about_link')"
+        />
     </section>
 
     {{-- Reviews --}}

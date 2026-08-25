@@ -2,6 +2,7 @@
 
 use App\Models\Setting;
 use Database\Seeders\SettingSeeder;
+use Database\Seeders\StatSeeder;
 
 test('the home page renders exactly one h1', function () {
     $html = $this->get(route('home'))->assertOk()->getContent();
@@ -131,11 +132,13 @@ test('the subpage heroes carry their own photo crop', function () {
 
 test('the sections that peek under a subpage hero opt out of the scroll-reveal fade', function (string $route, string $id) {
     $this->seed(SettingSeeder::class);
+    // About-me's first section depends on the data, so it needs its stats.
+    $this->seed(StatSeeder::class);
 
     $this->get(route($route))
         ->assertSee('id="'.$id.'" class="portfolio-section portfolio-section--no-reveal"', false);
 })->with([
-    ['about-me', 'about-me'],
+    ['about-me', 'about-me-stats'],
     ['projects', 'projects'],
 ]);
 

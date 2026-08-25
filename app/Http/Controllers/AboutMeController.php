@@ -7,6 +7,7 @@ use App\Models\Interest;
 use App\Models\PathNode;
 use App\Models\Review;
 use App\Models\Stat;
+use App\Models\Tool;
 
 class AboutMeController extends Controller
 {
@@ -25,6 +26,9 @@ class AboutMeController extends Controller
 
         $reviews = Review::orderBy('sort_order')->get();
 
-        return view('about-me', compact('pathNodes', 'interests', 'stats', 'showUps', 'reviews'));
+        $tools = Tool::where('placement', 'grid')->orderBy('sort_order')->get();
+        $toolChips = Tool::where('placement', 'learning')->orderBy('sort_order')->get();
+
+        return view('about-me', compact('pathNodes', 'interests', 'stats', 'showUps', 'reviews', 'tools', 'toolChips'));
     }
 }

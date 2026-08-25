@@ -22,6 +22,10 @@ return [
     'path_head_title' => 'The <em>short</em> version',
     'path_head_note' => 'Five turns that decided what I do with my days.',
 
+    'tools_head_eyebrow' => 'The toolbox',
+    'tools_head_title' => 'What I <em>reach for</em>',
+    'tools_head_note' => 'Grouped by where it sits in the stack, labelled by how often it is open.',
+
     'interests_head_eyebrow' => 'Off the screen',
     'interests_head_title' => 'What I do when the <em>laptop</em> closes',
     'interests_head_note' => 'The parts of me that keep showing up in how I work.',

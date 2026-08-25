@@ -4,6 +4,7 @@ use App\Models\Experience;
 use App\Models\Project;
 use App\Models\Review;
 use App\Models\Setting;
+use App\Models\Tool;
 
 test('home page returns 200', function () {
     $this->get(route('home'))->assertOk();
@@ -89,4 +90,25 @@ test('hero_roles markup survives to the page unescaped', function () {
     $this->get(route('home'))
         ->assertSee('Full-stack <span>developer</span>', false)
         ->assertDontSee('Full-stack &lt;span&gt;developer&lt;/span&gt;', false);
+});
+
+test('the home toolbox shows only the tools flagged for home, plus the rotation chips', function () {
+    Tool::factory()->onHome()->create(['name' => 'Spring Boot', 'color' => '#6DB33F', 'frequency' => 'daily']);
+    Tool::factory()->create(['name' => 'Proxmox']);
+    Tool::factory()->chip()->create(['name' => 'VS Code']);
+
+    $html = $this->get(route('home'))->getContent();
+
+    expect($html)->toContain('tk-cells')
+        ->and($html)->toContain('Spring Boot')
+        ->and($html)->toContain('--bc: #6DB33F')
+        ->and($html)->toContain('VS Code')
+        ->and($html)->not->toContain('Proxmox');
+});
+
+test('an empty toolbox draws no frame under the tools head', function () {
+    $html = $this->get(route('home'))->getContent();
+
+    expect($html)->toContain('id="tools"')
+        ->and($html)->not->toContain('class="tk"');
 });

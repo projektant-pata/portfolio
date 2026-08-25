@@ -22,6 +22,10 @@ return [
     'path_head_title' => '<em>Krátká</em> verze',
     'path_head_note' => 'Pět zatáček, které rozhodly, čím trávím dny.',
 
+    'tools_head_eyebrow' => 'Výbava',
+    'tools_head_title' => 'Po čem <em>sahám</em>',
+    'tools_head_note' => 'Seskupeno podle místa ve stacku, popsáno podle toho, jak často to mám otevřené.',
+
     'interests_head_eyebrow' => 'Mimo obrazovku',
     'interests_head_title' => 'Co dělám, když <em>zavřu notebook</em>',
     'interests_head_note' => 'Části mě, které se pořád objevují i v tom, jak pracuji.',

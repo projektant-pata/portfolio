@@ -224,7 +224,7 @@ Single-action controllers `app/Http/Controllers/{Home,AboutMe,Experience,Project
 
 ## Admin (dashboard)
 
-Livewire 4 single-file components in `resources/views/pages/manage/⚡{experiences,badges,articles,links,projects,stats,reviews,path-nodes,interests,site-content}.blade.php` (note the `⚡` filename prefix), registered with `Route::livewire()` in `routes/web.php` behind `auth` + `verified` + `admin`. Settings pages live in `resources/views/pages/settings/⚡*.blade.php` (routes in `routes/settings.php`).
+Livewire 4 single-file components in `resources/views/pages/manage/⚡{experiences,badges,articles,links,projects,stats,reviews,path-nodes,interests,tools,site-content}.blade.php` (note the `⚡` filename prefix), registered with `Route::livewire()` in `routes/web.php` behind `auth` + `verified` + `admin`. Settings pages live in `resources/views/pages/settings/⚡*.blade.php` (routes in `routes/settings.php`).
 
 ## Models & i18n
 
@@ -243,7 +243,8 @@ Laravel Fortify: registration disabled, 2FA and password resets enabled, **email
 - Design tokens live once in the `@theme` block of `resources/css/app.css`; `--c-*` are aliases only. Theme = `.dark` on `<html>`, driven by the `theme` cookie (`dark|light|system`, default dark) and applied pre-paint by `partials/theme.blade.php`; `resources/js/app.js` owns the toggle.
 - Page-CSS loading is still inconsistent (three different loading patterns); see `docs/design-audit-findings.md` before touching CSS. Vite entries are listed in `vite.config.js`.
 - Every public section opens with `<x-portfolio.section-head>` (ghost wordmark, eyebrow, h2, optional note). Ghost is decorative and `aria-hidden`; copy lives in `resources/lang/{en,cs}/pages/*.php` for the subpages and `resources/lang/{en,cs}/home/*.php` for home, except about-me's two titles, which stay admin-editable via `App\Models\Setting`. Rules: `resources/css/components/section-head.css`.
-- `/about-me` is composed of seven sections (intro frame, timeline, stats bento, interest cells, show-up strip, reviews carousel, contact band) backed by `PathNode`, `Interest`, tiered `Stat`, `show_on_about` `Experience`, `Review` and the `about_*` `Setting` keys. Rules: `resources/css/pages/about-me.css` plus `components/{image-slot,availability-dot,pill-button}.css`.
+- `/about-me` is composed of seven sections (stats bento, timeline, toolbox, interest cells, show-up strip, reviews carousel, contact band) backed by tiered `Stat`, `PathNode`, `Tool`, `Interest`, `show_on_about` `Experience`, `Review` and the `about_*` `Setting` keys. Whichever section renders first carries `portfolio-section--no-reveal` — it peeks under the hero and must not fade up. Rules: `resources/css/pages/about-me.css` plus `components/{image-slot,availability-dot,pill-button,toolbox}.css`.
+- The toolbox (`x-portfolio.toolbox`) is shared: `variant="cells"` on home renders the `show_on_home` tools, `variant="cols"` on /about-me groups every `grid` tool by its English `group`. `rotation` and `learning` rows are chip-only footers. The `about_intro_*`, `about_facts` and `about_title` settings are still editable in the admin but no page renders them since the intro section was retired.
 
 # Project Docs
 

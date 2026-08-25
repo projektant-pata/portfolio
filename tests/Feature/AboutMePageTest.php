@@ -17,9 +17,9 @@ test('the about me page renders all seven sections in order', function () {
     $html = $this->get(route('about-me'))->getContent();
 
     $sections = [
-        'id="about-me"',
-        'id="about-me-path"',
         'id="about-me-stats"',
+        'id="about-me-path"',
+        'id="about-me-tools"',
         'id="about-me-interests"',
         'id="about-me-showups"',
         'id="about-me-references"',
@@ -32,13 +32,24 @@ test('the about me page renders all seven sections in order', function () {
         ->and($positions)->toBe(array_values(collect($positions)->sort()->all()));
 });
 
-test('the about me intro head carries no ghost under the hero', function () {
+test('the stats section opens the page without a fade-up', function () {
     seedAboutPage();
 
     $html = $this->get(route('about-me'))->getContent();
 
-    expect($html)->toContain('sechead--noghost')
-        ->and($html)->toContain('portfolio-section--no-reveal');
+    /* The hero leaves the first section's top edge inside the first viewport,
+       so that section must already be painted — it never fades up. */
+    expect($html)->toContain('id="about-me-stats" class="portfolio-section portfolio-section--no-reveal"')
+        ->and($html)->toContain('sechead--noghost');
+});
+
+test('the retired intro section is gone', function () {
+    seedAboutPage();
+
+    $html = $this->get(route('about-me'))->getContent();
+
+    expect($html)->not->toContain('about-me-intro')
+        ->and($html)->not->toContain('about-me-fact');
 });
 
 test('the about me page carries exactly one ghost wordmark', function () {
@@ -79,8 +90,8 @@ test('a show up with a badge takes the badge colour and translated name', functi
 test('every section renders nothing on an empty database', function () {
     $html = $this->get(route('about-me'))->assertOk()->getContent();
 
-    expect($html)->not->toContain('about-me-intro')
-        ->and($html)->not->toContain('about-me-path')
+    expect($html)->not->toContain('about-me-path')
+        ->and($html)->not->toContain('tk-cols')
         ->and($html)->not->toContain('about-me-bento')
         ->and($html)->not->toContain('about-me-beyond')
         ->and($html)->not->toContain('about-me-showups')
@@ -96,12 +107,12 @@ test('the czech locale renders the czech copy of the new sections', function () 
         ->assertSee('Šachy od druhé třídy');
 });
 
-test('the availability dot appears in the intro and the contact band together', function () {
+test('the availability dot appears in the contact band', function () {
     seedAboutPage();
 
     $html = $this->get(route('about-me'))->getContent();
 
-    expect(substr_count($html, 'class="availability-dot"'))->toBe(2);
+    expect(substr_count($html, 'class="availability-dot"'))->toBe(1);
 
     Setting::updateOrCreate(['key' => 'about_available'], ['value' => ['en' => '', 'cs' => '']]);
 
@@ -149,4 +160,25 @@ test('the path node marked now takes the now modifier', function () {
 
     expect(substr_count($html, 'about-me-node--now'))->toBe(1)
         ->and(PathNode::where('is_now', true)->count())->toBe(1);
+});
+
+test('the about me toolbox groups tools into columns and lists the learning chips', function () {
+    seedAboutPage();
+
+    $html = $this->get(route('about-me'))->getContent();
+
+    expect($html)->toContain('tk-cols')
+        ->and(substr_count($html, '<div class="tk-col">'))->toBe(4)
+        ->and($html)->toContain('Spring Boot')
+        ->and($html)->toContain('--bc: #6DB33F')
+        ->and($html)->toContain('Kubernetes');
+});
+
+test('the about me toolbox translates the frequency labels', function () {
+    seedAboutPage();
+
+    $this->withSession(['locale' => 'cs'])
+        ->get(route('about-me'))
+        ->assertSee('denně')
+        ->assertSee('Právě se učím');
 });

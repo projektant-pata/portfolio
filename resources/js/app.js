@@ -253,7 +253,6 @@ function setStagger(containerSelector) {
 
 function initScrollReveal() {
     setStagger('.stats-cards');
-    setStagger('.tools-row');
     setStagger('.reviews-row');
     setStagger('#projects');
 
@@ -262,7 +261,7 @@ function initScrollReveal() {
     // owns its own reveal observer instead (a one-shot querySelectorAll
     // snapshot here would go stale the moment that rebuild runs).
     const targets = document.querySelectorAll(
-        '.portfolio-section:not(.portfolio-section--no-reveal), .stats-cards-card, .tools-row-card, .projects-row'
+        '.portfolio-section:not(.portfolio-section--no-reveal), .stats-cards-card, .projects-row'
     );
     const carousels = document.querySelectorAll('.reviews-carousel');
     const revealCards = (carousel) => {
