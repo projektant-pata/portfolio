@@ -6,6 +6,7 @@ use App\Models\Link;
 use App\Models\PathNode;
 use App\Models\Project;
 use App\Models\Stat;
+use App\Models\Tool;
 use App\Models\User;
 use Database\Seeders\BadgesSeeder;
 use Database\Seeders\DatabaseSeeder;
@@ -95,4 +96,19 @@ test('the stat seeder fills the about-me bento to a whole number of rows', funct
         ->and($stats->where('tier', 'hero')->count())->toBe(2)
         ->and($stats->where('tier', 'normal')->count())->toBe(6)
         ->and($stats->where('tier', 'soft')->count())->toBe(2);
+});
+
+test('the tool seeder fills four columns, eight home cells and both chip footers', function () {
+    $this->seed(DatabaseSeeder::class);
+
+    $groups = Tool::where('placement', 'grid')->get()
+        ->map(fn (Tool $tool) => $tool->getTranslation('group', 'en'))
+        ->unique()
+        ->values();
+
+    expect($groups)->toHaveCount(4)
+        ->and(Tool::where('show_on_home', true)->count())->toBe(8)
+        ->and(Tool::where('placement', 'rotation')->count())->toBe(3)
+        ->and(Tool::where('placement', 'learning')->count())->toBe(3)
+        ->and(Tool::whereNull('frequency')->where('placement', 'grid')->count())->toBe(0);
 });

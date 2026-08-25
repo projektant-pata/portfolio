@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             ReviewSeeder::class,
             PathNodeSeeder::class,
             InterestSeeder::class,
+            ToolSeeder::class,
         ]);
     }
 }

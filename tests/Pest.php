@@ -6,6 +6,7 @@ use Database\Seeders\InterestSeeder;
 use Database\Seeders\PathNodeSeeder;
 use Database\Seeders\SettingSeeder;
 use Database\Seeders\StatSeeder;
+use Database\Seeders\ToolSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Pest\Browser\Playwright\Playwright;
 use Tests\TestCase;
@@ -77,6 +78,7 @@ function seedAboutPage(): void
     test()->seed(StatSeeder::class);
     test()->seed(PathNodeSeeder::class);
     test()->seed(InterestSeeder::class);
+    test()->seed(ToolSeeder::class);
     Experience::factory()->onAbout()->create(['title' => ['en' => 'PEER program', 'cs' => 'Program PEER']]);
     Review::factory()->create(['name' => 'Jan Novák']);
 }

@@ -52,6 +52,9 @@
                     <flux:sidebar.item icon="sparkles" :href="route('manage.interests')" :current="request()->routeIs('manage.interests')" wire:navigate>
                         {{ __('Interests') }}
                     </flux:sidebar.item>
+                    <flux:sidebar.item icon="wrench" :href="route('manage.tools')" :current="request()->routeIs('manage.tools')" wire:navigate>
+                        {{ __('Tools') }}
+                    </flux:sidebar.item>
                 </flux:sidebar.group>
             </flux:sidebar.nav>
 

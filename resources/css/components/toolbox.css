@@ -1,0 +1,192 @@
+/* ================================================================
+   TOOLBOX (.tk)
+   ================================================================
+   One frame, one atom, two silhouettes: the home page renders eight
+   weekly drivers in hairline-divided cells (.tk-cells), /about-me
+   renders the full set in four labelled columns (.tk-cols). Both use
+   the same row — 6px brand dot, name, monospace frequency — so the
+   two pages read as one system.
+
+   Dividers are drawn per cell with nth-child rules, not with a
+   modifier class, so the responsive column counts stay correct.
+   ================================================================ */
+
+.tk {
+    border: var(--border-w) solid var(--c-primary-fade);
+    border-radius: var(--r-card);
+    background: var(--c-surface);
+    overflow: hidden;
+}
+
+/* ── The shared row ────────────────────────────────────────────── */
+.tk-item {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+    font-size: 0.95rem;
+    font-weight: var(--fw-light);
+    color: var(--c-fg);
+}
+
+.tk-item::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--bc, var(--c-primary));
+    flex-shrink: 0;
+    translate: 0 -2px;
+}
+
+.tk-item small {
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.05em;
+    color: var(--c-muted);
+    text-transform: uppercase;
+}
+
+/* ── About me · four grouped columns ───────────────────────────── */
+.tk-cols {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.tk-col {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1.9rem 1.6rem;
+}
+
+.tk-col:not(:nth-child(4n + 1)) {
+    border-left: 1px solid color-mix(in srgb, var(--c-primary-fade) 45%, transparent);
+}
+
+.tk-col h3 {
+    font-size: 11px;
+    font-weight: var(--fw-semibold);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--c-primary);
+}
+
+.tk-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+}
+
+/* ── Home · 4×2 divided cells ──────────────────────────────────── */
+.tk-cells {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.tk-cell {
+    padding: 1.05rem 1.3rem;
+    border-top: 1px solid color-mix(in srgb, var(--c-primary-fade) 45%, transparent);
+}
+
+.tk-cells > .tk-cell:nth-child(-n + 4) {
+    border-top: 0;
+}
+
+.tk-cells > .tk-cell:not(:nth-child(4n + 1)) {
+    border-left: 1px solid color-mix(in srgb, var(--c-primary-fade) 45%, transparent);
+}
+
+/* ── Footer · chips and the cross-page link ────────────────────── */
+.tk-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    padding: 1rem 1.6rem;
+    background: var(--c-surface-sunken);
+    border-top: 1px solid color-mix(in srgb, var(--c-primary-fade) 45%, transparent);
+}
+
+.tk-foot b {
+    font-size: 10.5px;
+    font-weight: var(--fw-semibold);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--c-primary);
+}
+
+.tk-chips {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.tk-chip {
+    padding: 0.28rem 0.7rem;
+    border-radius: var(--r-pill);
+    border: 1px solid color-mix(in srgb, var(--c-primary-fade) 75%, transparent);
+    font-size: 11.5px;
+    color: var(--c-fg);
+}
+
+.tk-link {
+    font-size: 12.5px;
+    color: var(--c-primary);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+}
+
+.tk-link:hover {
+    border-bottom-color: var(--c-primary);
+}
+
+/* ── Responsive ────────────────────────────────────────────────── */
+@media (max-width: 1100px) {
+    .tk-cols,
+    .tk-cells {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .tk-col:not(:nth-child(4n + 1)),
+    .tk-cells > .tk-cell:not(:nth-child(4n + 1)) {
+        border-left: 0;
+    }
+
+    .tk-col:nth-child(even),
+    .tk-cells > .tk-cell:nth-child(even) {
+        border-left: 1px solid color-mix(in srgb, var(--c-primary-fade) 45%, transparent);
+    }
+
+    .tk-col:nth-child(n + 3) {
+        border-top: 1px solid color-mix(in srgb, var(--c-primary-fade) 45%, transparent);
+    }
+
+    .tk-cells > .tk-cell:nth-child(-n + 4) {
+        border-top: 1px solid color-mix(in srgb, var(--c-primary-fade) 45%, transparent);
+    }
+
+    .tk-cells > .tk-cell:nth-child(-n + 2) {
+        border-top: 0;
+    }
+}
+
+@media (max-width: 760px) {
+    .tk-cols,
+    .tk-cells {
+        grid-template-columns: 1fr;
+    }
+
+    /* `:nth-child(n)` only to outweigh the two-column rules above. */
+    .tk-cols > .tk-col:nth-child(n),
+    .tk-cells > .tk-cell:nth-child(n) {
+        border-left: 0;
+        border-top: 1px solid color-mix(in srgb, var(--c-primary-fade) 45%, transparent);
+    }
+
+    .tk-cols > .tk-col:first-child,
+    .tk-cells > .tk-cell:first-child {
+        border-top: 0;
+    }
+}

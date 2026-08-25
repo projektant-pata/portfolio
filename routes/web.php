@@ -31,6 +31,7 @@ Route::middleware(['auth', 'verified', 'admin'])->group(function () {
     Route::livewire('dashboard/site-content', 'pages::manage.site-content')->name('manage.site-content');
     Route::livewire('dashboard/path-nodes', 'pages::manage.path-nodes')->name('manage.path-nodes');
     Route::livewire('dashboard/interests', 'pages::manage.interests')->name('manage.interests');
+    Route::livewire('dashboard/tools', 'pages::manage.tools')->name('manage.tools');
 });
 
 require __DIR__.'/settings.php';

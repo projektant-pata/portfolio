@@ -4,6 +4,7 @@ use App\Models\Article;
 use App\Models\Badge;
 use App\Models\Experience;
 use App\Models\Interest;
+use App\Models\Tool;
 use App\Models\Link;
 use App\Models\PathNode;
 use App\Models\Project;
@@ -33,6 +34,7 @@ new #[Title('Dashboard')] class extends Component {
             ['label' => __('Reviews'), 'icon' => 'chat-bubble-left-right', 'count' => Review::count(), 'route' => 'manage.reviews'],
             ['label' => __('Path nodes'), 'icon' => 'map', 'count' => PathNode::count(), 'route' => 'manage.path-nodes'],
             ['label' => __('Interests'), 'icon' => 'sparkles', 'count' => Interest::count(), 'route' => 'manage.interests'],
+            ['label' => __('Tools'), 'icon' => 'wrench', 'count' => Tool::count(), 'route' => 'manage.tools'],
         ];
     }
 
@@ -54,6 +56,7 @@ new #[Title('Dashboard')] class extends Component {
             ['label' => __('Add review'), 'icon' => 'chat-bubble-left-right', 'route' => 'manage.reviews'],
             ['label' => __('Add path node'), 'icon' => 'map', 'route' => 'manage.path-nodes'],
             ['label' => __('Add interest'), 'icon' => 'sparkles', 'route' => 'manage.interests'],
+            ['label' => __('Add tool'), 'icon' => 'wrench', 'route' => 'manage.tools'],
         ];
     }
 
