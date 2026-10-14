@@ -15,6 +15,7 @@ storage/framework/testing
 storage/framework/views/*
 storage/logs/*
 storage/app/public/*
+storage/app/private
 
 # Built by `npm run build` on the host and bind-mounted in.
 public/build

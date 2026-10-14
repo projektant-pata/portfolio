@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict XN5lOnrUByfYvsluOSmmuTmjqvfeB2hMCoYpU5tecgTBkopBwPp503xvlxqpxca
+\restrict vGS1WxhKy92BQdRwt8s47blv2WneVqQpITkwLpW7wLa9gWfEGdXExtGiwr1P4bI
 
 -- Dumped from database version 17.10 (Debian 17.10-1.pgdg13+1)
 -- Dumped by pg_dump version 17.10 (Debian 17.10-1.pgdg13+1)
@@ -18,20 +18,6 @@ SET check_function_bodies = false;
 SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
-
---
--- Name: public; Type: SCHEMA; Schema: -; Owner: -
---
-
--- *not* creating schema, since initdb creates it
-
-
---
--- Name: SCHEMA public; Type: COMMENT; Schema: -; Owner: -
---
-
-COMMENT ON SCHEMA public IS '';
-
 
 SET default_tablespace = '';
 
@@ -202,7 +188,10 @@ CREATE TABLE public.interests (
     image_path character varying(255),
     sort_order integer DEFAULT 0 NOT NULL,
     created_at timestamp(0) without time zone,
-    updated_at timestamp(0) without time zone
+    updated_at timestamp(0) without time zone,
+    label jsonb,
+    pull jsonb,
+    facts jsonb
 );
 
 
@@ -453,13 +442,14 @@ CREATE TABLE public.tools (
     id uuid NOT NULL,
     name character varying(255) NOT NULL,
     color character varying(255),
-    frequency character varying(255),
+    state character varying(255),
     "group" jsonb,
     placement character varying(255) DEFAULT 'grid'::character varying NOT NULL,
     show_on_home boolean DEFAULT false NOT NULL,
     sort_order integer DEFAULT 0 NOT NULL,
     created_at timestamp(0) without time zone,
-    updated_at timestamp(0) without time zone
+    updated_at timestamp(0) without time zone,
+    group_note jsonb
 );
 
 
@@ -524,16 +514,6 @@ ALTER TABLE ONLY public.settings ALTER COLUMN id SET DEFAULT nextval('public.set
 --
 
 COPY public.article_badge (article_id, badge_id) FROM stdin;
-01a00c65-89fd-71fe-a138-14666a6d2789	019f805e-738b-70a6-a9d6-241a9e10eef1
-01a00c65-89fd-71fe-a138-14666a6d2789	019f805e-738d-701b-9d4a-f25a4182ed98
-01a00c65-89ff-7090-87c9-28ad573326ec	019f805e-7389-7121-9e04-a65a5b8a49fb
-01a00c65-89ff-7090-87c9-28ad573326ec	019f805e-738b-70a6-a9d6-241a9e10eef1
-01a00c65-8a01-70b9-9ee6-9bf5f7be42d3	019f805e-738b-70a6-a9d6-241a9e10eef1
-01a00c65-8a01-70b9-9ee6-9bf5f7be42d3	019f805e-738d-701b-9d4a-f25a4182ed98
-01a00c65-8a03-71ad-a42d-ce2f042ff230	019f805e-738b-70a6-a9d6-241a9e10eef1
-01a00c65-8a03-71ad-a42d-ce2f042ff230	019f805e-738d-701b-9d4a-f25a4182ed98
-01a00c65-8a05-718f-93af-af2cc52ded56	019f805e-7389-7121-9e04-a65a5b8a49fb
-01a00c65-8a05-718f-93af-af2cc52ded56	019f805e-738b-70a6-a9d6-241a9e10eef1
 \.
 
 
@@ -542,11 +522,6 @@ COPY public.article_badge (article_id, badge_id) FROM stdin;
 --
 
 COPY public.articles (id, slug, date, thumbnail_url, user_id, created_at, updated_at, header, description, content, sort_order, published_at) FROM stdin;
-01a00c65-89fd-71fe-a138-14666a6d2789	assumenda-a-doloremque-5133	2024-09-26	\N	01a00c65-89eb-717e-b765-eecc8e3c9cfc	2026-08-16 21:06:16	2026-08-16 21:06:16	{"en":"Est commodi quis sed.","cs":"Molestias asperiores dolores dignissimos pariatur."}	{"en":"Aut sit expedita dolores illo nobis.","cs":"Consequuntur incidunt harum neque fugit."}	{"en":"Ad perferendis sapiente excepturi molestiae. Minus nulla eum veniam vel. Explicabo praesentium eos molestias dolor.","cs":"Alias accusamus voluptatum laborum sint. Sint consequatur quia tempora et. Neque fugit beatae blanditiis ipsam. Qui laborum magnam ut aut pariatur qui ipsam."}	0	2026-08-15 21:06:16
-01a00c65-89ff-7090-87c9-28ad573326ec	dolore-qui-voluptatem-5723	2024-12-19	\N	01a00c65-89f4-704c-8f1d-57f29fa27814	2026-08-16 21:06:16	2026-08-16 21:06:16	{"en":"Neque magni et ad.","cs":"Tenetur veniam iusto sed et."}	{"en":"Et saepe quo enim.","cs":"Fuga qui odit ipsam temporibus eaque."}	{"en":"Nostrum consectetur qui voluptates cum esse saepe. Similique sunt quidem vel optio et enim. Magni porro culpa culpa odio quisquam. Hic rem nihil natus rem laudantium consectetur.","cs":"Adipisci occaecati ab hic necessitatibus ut. Mollitia eveniet quis iusto consequatur."}	0	2026-08-15 21:06:16
-01a00c65-8a01-70b9-9ee6-9bf5f7be42d3	id-tenetur-quasi-9322	2025-08-22	\N	01a00c65-89f6-7305-a65c-0ebb21f24e13	2026-08-16 21:06:16	2026-08-16 21:06:16	{"en":"Dolorem eos quaerat magnam sed sed.","cs":"Quo omnis quia."}	{"en":"Nulla sequi eos itaque aperiam in laboriosam deserunt.","cs":"Alias sunt aperiam cupiditate."}	{"en":"Eligendi ipsam molestias dolor ab laboriosam corporis. Et consequatur reiciendis sit omnis officia. Omnis assumenda non veniam saepe. Ut aspernatur sunt odit a.","cs":"Alias pariatur nemo molestias ratione soluta aut dolorum. Enim harum ut inventore qui eaque assumenda. Enim deleniti praesentium molestiae aut hic."}	0	2026-08-15 21:06:16
-01a00c65-8a03-71ad-a42d-ce2f042ff230	et-quia-accusantium-qui-7709	2024-09-19	\N	01a00c65-89f8-7178-a621-77c30a42b868	2026-08-16 21:06:16	2026-08-16 21:06:16	{"en":"Veniam dolores aut esse.","cs":"Deleniti suscipit exercitationem cumque."}	{"en":"Qui dignissimos voluptatibus ut veniam voluptas non.","cs":"Sed est ut ipsam quos et beatae."}	{"en":"Numquam provident corrupti fuga atque eius sit fugit sequi. Rerum voluptatem aliquam id unde. Architecto ab earum aut consequuntur. Nostrum maxime nemo quasi ut in repellendus.","cs":"Dolore aliquam ut et ut dolor deserunt dolore. Eum dolor officiis voluptatem velit consequatur. Doloribus vitae est eius deleniti est."}	0	2026-08-15 21:06:16
-01a00c65-8a05-718f-93af-af2cc52ded56	quod-nemo-sed-suscipit-reiciendis-3280	2026-07-01	\N	01a00c65-89fb-7171-b4ab-b1f10df684ed	2026-08-16 21:06:16	2026-08-16 21:06:16	{"en":"Deserunt minima dolore accusamus vel.","cs":"Voluptas facere nesciunt quisquam."}	{"en":"Id numquam nihil necessitatibus delectus architecto ullam sint sunt.","cs":"Assumenda vel maiores ab rem ut."}	{"en":"Ipsam quos alias occaecati perferendis provident sit. Dolorum quibusdam amet quisquam eum ut maiores. Ut alias est esse.","cs":"Explicabo consequatur ea delectus animi. Vel consectetur quos aliquid accusamus qui aut nam consequatur. Amet est impedit sapiente quia modi voluptas tempore."}	0	2026-08-15 21:06:16
 \.
 
 
@@ -555,20 +530,25 @@ COPY public.articles (id, slug, date, thumbnail_url, user_id, created_at, update
 --
 
 COPY public.badges (id, slug, name, color, created_at, updated_at) FROM stdin;
-019f805e-739b-7129-bdb0-dccce49349c5	php	{"cs": "PHP", "en": "PHP"}	#A78BFA	2026-07-20 16:31:41	2026-08-18 03:30:01
-019f805e-739e-7077-822a-6f4b9fee88e1	python	{"cs": "Python", "en": "Python"}	#2DD4BF	2026-07-20 16:31:41	2026-08-18 03:30:01
-019f805e-73a1-7348-b9e4-b9e586559c8a	laravel	{"cs": "Laravel", "en": "Laravel"}	#FF2D20	2026-07-20 16:31:41	2026-08-18 03:30:01
-019f805e-73a5-7144-bf43-0f2ba6baa685	symfony	{"cs": "Symfony", "en": "Symfony"}	#64748B	2026-07-20 16:31:41	2026-08-18 03:30:01
-019f805e-73a9-72f0-868b-e62d2ee92e41	spring-boot	{"cs": "Spring Boot", "en": "Spring Boot"}	#6DB33F	2026-07-20 16:31:41	2026-08-18 03:30:01
-019f805e-73ad-70f5-8590-c19a1caf550f	javascript	{"cs": "JavaScript", "en": "JavaScript"}	#F7DF1E	2026-07-20 16:31:41	2026-08-18 03:30:01
-019f805e-73b0-708e-bcea-a43921a95ac3	blockchain	{"cs": "Blockchain", "en": "Blockchain"}	#22D3EE	2026-07-20 16:31:41	2026-08-18 03:30:01
-019f805e-7389-7121-9e04-a65a5b8a49fb	competition	{"cs": "Soutěž", "en": "Competition"}	#EAB308	2026-07-20 16:31:41	2026-08-18 03:30:01
-019f805e-738b-70a6-a9d6-241a9e10eef1	work	{"cs": "Práce", "en": "Work"}	#60A5FA	2026-07-20 16:31:41	2026-08-18 03:30:01
-019f805e-738d-701b-9d4a-f25a4182ed98	certificate	{"cs": "Certifikát", "en": "Certificate"}	#34D399	2026-07-20 16:31:41	2026-08-18 03:30:01
-019f805e-738f-7355-81e7-dc5cfecc15ef	education	{"cs": "Vzdělání", "en": "Education"}	#38BDF8	2026-07-20 16:31:41	2026-08-18 03:30:01
-019f805e-7391-73b6-b1b5-75b1ba171f28	hardware	{"cs": "Hardware", "en": "Hardware"}	#F59E0B	2026-07-20 16:31:41	2026-08-18 03:30:01
-019f805e-7395-7328-8f62-13e0f3bb0a2d	it	{"cs": "IT", "en": "IT"}	#818CF8	2026-07-20 16:31:41	2026-08-18 03:30:01
-019f805e-7398-73d5-a252-9c116d83070c	java	{"cs": "Java", "en": "Java"}	#F97316	2026-07-20 16:31:41	2026-08-18 03:30:01
+019f805e-7389-7121-9e04-a65a5b8a49fb	competition	{"cs": "Soutěž", "en": "Competition"}	#EAB308	2026-07-20 16:31:41	2026-08-29 09:35:22
+019f805e-738b-70a6-a9d6-241a9e10eef1	work	{"cs": "Práce", "en": "Work"}	#60A5FA	2026-07-20 16:31:41	2026-08-29 09:35:22
+019f805e-738d-701b-9d4a-f25a4182ed98	certificate	{"cs": "Certifikát", "en": "Certificate"}	#34D399	2026-07-20 16:31:41	2026-08-29 09:35:22
+019f805e-738f-7355-81e7-dc5cfecc15ef	education	{"cs": "Vzdělání", "en": "Education"}	#38BDF8	2026-07-20 16:31:41	2026-08-29 09:35:22
+019f805e-7391-73b6-b1b5-75b1ba171f28	hardware	{"cs": "Hardware", "en": "Hardware"}	#F59E0B	2026-07-20 16:31:41	2026-08-29 09:35:22
+019f805e-7395-7328-8f62-13e0f3bb0a2d	it	{"cs": "IT", "en": "IT"}	#818CF8	2026-07-20 16:31:41	2026-08-29 09:35:22
+01a04cde-4c5c-70a0-a027-d975e5322370	hackathon	{"cs": "Hackathon", "en": "Hackathon"}	#F472B6	2026-08-29 09:33:52	2026-08-29 09:35:22
+01a04cde-4c5f-7291-a05a-e0288185bbf9	non-profit	{"cs": "Nezisková organizace", "en": "Non-profit"}	#4ADE80	2026-08-29 09:33:52	2026-08-29 09:35:22
+019f805e-7398-73d5-a252-9c116d83070c	java	{"cs": "Java", "en": "Java"}	#F97316	2026-07-20 16:31:41	2026-08-29 09:35:22
+019f805e-739b-7129-bdb0-dccce49349c5	php	{"cs": "PHP", "en": "PHP"}	#A78BFA	2026-07-20 16:31:41	2026-08-29 09:35:22
+019f805e-739e-7077-822a-6f4b9fee88e1	python	{"cs": "Python", "en": "Python"}	#2DD4BF	2026-07-20 16:31:41	2026-08-29 09:35:22
+019f805e-73a1-7348-b9e4-b9e586559c8a	laravel	{"cs": "Laravel", "en": "Laravel"}	#FF2D20	2026-07-20 16:31:41	2026-08-29 09:35:22
+019f805e-73a5-7144-bf43-0f2ba6baa685	symfony	{"cs": "Symfony", "en": "Symfony"}	#64748B	2026-07-20 16:31:41	2026-08-29 09:35:22
+019f805e-73a9-72f0-868b-e62d2ee92e41	spring-boot	{"cs": "Spring Boot", "en": "Spring Boot"}	#6DB33F	2026-07-20 16:31:41	2026-08-29 09:35:22
+019f805e-73ad-70f5-8590-c19a1caf550f	javascript	{"cs": "JavaScript", "en": "JavaScript"}	#F7DF1E	2026-07-20 16:31:41	2026-08-29 09:35:22
+01a04cde-4c70-7038-b110-50814a54e438	typescript	{"cs": "TypeScript", "en": "TypeScript"}	#3178C6	2026-08-29 09:33:52	2026-08-29 09:35:22
+01a04cde-4c72-7382-ba8e-2f46b52ae9cf	html	{"cs": "HTML", "en": "HTML"}	#E34F26	2026-08-29 09:33:52	2026-08-29 09:35:22
+01a04cde-4c73-71a0-818d-72be875a5fdc	css	{"cs": "CSS", "en": "CSS"}	#2965F1	2026-08-29 09:33:52	2026-08-29 09:35:22
+019f805e-73b0-708e-bcea-a43921a95ac3	blockchain	{"cs": "Blockchain", "en": "Blockchain"}	#22D3EE	2026-07-20 16:31:41	2026-08-29 09:35:22
 \.
 
 
@@ -577,29 +557,29 @@ COPY public.badges (id, slug, name, color, created_at, updated_at) FROM stdin;
 --
 
 COPY public.experience_badge (experience_id, badge_id) FROM stdin;
-73	019f805e-738b-70a6-a9d6-241a9e10eef1
-74	019f805e-739e-7077-822a-6f4b9fee88e1
-74	019f805e-7389-7121-9e04-a65a5b8a49fb
-75	019f805e-73ad-70f5-8590-c19a1caf550f
-75	019f805e-73b0-708e-bcea-a43921a95ac3
-75	019f805e-738b-70a6-a9d6-241a9e10eef1
-76	019f805e-739b-7129-bdb0-dccce49349c5
-76	019f805e-73a5-7144-bf43-0f2ba6baa685
-76	019f805e-738b-70a6-a9d6-241a9e10eef1
-77	019f805e-738d-701b-9d4a-f25a4182ed98
-77	019f805e-7391-73b6-b1b5-75b1ba171f28
-78	019f805e-739b-7129-bdb0-dccce49349c5
-78	019f805e-73a1-7348-b9e4-b9e586559c8a
-78	019f805e-738f-7355-81e7-dc5cfecc15ef
-78	019f805e-7398-73d5-a252-9c116d83070c
-79	019f805e-7389-7121-9e04-a65a5b8a49fb
-79	019f805e-7395-7328-8f62-13e0f3bb0a2d
-80	019f805e-738d-701b-9d4a-f25a4182ed98
-81	019f805e-7389-7121-9e04-a65a5b8a49fb
-81	019f805e-7395-7328-8f62-13e0f3bb0a2d
-82	019f805e-7389-7121-9e04-a65a5b8a49fb
-83	019f805e-738d-701b-9d4a-f25a4182ed98
-84	019f805e-7395-7328-8f62-13e0f3bb0a2d
+61	019f805e-738b-70a6-a9d6-241a9e10eef1
+62	019f805e-7389-7121-9e04-a65a5b8a49fb
+62	019f805e-739e-7077-822a-6f4b9fee88e1
+63	019f805e-738b-70a6-a9d6-241a9e10eef1
+63	019f805e-73ad-70f5-8590-c19a1caf550f
+63	019f805e-73b0-708e-bcea-a43921a95ac3
+64	019f805e-738b-70a6-a9d6-241a9e10eef1
+64	019f805e-739b-7129-bdb0-dccce49349c5
+64	019f805e-73a5-7144-bf43-0f2ba6baa685
+65	019f805e-738d-701b-9d4a-f25a4182ed98
+65	019f805e-7391-73b6-b1b5-75b1ba171f28
+66	019f805e-738f-7355-81e7-dc5cfecc15ef
+66	019f805e-7398-73d5-a252-9c116d83070c
+66	019f805e-739b-7129-bdb0-dccce49349c5
+66	019f805e-73a1-7348-b9e4-b9e586559c8a
+67	019f805e-7389-7121-9e04-a65a5b8a49fb
+67	019f805e-7395-7328-8f62-13e0f3bb0a2d
+68	019f805e-738d-701b-9d4a-f25a4182ed98
+70	019f805e-7389-7121-9e04-a65a5b8a49fb
+72	01a04cde-4c5f-7291-a05a-e0288185bbf9
+71	01a04cde-4c5f-7291-a05a-e0288185bbf9
+68	019f805e-7395-7328-8f62-13e0f3bb0a2d
+62	019f805e-7395-7328-8f62-13e0f3bb0a2d
 \.
 
 
@@ -608,18 +588,21 @@ COPY public.experience_badge (experience_id, badge_id) FROM stdin;
 --
 
 COPY public.experiences (id, type, created_at, updated_at, year, url, image_path, sort_order, links, is_special, title, subtitle, content, show_on_about) FROM stdin;
-73	work	2026-08-18 03:30:01	2026-08-18 03:30:01	{"cs": "2024", "en": "2024"}	\N	\N	1	[{"url":"https:\\/\\/erasmus-plus.ec.europa.eu\\/","alt":"Erasmus+"}]	f	{"en":"Erasmus","cs":"Erasmus"}	{"en":"Work trip to Spain made possible by the European Union","cs":"Pracovn\\u00ed cesta do \\u0160pan\\u011blska umo\\u017en\\u011bn\\u00e1 Evropskou uni\\u00ed"}	{"en":"","cs":""}	f
-74	life	2026-08-18 03:30:01	2026-08-18 03:30:01	{"cs": "2024", "en": "2024"}	\N	\N	2	[{"url":"https:\\/\\/www.spse.cz\\/clanek.php?id=1103","alt":"SP\\u0160E"}]	f	{"en":"Hackathon AstroPi","cs":"Hackathon AstroPi"}	{"en":"1st team place","cs":"1. t\\u00fdmov\\u00e9 m\\u00edsto"}	{"en":"Space themed hackathon made possible by ESA, with 2 goals \\u2014 Mission Zero and Mission Space Lab, in a team with Petr Machovec and Ond\\u0159ej Ku\\u010dera.\\n\\n**Mission Zero** \\u2014 a Python program animating an 8x8 display on the AstroPi, reactive to the environment (change of heat or pressure).\\n\\n**Mission Space Lab** \\u2014 a Python program that calculates the speed of the ISS by taking 2 pictures of Earth and matching anchor points.","cs":"Hackathon s vesm\\u00edrnou tematikou, kter\\u00fd umo\\u017enila ESA, se dv\\u011bma c\\u00edli \\u2014 Mission Zero a Mission Space Lab, v t\\u00fdmu s Petrem Machovcem a Ond\\u0159ejem Ku\\u010derou.\\n\\n**Mission Zero** \\u2014 program v Pythonu animovan\\u00fd na displeji 8x8 na AstroPi, reaktivn\\u00ed na prost\\u0159ed\\u00ed (zm\\u011bna tepla nebo tlaku).\\n\\n**Mission Space Lab** \\u2014 program v Pythonu, kter\\u00fd vypo\\u010d\\u00edt\\u00e1 rychlost ISS t\\u00edm, \\u017ee z n\\u00ed po\\u0159\\u00edd\\u00ed 2 sn\\u00edmky Zem\\u011b a n\\u00e1sledn\\u011b porovn\\u00e1 kotevn\\u00ed body."}	f
-75	work	2026-08-18 03:30:01	2026-08-18 03:30:01	{"cs": "2024", "en": "2024"}	\N	\N	3	[{"url":"https:\\/\\/byevolution.com\\/","alt":"ByEvolution"}]	f	{"en":"ByEvolution","cs":"ByEvolution"}	{"en":"Work experience in Erasmus CIT+","cs":"Pracovn\\u00ed st\\u00e1\\u017e na Erasmus CIT+"}	{"en":"I was selected for an Erasmus trip in Spain. Here I worked 14 days in ByEvolution Creative Factory, a firm that specializes in blockchain and crypto technology.\\n\\n- Automatization of application in Selenium\\n- Front-end with HTML, Tailwind, Alpine.js","cs":"Byl jsem vybr\\u00e1n na Erasmus do \\u0160pan\\u011blska. Zde jsem 14 dn\\u00ed pracoval v ByEvolution Creative Factory, firm\\u011b, kter\\u00e1 se specializuje na blockchain a krypto technologie.\\n\\n- Automatizace aplikace v Seleniu\\n- Front-end s HTML, Tailwind, Alpine.js"}	f
-76	work	2026-08-18 03:30:01	2026-08-18 03:30:01	{"cs": "2024", "en": "2024"}	\N	\N	4	[{"url":"https:\\/\\/www.usladovnychrudim.cz\\/","alt":"U Sladovny"}]	t	{"en":"PekneWeby","cs":"PekneWeby"}	{"en":"Part-time job","cs":"Brig\\u00e1dn\\u00ed pr\\u00e1ce"}	{"en":"Took part in complete rebranding of restaurant U Sladovny in Chrudim.\\n\\n- Took part in Front-end + Back-end of a website made in Symfony\\n- [Website](https:\\/\\/www.usladovnychrudim.cz\\/)","cs":"\\u00da\\u010dastnil jsem se kompletn\\u00edho rebrandingu restaurace U Sladovny v Chrudimi.\\n\\n- \\u00da\\u010dastnil jsem se Front-endu + Back-endu webov\\u00fdch str\\u00e1nek vytvo\\u0159en\\u00fdch v Symfony\\n- [Odkaz zde](https:\\/\\/www.usladovnychrudim.cz\\/)"}	f
-77	life	2026-08-18 03:30:01	2026-08-18 03:30:01	{"cs": "2023", "en": "2023"}	\N	\N	5	[{"url":"https:\\/\\/netacad.cz\\/it-essentials\\/","alt":"NetAcad"}]	f	{"en":"Cisco IT Essentials","cs":"Cisco IT Essentials"}	{"en":"Certificate","cs":"Certifik\\u00e1t"}	{"en":"","cs":""}	f
-78	life	2026-08-18 03:30:01	2026-08-18 03:30:01	{"cs": "2022 - nyní", "en": "2022 - now"}	\N	\N	6	[{"url":"https:\\/\\/www.spse.cz\\/","alt":"SP\\u0160E"}]	f	{"en":"Student","cs":"Student"}	{"en":"SP\\u0160E a VO\\u0160 Pardubice","cs":"SP\\u0160E a VO\\u0160 Pardubice"}	{"en":"School education with focus on full-stack web development and app development.\\n\\n- HTML + CSS + JS in front-end\\n- PHP + Laravel in back-end\\n- MySQL in databases\\n- Java in app development\\n- Basics in Photoshop and Illustrator\\n- Basics in web design\\n- Developed interest in cybersecurity","cs":"\\u0160koln\\u00ed vzd\\u011bl\\u00e1n\\u00ed se zam\\u011b\\u0159en\\u00edm na full-stack webov\\u00fd v\\u00fdvoj a v\\u00fdvoj aplikac\\u00ed.\\n\\n- HTML + CSS + JS ve front-endu\\n- PHP + Laravel v back-endu\\n- MySQL v datab\\u00e1z\\u00edch\\n- Java ve v\\u00fdvoji aplikac\\u00ed\\n- Z\\u00e1klady Photoshopu a Illustratoru\\n- Z\\u00e1klady webov\\u00e9ho designu\\n- Vyvinut\\u00fd z\\u00e1jem o kybernetickou bezpe\\u010dnost"}	f
-79	life	2026-08-18 03:30:01	2026-08-18 03:30:01	{"cs": "2021", "en": "2021"}	\N	\N	7	[{"url":"https:\\/\\/www.it-slot.cz\\/results\\/year\\/2021","alt":"IT-Slot"}]	f	{"en":"IT-Slot","cs":"IT-Slot"}	{"en":"11th place out of 8320 students","cs":"11. m\\u00edsto z 8320 student\\u016f"}	{"en":"","cs":""}	f
-80	life	2026-08-18 03:30:01	2026-08-18 03:30:01	{"cs": "2021 - nyní", "en": "2021 - now"}	\N	\N	8	[{"url":"https:\\/\\/www.ecdl.cz\\/","alt":"ECDL"}]	f	{"en":"ECDL","cs":"ECDL"}	{"en":"Certificate","cs":"Certifik\\u00e1t"}	{"en":"","cs":""}	f
-81	work	2026-08-18 03:30:01	2026-08-18 03:30:01	{"cs": "2024", "en": "2024"}	\N	\N	9	[{"url":"https:\\/\\/www.spse.cz\\/clanky\\/2024-soutez-astropi-hackathon-pardubice","alt":"spse"}]	f	{"en":"AstroPi Hackathon 2024","cs":"AstroPi Hackathon 2024"}	{"en":"Hackathon","cs":"Hackathon"}	{"en":"","cs":""}	t
-82	life	2026-08-18 03:30:01	2026-08-18 03:30:01	{"cs": "2026", "en": "2026"}	\N	storage/experiences/4SUoVWLWnEj9MKXeJCVrKfdADgVxUTkyBMlZ1ffV.png	10	[{"url":"https:\\/\\/www.spse.cz\\/clanky\\/2026-regionalni-sampionat-skol-sachovy-turnaj","alt":"SPSE"}]	f	{"en":"Regional chess competetion of schools","cs":"Krajsk\\u00fd \\u0161achov\\u00fd turnaj \\u0161kol"}	{"en":"1st place in chess competetion","cs":"1. m\\u00edsto v \\u0161achov\\u00e9m turnaji"}	{"en":"","cs":""}	t
-83	life	2026-08-18 03:30:01	2026-08-18 03:30:01	{"cs": "2023 — nyní", "en": "2023 — now"}	\N	\N	11	\N	f	{"en":"PEER program","cs":"Program PEER"}	{"en":"Trained to teach teenagers about drugs and bullying, then presented to my own peers.","cs":"Vy\\u0161kolen, abych u\\u010dil teenagery o drog\\u00e1ch a \\u0161ikan\\u011b, a pak jsem prezentoval vlastn\\u00edm vrstevn\\u00edk\\u016fm."}	{"en":"","cs":""}	t
-84	life	2026-08-18 03:30:01	2026-08-18 03:30:01	{"cs": "2023", "en": "2023"}	\N	\N	12	\N	f	{"en":"Czech Day Against Cancer","cs":"\\u010cesk\\u00fd den proti rakovin\\u011b"}	{"en":"Sold flower badges on the street for cancer patients. The best public-speaking practice there is.","cs":"Prod\\u00e1val jsem kv\\u011btinov\\u00e9 odznaky na ulici pro pacienty s rakovinou. Nejlep\\u0161\\u00ed tr\\u00e9nink ve\\u0159ejn\\u00e9ho projevu, jak\\u00fd existuje."}	{"en":"","cs":""}	t
+61	life	2026-08-29 09:35:22	2026-08-29 15:17:08	{"cs": "2024", "en": "2024"}	\N	storage/experiences/LO0LqtA4zbERxOM2shhPWZw8bYali4aG31vQsp8s.jpg	1	[{"url":"https:\\/\\/erasmus-plus.ec.europa.eu\\/","alt":"Erasmus+"}]	f	{"en":"Erasmus CIT+","cs":"Erasmus CIT+"}	{"en":"Work trip to Spain made possible by the European Union","cs":"Pracovn\\u00ed cesta do \\u0160pan\\u011blska umo\\u017en\\u011bn\\u00e1 Evropskou uni\\u00ed"}	{"en":"","cs":""}	f
+63	work	2026-08-29 09:35:22	2026-08-29 15:15:33	{"cs": "2024", "en": "2024"}	\N	storage/experiences/IprQDd8qvwp0UmOpJoF9GuAW1ph86keyMY6Us4Ef.jpg	3	[{"url":"https:\\/\\/byevolution.com\\/","alt":"ByEvolution"}]	f	{"en":"ByEvolution","cs":"ByEvolution"}	{"en":"Work experience in Erasmus CIT+","cs":"Pracovn\\u00ed st\\u00e1\\u017e na Erasmus CIT+"}	{"en":"I was selected for an Erasmus trip in Spain. Here I worked 14 days in ByEvolution Creative Factory, a firm that specializes in blockchain and crypto technology.\\n\\n- Automatization of application in Selenium\\n- Front-end with HTML, Tailwind, Alpine.js","cs":"Byl jsem vybr\\u00e1n na Erasmus do \\u0160pan\\u011blska. Zde jsem 14 dn\\u00ed pracoval v ByEvolution Creative Factory, firm\\u011b, kter\\u00e1 se specializuje na blockchain a krypto technologie.\\n\\n- Automatizace aplikace v Seleniu\\n- Front-end s HTML, Tailwind, Alpine.js"}	f
+71	life	2026-08-29 09:35:22	2026-08-29 15:14:27	{"cs": "2023-2025", "en": "2023-2025"}	\N	storage/experiences/LO0LqtA4zbERxOM2shhPWZw8bYali4aG31vQsp8s.jpg	11	\N	f	{"en":"PEER program","cs":"Program PEER"}	{"en":"Trained to teach teenagers about drugs and bullying, then presented to my own peers.","cs":"Vy\\u0161kolen, abych u\\u010dil teenagery o drog\\u00e1ch a \\u0161ikan\\u011b, a pak jsem prezentoval vlastn\\u00edm vrstevn\\u00edk\\u016fm."}	{"en":"","cs":""}	t
+64	work	2026-08-29 09:35:22	2026-08-29 15:15:33	{"cs": "2024", "en": "2024"}	\N	storage/experiences/h12A89ck9ARq4rUMEq6eJkkOGfbMLfpfg93WY7p0.jpg	4	[{"url":"https:\\/\\/www.usladovnychrudim.cz\\/","alt":"U Sladovny"}]	t	{"en":"PekneWeby","cs":"PekneWeby"}	{"en":"Part-time job","cs":"Brig\\u00e1dn\\u00ed pr\\u00e1ce"}	{"en":"Took part in complete rebranding of restaurant U Sladovny in Chrudim.\\n\\n- Took part in Front-end + Back-end of a website made in Symfony\\n- [Website](https:\\/\\/www.usladovnychrudim.cz\\/)","cs":"\\u00da\\u010dastnil jsem se kompletn\\u00edho rebrandingu restaurace U Sladovny v Chrudimi.\\n\\n- \\u00da\\u010dastnil jsem se Front-endu + Back-endu webov\\u00fdch str\\u00e1nek vytvo\\u0159en\\u00fdch v Symfony\\n- [Odkaz zde](https:\\/\\/www.usladovnychrudim.cz\\/)"}	f
+65	life	2026-08-29 09:35:22	2026-08-29 15:15:33	{"cs": "2023", "en": "2023"}	\N	storage/experiences/B1RRobgMp6Ofrt0MRtEdd87r41fpZvpMEewMxnPl.jpg	5	[{"url":"https:\\/\\/netacad.cz\\/it-essentials\\/","alt":"NetAcad"}]	f	{"en":"Cisco IT Essentials","cs":"Cisco IT Essentials"}	{"en":"Certificate","cs":"Certifik\\u00e1t"}	{"en":"","cs":""}	f
+68	life	2026-08-29 09:35:22	2026-08-29 15:15:33	{"cs": "2021 - nyní", "en": "2021 - now"}	\N	storage/experiences/Oi12VGaPqM2vxanB609MgKwgXAIoUW4HkKtp8mA5.png	8	[{"url":"https:\\/\\/www.ecdl.cz\\/","alt":"ECDL"}]	f	{"en":"ECDL","cs":"ECDL"}	{"en":"Certificate","cs":"Certifik\\u00e1t"}	{"en":"","cs":""}	f
+72	life	2026-08-29 09:35:22	2026-08-29 15:15:33	{"cs": "2023", "en": "2023"}	\N	storage/experiences/F47932dU1qiugIpo1s4QC1tifMCj48l4jFPCRrwQ.png	12	\N	f	{"en":"Czech Day Against Cancer","cs":"\\u010cesk\\u00fd den proti rakovin\\u011b"}	{"en":"Sold flower badges on the street for cancer patients. The best public-speaking practice there is.","cs":"Prod\\u00e1val jsem kv\\u011btinov\\u00e9 odznaky na ulici pro pacienty s rakovinou. Nejlep\\u0161\\u00ed tr\\u00e9nink ve\\u0159ejn\\u00e9ho projevu, jak\\u00fd existuje."}	{"en":"","cs":""}	t
+66	life	2026-08-29 09:35:22	2026-08-29 15:16:08	{"cs": "2022-2026", "en": "2022-2026"}	\N	storage/experiences/LO0LqtA4zbERxOM2shhPWZw8bYali4aG31vQsp8s.jpg	6	[{"url":"https:\\/\\/www.spse.cz\\/","alt":"SP\\u0160E"}]	f	{"en":"Student","cs":"Student"}	{"en":"SP\\u0160E a VO\\u0160 Pardubice","cs":"SP\\u0160E a VO\\u0160 Pardubice"}	{"en":"School education with focus on full-stack web development and app development.\\n\\n- HTML + CSS + JS in front-end\\n- PHP + Laravel in back-end\\n- MySQL in databases\\n- Java in app development\\n- Basics in Photoshop and Illustrator\\n- Basics in web design\\n- Developed interest in cybersecurity","cs":"\\u0160koln\\u00ed vzd\\u011bl\\u00e1n\\u00ed se zam\\u011b\\u0159en\\u00edm na full-stack webov\\u00fd v\\u00fdvoj a v\\u00fdvoj aplikac\\u00ed.\\n\\n- HTML + CSS + JS ve front-endu\\n- PHP + Laravel v back-endu\\n- MySQL v datab\\u00e1z\\u00edch\\n- Java ve v\\u00fdvoji aplikac\\u00ed\\n- Z\\u00e1klady Photoshopu a Illustratoru\\n- Z\\u00e1klady webov\\u00e9ho designu\\n- Vyvinut\\u00fd z\\u00e1jem o kybernetickou bezpe\\u010dnost"}	f
+70	work	2026-08-29 09:35:22	2026-08-29 15:23:14	{"cs": "2026", "en": "2026"}	\N	storage/experiences/4SUoVWLWnEj9MKXeJCVrKfdADgVxUTkyBMlZ1ffV.png	10	[{"url":"https:\\/\\/www.spse.cz\\/clanky\\/2026-regionalni-sampionat-skol-sachovy-turnaj","alt":"SPSE"}]	f	{"en":"Regional chess competetion of schools","cs":"Krajsk\\u00fd \\u0161achov\\u00fd turnaj \\u0161kol"}	{"en":"1st place in chess competetion","cs":"1. m\\u00edsto v \\u0161achov\\u00e9m turnaji"}	{"en":"","cs":""}	t
+67	work	2026-08-29 09:35:22	2026-08-29 15:23:14	{"cs": "2021", "en": "2021"}	\N	storage/experiences/bXKQc2E8bGETCydIbHrCiOOEXCshl26k30oTqvKu.png	7	[{"url":"https:\\/\\/www.it-slot.cz\\/results\\/year\\/2021","alt":"IT-Slot"}]	f	{"en":"IT-Slot","cs":"IT-Slot"}	{"en":"11th place out of 8320 students","cs":"11. m\\u00edsto z 8320 student\\u016f"}	{"en":"","cs":""}	f
+62	work	2026-08-29 09:35:22	2026-08-29 15:23:14	{"cs": "2024", "en": "2024"}	\N	storage/experiences/mQPLYyUrNW0WX0iQ6O60S9bbHqxM1xcOjgOdYxsl.png	2	[{"url":"https:\\/\\/www.spse.cz\\/clanek.php?id=1103","alt":"SP\\u0160E"}]	f	{"en":"Hackathon AstroPi","cs":"Hackathon AstroPi"}	{"en":"1st team place","cs":"1. t\\u00fdmov\\u00e9 m\\u00edsto"}	{"en":"Space themed hackathon made possible by ESA, with 2 goals \\u2014 Mission Zero and Mission Space Lab, in a team with Petr Machovec and Ond\\u0159ej Ku\\u010dera.\\n\\n**Mission Zero** \\u2014 a Python program animating an 8x8 display on the AstroPi, reactive to the environment (change of heat or pressure).\\n\\n**Mission Space Lab** \\u2014 a Python program that calculates the speed of the ISS by taking 2 pictures of Earth and matching anchor points.","cs":"Hackathon s vesm\\u00edrnou tematikou, kter\\u00fd umo\\u017enila ESA, se dv\\u011bma c\\u00edli \\u2014 Mission Zero a Mission Space Lab, v t\\u00fdmu s Petrem Machovcem a Ond\\u0159ejem Ku\\u010derou.\\n\\n**Mission Zero** \\u2014 program v Pythonu animovan\\u00fd na displeji 8x8 na AstroPi, reaktivn\\u00ed na prost\\u0159ed\\u00ed (zm\\u011bna tepla nebo tlaku).\\n\\n**Mission Space Lab** \\u2014 program v Pythonu, kter\\u00fd vypo\\u010d\\u00edt\\u00e1 rychlost ISS t\\u00edm, \\u017ee z n\\u00ed po\\u0159\\u00edd\\u00ed 2 sn\\u00edmky Zem\\u011b a n\\u00e1sledn\\u011b porovn\\u00e1 kotevn\\u00ed body."}	f
+73	work	2026-08-29 15:23:14	2026-08-29 15:23:14	{"cs": "2026", "en": "2026"}	\N	\N	13	[]	f	{"en":"Funovation 26","cs":"Funovation 26"}	{"en":"","cs":""}	{"en":"","cs":""}	t
+74	work	2026-08-29 15:23:14	2026-08-29 15:23:14	{"cs": "2025", "en": "2025"}	\N	\N	14	[]	f	{"en":"OpenData KHK","cs":"OpenData KHK"}	{"en":"","cs":""}	{"en":"","cs":""}	t
+75	work	2026-08-29 15:23:14	2026-08-29 15:23:14	{"cs": "2026", "en": "2026"}	\N	\N	15	[]	f	{"en":"Hackathon NKU","cs":"Hackathon NKU"}	{"en":"","cs":""}	{"en":"","cs":""}	t
+76	work	2026-08-29 15:23:14	2026-08-29 15:23:14	{"cs": "2026", "en": "2026"}	\N	\N	16	[]	f	{"en":"Tour-de-App26","cs":"Tour-de-App26"}	{"en":"","cs":""}	{"en":"","cs":""}	t
 \.
 
 
@@ -627,10 +610,11 @@ COPY public.experiences (id, type, created_at, updated_at, year, url, image_path
 -- Data for Name: interests; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-COPY public.interests (id, title, highlight, body, meta, image_path, sort_order, created_at, updated_at) FROM stdin;
-01a012eb-3dfc-7245-9f78-a1d9ae505ec6	{"cs": "Šachy od druhé třídy", "en": "Chess since 2nd grade"}	{"cs": "druhé třídy", "en": "2nd grade"}	{"cs": "Místní turnaje proti středoškolákům mě naučily myslet tři tahy dopředu a prohrávat bez zhroucení. Jezdec je ta figura.", "en": "Local tournaments against high-schoolers taught me to think three moves out and to lose without falling apart. The knight is the piece."}	{"cs": "1684 elo · trpělivost, strategie", "en": "1684 elo · patience, strategy"}	\N	0	2026-08-18 03:30:01	2026-08-18 03:30:01
-01a012eb-3dff-72e5-9c25-981186117de9	{"cs": "Rock, nahlas", "en": "Rock, loud"}	{"cs": "nahlas", "en": "loud"}	{"cs": "Většina mého kódu vznikla s kytarou v jednom uchu. Koncerty vždycky, když to kalendář dovolí.", "en": "Most of my code was written with a guitar in one ear. Live shows whenever the calendar lets me."}	{"cs": "Koncerty · playlisty · sluchátka", "en": "Concerts · playlists · headphones"}	\N	1	2026-08-18 03:30:01	2026-08-18 03:30:01
-01a012eb-3e02-71c3-a0a4-cc97e8c88117	{"cs": "Homelab a sumci", "en": "Homelab and catfish"}	{"cs": "sumci", "en": "catfish"}	{"cs": "Stojan Raspberry Pi, které rozbíjím schválně, a ano — sumci. Na obojí se mě lidé ptají víc než na práci.", "en": "A rack of Raspberry Pis I break on purpose, and yes — catfish. Both are hobbies I get asked about more than my job."}	{"cs": "Senzory · self-hosting · rybaření", "en": "Sensors · self-hosting · fishing"}	\N	2	2026-08-18 03:30:01	2026-08-18 03:30:01
+COPY public.interests (id, title, highlight, body, meta, image_path, sort_order, created_at, updated_at, label, pull, facts) FROM stdin;
+01a04cdf-ad20-73d6-bd43-e7fc0d8a4db1	{"cs": "Šachy od druhé třídy", "en": "Chess since the second grade"}	{"cs": "druhé třídy", "en": "second grade"}	{"cs": "Začal jsem, protože učiteli chyběl jeden hráč do školního týmu, a zůstal jsem, protože mi to dlouho nešlo. Místní turnaje znamenaly sedět naproti středoškolákům, kteří hráli déle, než jsem byl na světě, prohrávat a stejně přijít i příští neděli.\\n\\nJe to jediný koníček, který okamžitě trestá netrpělivost. Pozici nelze zablufovat — buď jste důsledek viděli tři tahy dopředu, nebo ne, a šachovnice vám to řekne do minuty. 1684 je moje nejvyšší rating, což je slušné a zdaleka ne dobré, a s oběma polovinami té věty jsem smířený.", "en": "I started because a teacher needed one more kid to fill out the school team, and stayed because I was bad at it for a long time. Local tournaments meant sitting across from high-schoolers who had been playing longer than I had been alive, losing, and coming back the next Sunday anyway.\\n\\nIt is the only hobby I have that punishes impatience immediately. You cannot bluff a position — either you saw the consequence three moves ago or you did not, and the board tells you which within a minute. 1684 is my peak rating, which is respectable and nowhere near good, and I am fine with both halves of that sentence."}	{"cs": [], "en": []}	\N	0	2026-08-29 09:35:22	2026-08-29 09:35:22	{"cs": "Šachy", "en": "Chess"}	{"cs": "Šachy mě naučily prohrát něco, na čem mi záleželo, a přesto přijít i příští týden.", "en": "Chess is where I learned to lose something I cared about and still show up the following week."}	{"cs": [{"dd": "1684 elo", "dt": "Nejvyšší rating"}, {"dd": "2. třídy", "dt": "Hraju od"}, {"dd": "Jezdec", "dt": "Oblíbená figura"}], "en": [{"dd": "1684 elo", "dt": "Peak rating"}, {"dd": "2nd grade", "dt": "Playing since"}, {"dd": "Knight", "dt": "Favourite piece"}]}
+01a04cdf-ad22-73ce-ac45-a5eb8b1c7c80	{"cs": "Police počítačů, které schválně rozbíjím", "en": "A shelf of computers I break on purpose"}	{"cs": "schválně rozbíjím", "en": "break on purpose"}	{"cs": "Tři Raspberry Pi a jeden malý Proxmox box na dřevěné polici, špatně zapojené a ještě hůř popsané. Dohromady na nich běží moje úložiště souborů, monitorovací stack, který mě upozorní, když něco spadne, a sada MQTT senzorů, které loguju teplotu bytu, kterou po mně nikdo nechtěl.\\n\\nVšechno, co umím o Linuxu, Dockeru a síťování, umím proto, že jsem si tenhle rack nejdřív rozbil sám. Doma žádné staging prostředí není — vypnete službu, přestanou fungovat vlastní věci a opravujete to v jedenáct večer, protože chcete zpátky svoje soubory. To je rychlejší učitel než jakýkoliv tutoriál.", "en": "Three Raspberry Pis and one small Proxmox box on a wooden shelf, wired badly, labelled worse. Between them they run my file storage, a monitoring stack that pages me when something falls over, and a set of MQTT sensors that log the temperature of a flat nobody asked me to measure.\\n\\nEverything I know about Linux, Docker and networking, I know because I broke this rack first. There is no staging environment at home — you take the service down, your own stuff stops working, and you fix it at 11pm because you want your files back. That is a faster teacher than any tutorial."}	{"cs": [], "en": []}	\N	1	2026-08-29 09:35:22	2026-08-29 09:35:22	{"cs": "Homelab", "en": "Homelab"}	{"cs": null, "en": null}	{"cs": [{"dd": "3× Pi + 1× Proxmox host", "dt": "Uzly"}, {"dd": "Úložiště · monitoring · MQTT", "dt": "Běží tam"}, {"dd": "Víckrát, než přiznávám", "dt": "Přestavěno"}], "en": [{"dd": "3 Pis + 1 Proxmox host", "dt": "Nodes"}, {"dd": "Storage · monitoring · MQTT", "dt": "Running"}, {"dd": "More times than I admit", "dt": "Rebuilt"}]}
+01a04cdf-ad23-71be-aa08-9dcd2c1bfe01	{"cs": "V posilovně odkládám telefon", "en": "The gym is where I put the phone down"}	{"cs": "odkládám telefon", "en": "put the phone down"}	{"cs": "Čtyři tréninky týdně, a takhle to je už pár let. Ne kvůli číslu na čince — kvůli tomu, že je to jediná hodina dne bez notifikací, ticketů a rozdělané branch, která na mě čeká.\\n\\nSpravilo mi to i něco, co kód nedokázal. Pokrok v posilovně je pomalý, nudný a naprosto upřímný, a zvyknout si na to mě zlepšilo v dlouhých projektech, které vás první tři týdny nijak neodmění.", "en": "Four sessions a week, and it has been that way for a couple of years now. Not for a number on a bar — for the fact that it is the one hour of my day with no notifications, no tickets and no half-finished branch waiting for me.\\n\\nIt also fixed something the code could not. Progress in the gym is slow, boring and completely honest, and getting used to that made me much better at long projects that do not reward you for the first three weeks."}	{"cs": [], "en": []}	\N	2	2026-08-29 09:35:22	2026-08-29 09:35:22	{"cs": "Sport", "en": "Sport"}	{"cs": "Ukázat se i ve špatný den je dovednost, a přenáší se dál.", "en": "Showing up on the bad days is a skill, and it transfers."}	{"cs": [{"dd": "4× týdně", "dt": "Frekvence"}, {"dd": "2023", "dt": "Od"}, {"dd": "Skříňka", "dt": "Politika telefonu"}], "en": [{"dd": "4× a week", "dt": "Frequency"}, {"dd": "2023", "dt": "Since"}, {"dd": "Locker", "dt": "Phone policy"}]}
+01a04cdf-ad24-73d2-acce-757081df607b	{"cs": "Vlaky a až příliš pečlivě naplánovaná trasa", "en": "Trains, and a route planned too carefully"}	{"cs": "příliš pečlivě naplánovaná trasa", "en": "a route planned too carefully"}	{"cs": "Radši strávím jedenáct hodin ve vlaku než dvě hodiny v letadle. Půlka cesty se pro mě odehrává ještě předtím, než začne: jízdní řády, přípoje, jeden excel, který nikomu neukážu, a plán volný tak akorát, aby zmeškaný přípoj byl historka, ne problém.\\n\\nZatím šest zemí, hlavně po střední Evropě, obvykle s notebookem, který jsem slíbil neotevřít. Co mi z toho zůstalo, je drobnost: všude, kde jsem byl, věci fungují, protože se je někdo obtěžoval udělat funkční — značení, jízdenkový automat, jízdní řád. Jakmile začnete věci stavět sami, nejde si toho nevšímat.", "en": "I would rather spend eleven hours on a train than two in the air. Half of the trip, for me, happens before it starts: timetables, connections, one spreadsheet I refuse to show anyone, and a plan loose enough that a missed connection is a story instead of a problem.\\n\\nSix countries so far, mostly around central Europe, usually with a laptop I promised not to open. The part that stuck is small: everywhere I have been, things work because somebody bothered to make them work — the signage, the ticket machine, the timetable. It is hard to unsee that once you start building things yourself."}	{"cs": [], "en": []}	\N	3	2026-08-29 09:35:22	2026-08-29 09:35:22	{"cs": "Cestování", "en": "Travel"}	{"cs": null, "en": null}	{"cs": [{"dd": "6 a přibývá", "dt": "Zemí"}, {"dd": "Vlak před letadlem", "dt": "Preference"}, {"dd": "Severní trasa", "dt": "Další v plánu"}], "en": [{"dd": "6 and counting", "dt": "Countries"}, {"dd": "Rail over air", "dt": "Preferred"}, {"dd": "Northern route", "dt": "Next up"}]}
 \.
 
 
@@ -639,10 +623,10 @@ COPY public.interests (id, title, highlight, body, meta, image_path, sort_order,
 --
 
 COPY public.links (id, project_id, alt, img_url, url, created_at, updated_at, kind) FROM stdin;
-01a012eb-3c90-71c2-a413-dc09dea07857	01a012eb-3c8b-7304-a69b-ce8971838e8b	{"cs": "Navštívit web", "en": "Visit website"}	images/projects/icons/web.webp	https://hyvlri22.llmp.spse-net.cz/	2026-08-18 03:30:01	2026-08-18 03:30:01	live
-01a012eb-3c94-7219-b4d6-57190825a03c	01a012eb-3c8b-7304-a69b-ce8971838e8b	{"cs": "Zobrazit na GitHubu", "en": "View on GitHub"}	images/mobile/icons/github.webp	https://github.com/projektant-pata/SPSE-WP	2026-08-18 03:30:01	2026-08-18 03:30:01	repo
-01a012eb-3ca5-70a0-bddf-71812fadaaa8	01a012eb-3ca1-7283-be63-d2589a9c7424	{"cs": "Navštívit web", "en": "Visit website"}	images/projects/icons/web.webp	https://www.usladovnychrudim.cz/	2026-08-18 03:30:01	2026-08-18 03:30:01	live
-01a012eb-3cb0-7105-982c-9a085d6ed64c	01a012eb-3cad-7271-aa8b-f785bfdb6748	{"cs": "Zobrazit na GitHubu", "en": "View on GitHub"}	images/mobile/icons/github.webp	https://github.com/projektant-pata/portfolio	2026-08-18 03:30:01	2026-08-18 03:30:01	repo
+01a04cdf-ac6a-721b-ab50-5df3e27c0473	01a04cdf-ac67-7239-85f9-52ff91f4fd20	{"cs": "Navštívit web", "en": "Visit website"}	images/projects/icons/web.webp	https://hyvlri22.llmp.spse-net.cz/	2026-08-29 09:35:22	2026-08-29 09:35:22	live
+01a04cdf-ac6c-7043-b910-774a3d442f0f	01a04cdf-ac67-7239-85f9-52ff91f4fd20	{"cs": "Zobrazit na GitHubu", "en": "View on GitHub"}	images/mobile/icons/github.webp	https://github.com/projektant-pata/SPSE-WP	2026-08-29 09:35:22	2026-08-29 09:35:22	repo
+01a04cdf-ac73-72e7-abcb-07262c4d3dff	01a04cdf-ac72-7287-901b-f3a22daa1bae	{"cs": "Navštívit web", "en": "Visit website"}	images/projects/icons/web.webp	https://www.usladovnychrudim.cz/	2026-08-29 09:35:22	2026-08-29 09:35:22	live
+01a04cdf-ac77-7330-bf1b-8556239cea46	01a04cdf-ac76-72cb-855c-e5e69c67a7aa	{"cs": "Zobrazit na GitHubu", "en": "View on GitHub"}	images/mobile/icons/github.webp	https://github.com/projektant-pata/portfolio	2026-08-29 09:35:22	2026-08-29 09:35:22	repo
 \.
 
 
@@ -682,22 +666,16 @@ COPY public.migrations (id, migration, batch) FROM stdin;
 29	2026_07_21_000005_create_about_cards_table	2
 30	2026_08_01_093443_add_source_and_highlight_to_reviews_table	3
 31	2026_08_15_000000_add_published_at_to_articles_table	4
-32	2026_08_15_000001_add_metadata_to_projects_and_links_tables	5
-33	2026_08_15_000002_drop_not_null_from_links_alt	5
-34	2026_08_17_000001_create_path_nodes_table	6
-35	2026_08_17_000002_create_interests_table	6
-36	2026_08_17_000003_add_tier_and_note_to_stats_table	6
-37	2026_08_17_000004_add_show_on_about_to_experiences_table	6
-38	2026_08_17_000005_drop_about_cards_table	7
-39	2026_08_18_000001_create_tools_table	8
-\.
-
-
---
--- Data for Name: password_reset_tokens; Type: TABLE DATA; Schema: public; Owner: -
---
-
-COPY public.password_reset_tokens (email, token, created_at) FROM stdin;
+32	2026_08_15_000001_add_metadata_to_projects_and_links_tables	4
+33	2026_08_15_000002_drop_not_null_from_links_alt	4
+34	2026_08_17_000001_create_path_nodes_table	4
+35	2026_08_17_000002_create_interests_table	4
+36	2026_08_17_000003_add_tier_and_note_to_stats_table	4
+37	2026_08_17_000004_add_show_on_about_to_experiences_table	4
+38	2026_08_17_000005_drop_about_cards_table	4
+39	2026_08_18_000001_create_tools_table	4
+40	2026_08_26_083640_add_chapter_fields_to_interests_table	5
+42	2026_08_26_091941_replace_tool_frequency_with_state	6
 \.
 
 
@@ -706,11 +684,11 @@ COPY public.password_reset_tokens (email, token, created_at) FROM stdin;
 --
 
 COPY public.path_nodes (id, year, title, body, is_now, sort_order, created_at, updated_at) FROM stdin;
-01a012eb-3de7-70aa-bc62-c63031ad2fc3	{"cs": "2019", "en": "2019"}	{"cs": "Zpátky na základní školu", "en": "Back to elementary school"}	{"cs": "Kvůli zdravotním problémům jsem musel odejít z gymnázia. Základka, na kterou jsem se vrátil, měla rozšířenou výuku IT — nejšťastnější smůla, jakou jsem zažil.", "en": "Health issues pulled me out of gymnasium. The school I returned to happened to teach extended IT — the luckiest bad break I have had."}	f	0	2026-08-18 03:30:01	2026-08-18 03:30:01
-01a012eb-3dea-7049-94e0-429e83d73adc	{"cs": "2020", "en": "2020"}	{"cs": "První web, pak žádný web", "en": "First website, then no website"}	{"cs": "Nadchla mě představa, že věci se dají prostě postavit. Vydal jsem první web, přišel o něj se zrušeným hostingem a naučil se o zálohách tou dražší cestou.", "en": "I fell for the idea that you can just build things. Shipped my first site, lost it to a dead hosting account, and learned about backups the expensive way."}	f	1	2026-08-18 03:30:01	2026-08-18 03:30:01
-01a012eb-3ded-7214-bbde-d65380e6c465	{"cs": "2022", "en": "2022"}	{"cs": "SPŠE Pardubice", "en": "SPŠE Pardubice"}	{"cs": "Vybral jsem si školu, která mě nenechá usnout. Tady mi zapadl backend — nejdřív Java, pak všechno kolem ní.", "en": "Chose the school that would keep pushing me. Backend clicked here — Java first, then everything around it."}	f	2	2026-08-18 03:30:01	2026-08-18 03:30:01
-01a012eb-3def-7116-ab63-1578677c1432	{"cs": "2024", "en": "2024"}	{"cs": "Soutěže a porota před očima", "en": "Competitions and a jury to face"}	{"cs": "Výhry na hackathonech, celostátní finále a poprvé jsem musel vysvětlovat vlastní architekturu cizím lidem s hodinami v zádech.", "en": "Hackathon wins, a national final, and the first time I had to explain my own architecture to strangers under a clock."}	f	3	2026-08-18 03:30:01	2026-08-18 03:30:01
-01a012eb-3df3-71c5-9239-67019ce05b16	{"cs": "Teď", "en": "Now"}	{"cs": "Freelance a Prezz", "en": "Freelance and Prezz"}	{"cs": "Placená práce pro klienty, vývojářská skupina, kterou pomáhám vést, a platforma v produkci, kterou lidé používají, aniž by znali moje jméno.", "en": "Paid client work, a web dev group to help lead, and a platform in production that people use without knowing my name."}	t	4	2026-08-18 03:30:01	2026-08-18 03:30:01
+01a04cdf-ad17-729f-b1ff-68ae77bfabd9	{"cs": "2019", "en": "2019"}	{"cs": "První dotek s IT", "en": "First touch with IT"}	{"cs": "Nastoupil jsem do třídy s rozšířenou výukou IT — první dotek se světem IT, dotek, který rozhodl o mé kariéře. Od té doby jsem na technologiích závislý.", "en": "Took an IT extended class — the first touch with the world of IT, the touch that decided my career. Ever since, I have been hooked on technology."}	f	0	2026-08-29 09:35:22	2026-08-29 09:35:22
+01a04cdf-ad19-70a7-86ed-b8d74e2accd6	{"cs": "2020", "en": "2020"}	{"cs": "První web, pak žádný web", "en": "First website, then no website"}	{"cs": "Nadchla mě představa, že věci se dají prostě postavit. Vydal jsem první web, přišel o něj se zrušeným hostingem a naučil se o zálohách tou dražší cestou.", "en": "I fell for the idea that you can just build things. Shipped my first site, lost it to a dead hosting account, and learned about backups the expensive way."}	f	1	2026-08-29 09:35:22	2026-08-29 09:35:22
+01a04cdf-ad1a-73e5-a35f-341fb15e50de	{"cs": "2022", "en": "2022"}	{"cs": "SPŠE Pardubice", "en": "SPŠE Pardubice"}	{"cs": "Vybral jsem si školu, která mě nenechá usnout. Tady mi zapadl backend — nejdřív Java, pak všechno kolem ní.", "en": "Chose the school that would keep pushing me. Backend clicked here — Java first, then everything around it."}	f	2	2026-08-29 09:35:22	2026-08-29 09:35:22
+01a04cdf-ad1b-7045-a748-0aafd5c58ff4	{"cs": "2024", "en": "2024"}	{"cs": "Soutěže a porota před očima", "en": "Competitions and a jury to face"}	{"cs": "Výhry na hackathonech, celostátní finále a poprvé jsem musel vysvětlovat vlastní architekturu cizím lidem s hodinami v zádech.", "en": "Hackathon wins, a national final, and the first time I had to explain my own architecture to strangers under a clock."}	f	3	2026-08-29 09:35:22	2026-08-29 09:35:22
+01a04cdf-ad1c-739d-b022-8c6319f59117	{"cs": "Teď", "en": "Now"}	{"cs": "Freelance a Prezz", "en": "Freelance and Prezz"}	{"cs": "Placená práce pro klienty, vývojářská skupina, kterou pomáhám vést, a platforma v produkci, kterou lidé používají, aniž by znali moje jméno.", "en": "Paid client work, a web dev group to help lead, and a platform in production that people use without knowing my name."}	t	4	2026-08-29 09:35:22	2026-08-29 09:35:22
 \.
 
 
@@ -719,11 +697,26 @@ COPY public.path_nodes (id, year, title, body, is_now, sort_order, created_at, u
 --
 
 COPY public.project_badge (project_id, badge_id) FROM stdin;
-01a012eb-3c8b-7304-a69b-ce8971838e8b	019f805e-73ad-70f5-8590-c19a1caf550f
-01a012eb-3ca1-7283-be63-d2589a9c7424	019f805e-739b-7129-bdb0-dccce49349c5
-01a012eb-3ca1-7283-be63-d2589a9c7424	019f805e-73a5-7144-bf43-0f2ba6baa685
-01a012eb-3cad-7271-aa8b-f785bfdb6748	019f805e-739b-7129-bdb0-dccce49349c5
-01a012eb-3cad-7271-aa8b-f785bfdb6748	019f805e-73a1-7348-b9e4-b9e586559c8a
+01a04cdf-ac67-7239-85f9-52ff91f4fd20	019f805e-73ad-70f5-8590-c19a1caf550f
+01a04cdf-ac72-7287-901b-f3a22daa1bae	019f805e-739b-7129-bdb0-dccce49349c5
+01a04cdf-ac72-7287-901b-f3a22daa1bae	019f805e-73a5-7144-bf43-0f2ba6baa685
+01a04cdf-ac76-72cb-855c-e5e69c67a7aa	019f805e-739b-7129-bdb0-dccce49349c5
+01a04cdf-ac76-72cb-855c-e5e69c67a7aa	019f805e-73a1-7348-b9e4-b9e586559c8a
+01a04cdf-ac7a-718e-a412-4955021ca360	019f805e-738f-7355-81e7-dc5cfecc15ef
+01a04cdf-ac7a-718e-a412-4955021ca360	01a04cde-4c72-7382-ba8e-2f46b52ae9cf
+01a04cdf-ac7a-718e-a412-4955021ca360	01a04cde-4c73-71a0-818d-72be875a5fdc
+01a04cdf-ac7d-7125-a43d-2d00c86f90ec	019f805e-738f-7355-81e7-dc5cfecc15ef
+01a04cdf-ac7d-7125-a43d-2d00c86f90ec	01a04cde-4c5c-70a0-a027-d975e5322370
+01a04cdf-ac7d-7125-a43d-2d00c86f90ec	01a04cde-4c70-7038-b110-50814a54e438
+01a04cdf-ac81-7079-b8b1-30545ceb7d12	019f805e-738f-7355-81e7-dc5cfecc15ef
+01a04cdf-ac81-7079-b8b1-30545ceb7d12	01a04cde-4c5c-70a0-a027-d975e5322370
+01a04cdf-ac81-7079-b8b1-30545ceb7d12	01a04cde-4c70-7038-b110-50814a54e438
+01a04cdf-ac85-72b3-a71c-1394cb15d710	019f805e-738f-7355-81e7-dc5cfecc15ef
+01a04cdf-ac85-72b3-a71c-1394cb15d710	01a04cde-4c5c-70a0-a027-d975e5322370
+01a04cdf-ac85-72b3-a71c-1394cb15d710	019f805e-7398-73d5-a252-9c116d83070c
+01a04cdf-ac85-72b3-a71c-1394cb15d710	01a04cde-4c70-7038-b110-50814a54e438
+01a04cdf-ac89-72c2-a5a0-20fedd3569ca	01a04cde-4c5f-7291-a05a-e0288185bbf9
+01a04cdf-ac89-72c2-a5a0-20fedd3569ca	01a04cde-4c70-7038-b110-50814a54e438
 \.
 
 
@@ -732,9 +725,14 @@ COPY public.project_badge (project_id, badge_id) FROM stdin;
 --
 
 COPY public.projects (id, year, slug, img_url, created_at, updated_at, header, description, sort_order, kind, client, status, role) FROM stdin;
-01a012eb-3c8b-7304-a69b-ce8971838e8b	2022	spse-hub	images/projects/spse_wp.png	2026-08-18 03:30:01	2026-08-18 03:30:01	{"en":"SP\\u0160E Hub","cs":"SP\\u0160E Rozcestn\\u00edk"}	{"en":"The SPSE Hub is a project created under the guidance of Mr. Nitrogen to teach how to make a website. It marks my beginnings and has a nostalgic effect on me \\u2013 so I'm including it. Built using HTML5, CSS3, and JavaScript.","cs":"Tento projekt je rozcestn\\u00edk v\\u0161ech webov\\u00fdch str\\u00e1nek, kter\\u00e9 jsem vytvo\\u0159il p\\u0159i studiu na st\\u0159edn\\u00ed \\u0161kole p\\u0159i pln\\u011bn\\u00ed \\u00fakol\\u016f od u\\u010ditele Ren\\u00e9ho \\"Dus\\u00edka\\" Duse. Jsou to jedny z m\\u00fdch prvn\\u00edch str\\u00e1nek (prvn\\u00ed jsme vytv\\u00e1\\u0159eli u\\u017e na z\\u00e1kladn\\u00ed \\u0161kole)."}	0	school	\N	archived	{"en":"Everything \\u2014 my first hand-written site","cs":"V\\u0161echno \\u2014 moje prvn\\u00ed ru\\u010dn\\u011b psan\\u00e9 str\\u00e1nky"}
-01a012eb-3ca1-7283-be63-d2589a9c7424	2025	u-sladovny	images/projects/usladovny.png	2026-08-18 03:30:01	2026-08-18 03:30:01	{"en":"U Sladovny","cs":"U Sladovny"}	{"en":"A project I was part of during my part-time work at PekneWeby. The plan was simple \\u2013 rebrand and rebuild the restaurant. My part was front-end and back-end. And the result? I think PekneWeby did a fabulous job.","cs":"Projekt, na kter\\u00e9m jsem se pod\\u00edlel b\\u011bhem sv\\u00e9 pr\\u00e1ce na \\u010d\\u00e1ste\\u010dn\\u00fd \\u00favazek v PekneWeby. Pl\\u00e1n byl jednoduch\\u00fd - rebranding a rekonstrukce restaurace. M\\u016fj z\\u00e1b\\u011br byl ve front-endu a back-endu. A v\\u00fdsledek? Mysl\\u00edm, \\u017ee firma PekneWeby odvedla b\\u00e1je\\u010dnou pr\\u00e1ci."}	0	client	PekneWeby	live	{"en":"Front-end and back-end","cs":"Front-end a back-end"}
-01a012eb-3cad-7271-aa8b-f785bfdb6748	2026	portfolio	images/projects/portfolio.png	2026-08-18 03:30:01	2026-08-18 03:30:01	{"en":"Portfolio","cs":"Portf\\u00f3lio"}	{"en":"I think everybody making something artistic should have a portfolio in any form that displays their mind, creativity, and most importantly, personality \\u2013 and I believe that web developers are artists too.","cs":"Mysl\\u00edm si, \\u017ee ka\\u017ed\\u00fd, kdo d\\u011bl\\u00e1 n\\u011bco um\\u011bleck\\u00e9ho, by m\\u011bl m\\u00edt portfolio v jak\\u00e9koli podob\\u011b, kter\\u00e9 ukazuje jeho um, kreativitu a hlavn\\u011b osobnost - a v\\u011b\\u0159\\u00edm, \\u017ee i webov\\u00ed v\\u00fdvoj\\u00e1\\u0159i jsou um\\u011blci."}	0	personal	\N	live	{"en":"Design and build, start to finish","cs":"N\\u00e1vrh i realizace, od za\\u010d\\u00e1tku do konce"}
+01a04cdf-ac67-7239-85f9-52ff91f4fd20	2022	spse-hub	images/projects/spse_wp.png	2026-08-29 09:35:22	2026-08-29 09:35:22	{"en":"SP\\u0160E Hub","cs":"SP\\u0160E Rozcestn\\u00edk"}	{"en":"The SPSE Hub is a project created under the guidance of Mr. Nitrogen to teach how to make a website. It marks my beginnings and has a nostalgic effect on me \\u2013 so I'm including it. Built using HTML5, CSS3, and JavaScript.","cs":"Tento projekt je rozcestn\\u00edk v\\u0161ech webov\\u00fdch str\\u00e1nek, kter\\u00e9 jsem vytvo\\u0159il p\\u0159i studiu na st\\u0159edn\\u00ed \\u0161kole p\\u0159i pln\\u011bn\\u00ed \\u00fakol\\u016f od u\\u010ditele Ren\\u00e9ho \\"Dus\\u00edka\\" Duse. Jsou to jedny z m\\u00fdch prvn\\u00edch str\\u00e1nek (prvn\\u00ed jsme vytv\\u00e1\\u0159eli u\\u017e na z\\u00e1kladn\\u00ed \\u0161kole)."}	0	school	\N	archived	{"en":"Everything \\u2014 my first hand-written site","cs":"V\\u0161echno \\u2014 moje prvn\\u00ed ru\\u010dn\\u011b psan\\u00e9 str\\u00e1nky"}
+01a04cdf-ac72-7287-901b-f3a22daa1bae	2025	u-sladovny	images/projects/usladovny.png	2026-08-29 09:35:22	2026-08-29 09:35:22	{"en":"U Sladovny","cs":"U Sladovny"}	{"en":"A project I was part of during my part-time work at PekneWeby. The plan was simple \\u2013 rebrand and rebuild the restaurant. My part was front-end and back-end. And the result? I think PekneWeby did a fabulous job.","cs":"Projekt, na kter\\u00e9m jsem se pod\\u00edlel b\\u011bhem sv\\u00e9 pr\\u00e1ce na \\u010d\\u00e1ste\\u010dn\\u00fd \\u00favazek v PekneWeby. Pl\\u00e1n byl jednoduch\\u00fd - rebranding a rekonstrukce restaurace. M\\u016fj z\\u00e1b\\u011br byl ve front-endu a back-endu. A v\\u00fdsledek? Mysl\\u00edm, \\u017ee firma PekneWeby odvedla b\\u00e1je\\u010dnou pr\\u00e1ci."}	0	client	PekneWeby	live	{"en":"Front-end and back-end","cs":"Front-end a back-end"}
+01a04cdf-ac76-72cb-855c-e5e69c67a7aa	2026	portfolio	images/projects/portfolio.png	2026-08-29 09:35:22	2026-08-29 09:35:22	{"en":"Portfolio","cs":"Portf\\u00f3lio"}	{"en":"I think everybody making something artistic should have a portfolio in any form that displays their mind, creativity, and most importantly, personality \\u2013 and I believe that web developers are artists too.","cs":"Mysl\\u00edm si, \\u017ee ka\\u017ed\\u00fd, kdo d\\u011bl\\u00e1 n\\u011bco um\\u011bleck\\u00e9ho, by m\\u011bl m\\u00edt portfolio v jak\\u00e9koli podob\\u011b, kter\\u00e9 ukazuje jeho um, kreativitu a hlavn\\u011b osobnost - a v\\u011b\\u0159\\u00edm, \\u017ee i webov\\u00ed v\\u00fdvoj\\u00e1\\u0159i jsou um\\u011blci."}	0	personal	\N	live	{"en":"Design and build, start to finish","cs":"N\\u00e1vrh i realizace, od za\\u010d\\u00e1tku do konce"}
+01a04cdf-ac7a-718e-a412-4955021ca360	2020	first-site	\N	2026-08-29 09:35:22	2026-08-29 09:35:22	{"en":"First site","cs":"Prvn\\u00ed str\\u00e1nky"}	{"en":"My first website. Unfortunately, I have no backup :(. This taught me how important backups are!","cs":"Moje prvn\\u00ed webov\\u00e9 str\\u00e1nky. Bohu\\u017eel nem\\u00e1m z\\u00e1lohu :(. Nau\\u010dilo m\\u011b to, jak d\\u016fle\\u017eit\\u00e9 jsou z\\u00e1lohy!"}	0	school	\N	archived	{"en":"Everything \\u2014 my very first hand-written site","cs":"V\\u0161echno \\u2014 moje \\u00fapln\\u011b prvn\\u00ed ru\\u010dn\\u011b psan\\u00e9 str\\u00e1nky"}
+01a04cdf-ac7d-7125-a43d-2d00c86f90ec	2026	lifely	\N	2026-08-29 09:35:22	2026-08-29 09:35:22	{"en":"Lifely","cs":"Lifely"}	{"en":"Project for the OpenData KHK and Hackathon on NKU (national audit office) hackathons. The idea was to help people find their new place to live by scanning the area and evaluating nearby healthcare, noise from all sources we could get our hands on (like a nearby airport), and stuff like that. Links to OpenData NKU and NKU coming in the future.","cs":"Projekt pro hackathony OpenData KHK a Hackathon on NKU. C\\u00edlem bylo pomoci lidem naj\\u00edt nov\\u00e9 bydli\\u0161t\\u011b skenov\\u00e1n\\u00edm okol\\u00ed a vyhodnocen\\u00edm dostupnosti zdravotn\\u00ed p\\u00e9\\u010de, hluku ze v\\u0161ech zdroj\\u016f, kter\\u00e9 jsme dok\\u00e1zali z\\u00edskat (nap\\u0159\\u00edklad bl\\u00edzk\\u00e9ho leti\\u0161t\\u011b), a podobn\\u00fdch v\\u011bc\\u00ed. Odkazy na OpenData NKU a NKU p\\u0159ibudou v budoucnu."}	0	school	\N	archived	{"en":"Hackathon team member","cs":"\\u010clen hackathonov\\u00e9ho t\\u00fdmu"}
+01a04cdf-ac81-7079-b8b1-30545ceb7d12	2026	zemloveka	\N	2026-08-29 09:35:22	2026-08-29 09:35:22	{"en":"ZemLOVEka","cs":"ZemLOVEka"}	{"en":"A gamified cookguide for people who want to get into cooking. Three modes: Campaign, a story-driven mode where people progress and learn the basics of cooking and cooking safety; Open World, similar to Campaign but where people choose a country and learn its dishes and culture; and a basic cookguide for finding recipes for people who already know what they want. Link to Funovation 26.","cs":"Gamifikovan\\u00fd kucha\\u0159sk\\u00fd pr\\u016fvodce pro lidi, kte\\u0159\\u00ed se cht\\u011bj\\u00ed nau\\u010dit va\\u0159it. T\\u0159i m\\u00f3dy: Kampa\\u0148, p\\u0159\\u00edb\\u011bhov\\u00fd m\\u00f3d, kde lid\\u00e9 postupuj\\u00ed a u\\u010d\\u00ed se z\\u00e1klady va\\u0159en\\u00ed a bezpe\\u010dnosti p\\u0159i va\\u0159en\\u00ed; Otev\\u0159en\\u00fd sv\\u011bt, podobn\\u00fd Kampani, jen si lid\\u00e9 vyberou zemi a u\\u010d\\u00ed se jej\\u00ed j\\u00eddla a kulturu; a z\\u00e1kladn\\u00ed kucha\\u0159sk\\u00fd pr\\u016fvodce pro hled\\u00e1n\\u00ed recept\\u016f pro ty, kdo u\\u017e v\\u011bd\\u00ed, co cht\\u011bj\\u00ed. Odkaz na Funovation 26."}	0	school	\N	archived	{"en":"Hackathon team member","cs":"\\u010clen hackathonov\\u00e9ho t\\u00fdmu"}
+01a04cdf-ac85-72b3-a71c-1394cb15d710	2026	teachers-digital-academy	\N	2026-08-29 09:35:22	2026-08-29 09:35:22	{"en":"Teachers digital Academy","cs":"Teachers digital Academy"}	{"en":"Platform that innovates distance teaching with interactive quizzes, live presentations, and a lot more!","cs":"Platforma, kter\\u00e1 inovuje v\\u00fduku na d\\u00e1lku pomoc\\u00ed interaktivn\\u00edch kv\\u00edz\\u016f, \\u017eiv\\u00fdch prezentac\\u00ed a mnoha dal\\u0161\\u00edch funkc\\u00ed!"}	0	school	\N	archived	{"en":"Hackathon team member","cs":"\\u010clen hackathonov\\u00e9ho t\\u00fdmu"}
+01a04cdf-ac89-72c2-a5a0-20fedd3569ca	2026	tourdecloud	\N	2026-08-29 09:35:22	2026-08-29 09:35:22	{"en":"TourdeCloud","cs":"TourdeCloud"}	{"en":"Took part in creating the platform for the next year of Tour-de-App 27. My part was back-end \\u2014 the achievements and leveling system. TourdeCloud is a platform for contestants to upload their projects, show progress, roadmap, and a lot more!","cs":"Pod\\u00edlel jsem se na tvorb\\u011b platformy pro dal\\u0161\\u00ed ro\\u010dn\\u00edk Tour-de-App 27. M\\u016fj pod\\u00edl byl back-end - syst\\u00e9m achievement\\u016f a levelov\\u00e1n\\u00ed. TourdeCloud je platforma pro sout\\u011b\\u017e\\u00edc\\u00ed, kde mohou nahr\\u00e1vat sv\\u00e9 projekty, ukazovat progres, roadmapu a mnoho dal\\u0161\\u00edho!"}	0	client	Tour-de-App	live	{"en":"Back-end \\u2014 achievements and leveling system","cs":"Back-end - syst\\u00e9m achievement\\u016f a levelov\\u00e1n\\u00ed"}
 \.
 
 
@@ -743,14 +741,14 @@ COPY public.projects (id, year, slug, img_url, created_at, updated_at, header, d
 --
 
 COPY public.reviews (id, name, "position", text, sort_order, created_at, updated_at, highlight, source, source_color) FROM stdin;
-01a012eb-3dc8-7363-aa2d-26f40c99688e	Petr Machovec	{"cs": "Spoluzakladatel Prezz", "en": "Co-founder of Prezz"}	{"cs": "\\"Richard vždy dodává čistý, efektivní kód a má skvělý smysl pro uživatelsky přívětivý design. Spolehlivý a talentovaný týmový hráč!\\"", "en": "\\"Richard always delivers clean, efficient code and has a great sense for user-friendly design. A reliable and talented team player!\\""}	0	2026-08-18 03:30:01	2026-08-18 03:30:01	{"cs": "čistý, efektivní kód", "en": "clean, efficient code"}	LinkedIn	#60A5FA
-01a012eb-3dcb-7285-a5b2-c63d84de21c8	ChatGPT	{"cs": "The best AI", "en": "The best AI"}	{"cs": "\\"Richardova oddanost zlepšování svého řemesla a sdílení nápadů z něj dělá inspirativního a cenného kolegu.\\"", "en": "\\"Richard’s commitment to improving his craft and sharing ideas makes him an inspiring and valuable colleague.\\""}	1	2026-08-18 03:30:01	2026-08-18 03:30:01	{"cs": "zlepšování svého řemesla", "en": "improving his craft"}	Reference	#818CF8
-01a012eb-3dce-7291-b87b-9f7a498b1b00	Ondřej Kučera	{"cs": "Co-founder of Prezz", "en": "Co-founder of Prezz"}	{"cs": "\\"Richard se rychle přizpůsobuje novým nástrojům a s důvěrou a kreativitou se vypořádává se složitými projekty.\\"", "en": "\\"Richard adapts quickly to new tools and tackles complex projects with confidence and creativity.\\""}	2	2026-08-18 03:30:01	2026-08-18 03:30:01	{"cs": "důvěrou a kreativitou", "en": "confidence and creativity"}	LinkedIn	#60A5FA
-01a012eb-3dd1-71f6-be53-05c8a6403d79	Jana Nováková	{"cs": "Product Owner, freelance klientka", "en": "Product Owner, freelance client"}	{"cs": "\\"Jasná komunikace od prvního dne a kód, který prostě funguje. Richard proměnil vágní zadání v propracovaný produkt dřív, než jsme čekali.\\"", "en": "\\"Clear communication from day one and code that just works. Richard turned a vague brief into a polished product ahead of schedule.\\""}	3	2026-08-18 03:30:01	2026-08-18 03:30:01	{"cs": "dřív, než jsme čekali", "en": "ahead of schedule"}	E-mail	#34D399
-01a012eb-3dd4-735e-97ed-ae6c79fee210	Tomáš Dvořák	{"cs": "Backend vývojář, bývalý kolega", "en": "Backend engineer, former teammate"}	{"cs": "\\"Jeden z mála vývojářů, kteří si nejdřív přečtou dokumentaci a až pak se ptají. Jeho PR se recenzují radost.\\"", "en": "\\"One of the few developers who actually reads the docs before asking. His PRs are a pleasure to review.\\""}	4	2026-08-18 03:30:01	2026-08-18 03:30:01	{"cs": "recenzují radost", "en": "a pleasure to review"}	LinkedIn	#60A5FA
-01a012eb-3dd8-71d0-a355-626d657fe1f3	Lucie Horáková	{"cs": "QA inženýrka, Prezz", "en": "QA engineer, Prezz"}	{"cs": "\\"Chyby, které nahlásím na jeho featury, se skoro nikdy nevrací podruhé. Okrajové případy testuje dřív, než se k nim vůbec dostanu.\\"", "en": "\\"Bugs I file against his features rarely come back twice. He tests edge cases before I even get to them.\\""}	5	2026-08-18 03:30:01	2026-08-18 03:30:01	{"cs": "skoro nikdy nevrací podruhé", "en": "rarely come back twice"}	E-mail	#34D399
-01a012eb-3ddb-728c-81a9-8f25147e7226	Martin Sedlák	{"cs": "CTO, klient rané startupové fáze", "en": "CTO, early-stage startup client"}	{"cs": "\\"Potřebovali jsme někoho, kdo zvládne celý stack pod tlakem termínu. Richard to dodal a architektura vydržela i dlouho poté.\\"", "en": "\\"We needed someone who could own the whole stack under a tight deadline. Richard delivered, and the architecture held up long after.\\""}	6	2026-08-18 03:30:01	2026-08-18 03:30:01	{"cs": "architektura vydržela i dlouho poté", "en": "the architecture held up long after"}	Reference	#818CF8
-01a012eb-3dde-710b-a67c-b5403e98a95a	Barbora King	{"cs": "Spoluhráčka v šachovém klubu", "en": "Chess club teammate"}	{"cs": "\\"U šachovnice stejně metodické myšlení jako v kódu — plánuje tři tahy dopředu a nikdy nepanikaří.\\"", "en": "\\"Same methodical thinking at the board as in his code — plans three moves ahead and never panics.\\""}	7	2026-08-18 03:30:01	2026-08-18 03:30:01	\N	\N	\N
+01a04cdf-ad0b-7102-9892-58017d8b1c7f	Petr Machovec	{"cs": "Spoluzakladatel Prezz", "en": "Co-founder of Prezz"}	{"cs": "\\"Richard vždy dodává čistý, efektivní kód a má skvělý smysl pro uživatelsky přívětivý design. Spolehlivý a talentovaný týmový hráč!\\"", "en": "\\"Richard always delivers clean, efficient code and has a great sense for user-friendly design. A reliable and talented team player!\\""}	0	2026-08-29 09:35:22	2026-08-29 09:35:22	{"cs": "čistý, efektivní kód", "en": "clean, efficient code"}	LinkedIn	#60A5FA
+01a04cdf-ad0d-72e5-bf22-139ab9c3f4cb	ChatGPT	{"cs": "The best AI", "en": "The best AI"}	{"cs": "\\"Richardova oddanost zlepšování svého řemesla a sdílení nápadů z něj dělá inspirativního a cenného kolegu.\\"", "en": "\\"Richard’s commitment to improving his craft and sharing ideas makes him an inspiring and valuable colleague.\\""}	1	2026-08-29 09:35:22	2026-08-29 09:35:22	{"cs": "zlepšování svého řemesla", "en": "improving his craft"}	Reference	#818CF8
+01a04cdf-ad0e-72a7-99c2-9bce2fcddfa3	Ondřej Kučera	{"cs": "Co-founder of Prezz", "en": "Co-founder of Prezz"}	{"cs": "\\"Richard se rychle přizpůsobuje novým nástrojům a s důvěrou a kreativitou se vypořádává se složitými projekty.\\"", "en": "\\"Richard adapts quickly to new tools and tackles complex projects with confidence and creativity.\\""}	2	2026-08-29 09:35:22	2026-08-29 09:35:22	{"cs": "důvěrou a kreativitou", "en": "confidence and creativity"}	LinkedIn	#60A5FA
+01a04cdf-ad0f-70ec-9fec-c571ab4c1ba6	Jana Nováková	{"cs": "Product Owner, freelance klientka", "en": "Product Owner, freelance client"}	{"cs": "\\"Jasná komunikace od prvního dne a kód, který prostě funguje. Richard proměnil vágní zadání v propracovaný produkt dřív, než jsme čekali.\\"", "en": "\\"Clear communication from day one and code that just works. Richard turned a vague brief into a polished product ahead of schedule.\\""}	3	2026-08-29 09:35:22	2026-08-29 09:35:22	{"cs": "dřív, než jsme čekali", "en": "ahead of schedule"}	E-mail	#34D399
+01a04cdf-ad10-7302-8a3a-7760963ce495	Tomáš Dvořák	{"cs": "Backend vývojář, bývalý kolega", "en": "Backend engineer, former teammate"}	{"cs": "\\"Jeden z mála vývojářů, kteří si nejdřív přečtou dokumentaci a až pak se ptají. Jeho PR se recenzují radost.\\"", "en": "\\"One of the few developers who actually reads the docs before asking. His PRs are a pleasure to review.\\""}	4	2026-08-29 09:35:22	2026-08-29 09:35:22	{"cs": "recenzují radost", "en": "a pleasure to review"}	LinkedIn	#60A5FA
+01a04cdf-ad11-72fb-8a60-58d861d405be	Lucie Horáková	{"cs": "QA inženýrka, Prezz", "en": "QA engineer, Prezz"}	{"cs": "\\"Chyby, které nahlásím na jeho featury, se skoro nikdy nevrací podruhé. Okrajové případy testuje dřív, než se k nim vůbec dostanu.\\"", "en": "\\"Bugs I file against his features rarely come back twice. He tests edge cases before I even get to them.\\""}	5	2026-08-29 09:35:22	2026-08-29 09:35:22	{"cs": "skoro nikdy nevrací podruhé", "en": "rarely come back twice"}	E-mail	#34D399
+01a04cdf-ad12-7045-88d5-f2b469968001	Martin Sedlák	{"cs": "CTO, klient rané startupové fáze", "en": "CTO, early-stage startup client"}	{"cs": "\\"Potřebovali jsme někoho, kdo zvládne celý stack pod tlakem termínu. Richard to dodal a architektura vydržela i dlouho poté.\\"", "en": "\\"We needed someone who could own the whole stack under a tight deadline. Richard delivered, and the architecture held up long after.\\""}	6	2026-08-29 09:35:22	2026-08-29 09:35:22	{"cs": "architektura vydržela i dlouho poté", "en": "the architecture held up long after"}	Reference	#818CF8
+01a04cdf-ad13-727f-8e0b-efcd73f69b9b	Barbora King	{"cs": "Spoluhráčka v šachovém klubu", "en": "Chess club teammate"}	{"cs": "\\"U šachovnice stejně metodické myšlení jako v kódu — plánuje tři tahy dopředu a nikdy nepanikaří.\\"", "en": "\\"Same methodical thinking at the board as in his code — plans three moves ahead and never panics.\\""}	7	2026-08-29 09:35:22	2026-08-29 09:35:22	\N	\N	\N
 \.
 
 
@@ -759,31 +757,35 @@ COPY public.reviews (id, name, "position", text, sort_order, created_at, updated
 --
 
 COPY public.settings (id, key, value, created_at, updated_at) FROM stdin;
-15	about_hero_roles	{"cs": ["Život <span>mimo kód</span>", "<span>Arch</span>, mimochodem", "Homelab <span>nadšenec</span>", "Ve dne <span>student</span>", "V noci <span>freelancer</span>", "<span>Šachista</span>"], "en": ["Life <span>outside code</span>", "<span>Arch</span> btw", "<span>Home</span> labber", "Student <span>by day</span>", "Freelancer <span>by night</span>", "<span>Chess</span> player"]}	2026-08-12 12:52:48	2026-08-18 03:30:01
-16	experience_hero_suptitle	{"cs": "🗓️ Kudy jsem prošel", "en": "🗓️ Where I’ve been"}	2026-08-12 12:52:48	2026-08-18 03:30:01
-20	projects_hero_title	{"cs": "Věci, co jsem <span>postavil</span>,", "en": "Things I’ve <span>shipped</span>,"}	2026-08-12 12:52:48	2026-08-18 03:30:01
-21	projects_hero_roles	{"cs": ["Vedlejšáky, co <span>přežily</span>", "Laravel <span>monolity</span>", "Spring Boot <span>API</span>", "Nasazeno přes <span>Docker</span>", "Postaveno, rozbito, <span>opraveno</span>"], "en": ["Side projects that <span>survived</span>", "Laravel <span>monoliths</span>", "Spring Boot <span>APIs</span>", "Shipped with <span>Docker</span>", "Built, broken, <span>rebuilt</span>"]}	2026-08-12 12:52:48	2026-08-18 03:30:01
-22	blog_hero_suptitle	{"cs": "📝 Myslím nahlas", "en": "📝 Thinking out loud"}	2026-08-16 21:04:25	2026-08-18 03:30:01
-23	blog_hero_title	{"cs": "Zápisky a <span>co se rozbilo</span>,", "en": "Build logs, and <span>what broke</span>,"}	2026-08-16 21:04:25	2026-08-18 03:30:01
-2	hero_title	{"cs": "Jsem <span>projektant-pata</span>,", "en": "I’m <span>projektant-pata</span>,"}	2026-07-21 21:29:49	2026-08-18 03:30:01
-17	experience_hero_title	{"cs": "Moje <span>cesta</span>,", "en": "My <span>journey</span>,"}	2026-08-12 12:52:48	2026-08-18 03:30:01
-18	experience_hero_roles	{"cs": ["Certifikáty a <span>soutěže</span>", "<span>PHP</span> nadšenec", "<span>Javu</span> miluju", "<span>JavaScript</span> nesnáším!!", "Od <span>2021</span> dodnes"], "en": ["Certificates & <span>competitions</span>", "<span>PHP</span> enjoyer", "<span>Java</span> lover", "<span>JavaScript</span> hater!!", "From <span>2021</span> to now"]}	2026-08-12 12:52:48	2026-08-18 03:30:01
-19	projects_hero_suptitle	{"cs": "🛠️ Co jsem postavil", "en": "🛠️ What I’ve built"}	2026-08-12 12:52:48	2026-08-18 03:30:01
-24	blog_hero_roles	{"cs": ["Píše, jen když se <span>něco rozbije</span>", "Markdown <span>fanatik</span>", "<span>Arch</span>, mimochodem", "Pořád ne <span>frontend vývojář</span>", "Commituje ve 2 ráno, <span>publikuje ve 2 odpoledne</span>"], "en": ["Writes only when <span>something breaks</span>", "Markdown <span>maximalist</span>", "<span>Arch</span> btw", "Still not a <span>frontend dev</span>", "Commits at 2am, <span>posts at 2pm</span>"]}	2026-08-16 21:04:25	2026-08-18 03:30:01
-26	about_intro_lead	{"cs": "Stavím backendy, které přežijí demo, a radši <em>vydám něco malého</em>, než abych popisoval něco velkého.", "en": "I build backends that outlive the demo, and I would rather <em>ship something small</em> than describe something big."}	2026-08-18 02:59:54	2026-08-18 03:30:01
-28	about_facts	{"cs": [{"label": "Bydliště", "value": "Pardubice, ČR"}, {"label": "Zaměření", "value": "Backend a web"}, {"label": "Jazyky", "value": "Čeština, angličtina"}, {"label": "Stav", "value": "Otevřen nabídkám"}], "en": [{"label": "Based in", "value": "Pardubice, CZ"}, {"label": "Focus", "value": "Backend & web"}, {"label": "Languages", "value": "Czech, English"}, {"label": "Status", "value": "Open to work"}]}	2026-08-18 02:59:54	2026-08-18 03:30:01
-29	about_available	{"cs": "Volný pro freelance zakázky", "en": "Available for freelance work"}	2026-08-18 02:59:54	2026-08-18 03:30:01
-30	about_cta_title	{"cs": "Máte něco, co je potřeba <em>postavit</em>?", "en": "Have something that needs <em>building</em>?"}	2026-08-18 02:59:54	2026-08-18 03:30:01
-31	about_cta_sub	{"cs": "Zakázka, školní projekt nebo nápad, na který chcete druhý názor — napište a ozvu se.", "en": "Client work, a school project, or an idea you want a second opinion on — write and you will hear back."}	2026-08-18 02:59:54	2026-08-18 03:30:01
-1	hero_suptitle	{"cs": "👋 Ahoj světe!", "en": "👋 Hello world!"}	2026-07-21 21:29:49	2026-08-18 03:30:01
-8	hero_roles	{"cs": ["Full-stack <span>vývojář</span>", "<span>Šachista</span>", "Spring Boot <span>inženýr</span>", "Laravel <span>řemeslník</span>", "Řešitel <span>problémů</span>"], "en": ["Full-stack <span>developer</span>", "Chess <span>player</span>", "Spring Boot <span>engineer</span>", "Laravel <span>craftsman</span>", "Problem <span>solver</span>"]}	2026-07-21 21:33:27	2026-08-18 03:30:01
-4	stats_title	{"cs": "Moje statistiky", "en": "My Stats"}	2026-07-21 21:29:49	2026-08-18 03:30:01
-5	tools_title	{"cs": "Nástroje", "en": "Tools"}	2026-07-21 21:29:49	2026-08-18 03:30:01
-6	reviews_title	{"cs": "Reference", "en": "Reviews"}	2026-07-21 21:29:49	2026-08-18 03:30:01
-7	about_title	{"cs": "O mně", "en": "About me"}	2026-07-21 21:29:49	2026-08-18 03:30:01
-13	about_hero_suptitle	{"cs": "👤 whoami", "en": "👤 whoami"}	2026-08-12 12:52:48	2026-08-18 03:30:01
-14	about_hero_title	{"cs": "Něco <span>o mně</span>,", "en": "A bit <span>about me</span>,"}	2026-08-12 12:52:48	2026-08-18 03:30:01
-27	about_intro_body	{"cs": ["Jsem Richard Hývl, student <b>SPŠE Pardubice</b> a freelancer. Většinu týdne tvoří Java a PHP — na jedné straně Spring Boot, na druhé Laravel — plus vývojářská skupina <b>Prezz</b>, kterou pomáhám vést.", "Pohání mě zvědavost a chuť být užitečný lidem, kteří moje věci používají. Nejrychleji se učím tím, že rozbíjím vlastní věci — proto existuje homelab."], "en": ["I am Richard Hývl, a student at <b>SPŠE Pardubice</b> and a freelancer. Most of my week is Java and PHP — Spring Boot on one side, Laravel on the other — plus a web dev group called <b>Prezz</b> that I help lead.", "What drives me is curiosity and the wish to be useful to the people who use what I build. I learn fastest by breaking things I own, which is why the homelab exists."]}	2026-08-18 02:59:54	2026-08-18 03:30:01
+1	hero_suptitle	{"cs": "👋 Ahoj světe!", "en": "👋 Hello world!"}	2026-07-21 21:29:49	2026-08-29 09:35:22
+2	hero_title	{"cs": "Jsem <span>projektant-pata</span>,", "en": "I’m <span>projektant-pata</span>,"}	2026-07-21 21:29:49	2026-08-29 09:35:22
+4	stats_title	{"cs": "Moje statistiky", "en": "My Stats"}	2026-07-21 21:29:49	2026-08-29 09:35:22
+5	tools_title	{"cs": "Nástroje", "en": "Tools"}	2026-07-21 21:29:49	2026-08-29 09:35:22
+16	experience_hero_suptitle	{"cs": "🗓️ Kudy jsem prošel", "en": "🗓️ Where I’ve been"}	2026-08-12 12:52:48	2026-08-29 09:35:22
+17	experience_hero_title	{"cs": "Moje <span>cesta</span>,", "en": "My <span>journey</span>,"}	2026-08-12 12:52:48	2026-08-29 09:35:22
+18	experience_hero_roles	{"cs": ["Certifikáty a <span>soutěže</span>", "<span>PHP</span> nadšenec", "<span>Javu</span> miluju", "<span>JavaScript</span> nesnáším!!", "Od <span>2021</span> dodnes"], "en": ["Certificates & <span>competitions</span>", "<span>PHP</span> enjoyer", "<span>Java</span> lover", "<span>JavaScript</span> hater!!", "From <span>2021</span> to now"]}	2026-08-12 12:52:48	2026-08-29 09:35:22
+19	projects_hero_suptitle	{"cs": "🛠️ Co jsem postavil", "en": "🛠️ What I’ve built"}	2026-08-12 12:52:48	2026-08-29 09:35:22
+20	projects_hero_title	{"cs": "Věci, co jsem <span>postavil</span>,", "en": "Things I’ve <span>shipped</span>,"}	2026-08-12 12:52:48	2026-08-29 09:35:22
+21	projects_hero_roles	{"cs": ["Vedlejšáky, co <span>přežily</span>", "Laravel <span>monolity</span>", "Spring Boot <span>API</span>", "Nasazeno přes <span>Docker</span>", "Postaveno, rozbito, <span>opraveno</span>"], "en": ["Side projects that <span>survived</span>", "Laravel <span>monoliths</span>", "Spring Boot <span>APIs</span>", "Shipped with <span>Docker</span>", "Built, broken, <span>rebuilt</span>"]}	2026-08-12 12:52:48	2026-08-29 09:35:22
+22	blog_hero_suptitle	{"cs": "📝 Myslím nahlas", "en": "📝 Thinking out loud"}	2026-08-26 06:37:17	2026-08-29 09:35:22
+23	blog_hero_title	{"cs": "Zápisky a <span>co se rozbilo</span>,", "en": "Build logs, and <span>what broke</span>,"}	2026-08-26 06:37:17	2026-08-29 09:35:22
+24	blog_hero_roles	{"cs": ["Píše, jen když se <span>něco rozbije</span>", "Markdown <span>fanatik</span>", "<span>Arch</span>, mimochodem", "Pořád ne <span>frontend vývojář</span>", "Commituje ve 2 ráno, <span>publikuje ve 2 odpoledne</span>"], "en": ["Writes only when <span>something breaks</span>", "Markdown <span>maximalist</span>", "<span>Arch</span> btw", "Still not a <span>frontend dev</span>", "Commits at 2am, <span>posts at 2pm</span>"]}	2026-08-26 06:37:17	2026-08-29 09:35:22
+32	contact_hero_suptitle	{"cs": "✉️ Ozvěte se", "en": "✉️ Say hello"}	2026-08-26 19:01:43	2026-08-29 09:35:22
+33	contact_hero_title	{"cs": "Pojďme si <span>napsat</span>,", "en": "Let’s <span>talk</span>,"}	2026-08-26 19:01:43	2026-08-29 09:35:22
+34	contact_hero_roles	{"cs": ["Odpovídám do <span>24 hodin</span>", "Freelance <span>zakázky</span>", "Juniorní <span>pozice</span>", "Hackathonové <span>týmy</span>", "Ano, ne, nebo <span>datum</span>"], "en": ["Replies within <span>24 hours</span>", "Freelance <span>work</span>", "Junior <span>roles</span>", "Hackathon <span>team-ups</span>", "A yes, a no, or <span>a date</span>"]}	2026-08-26 19:01:43	2026-08-29 09:35:22
+25	about_intro_lead	{"cs": "Stavím backendy, které přežijí demo, a radši <em>vydám něco malého</em>, než abych popisoval něco velkého.", "en": "I build backends that outlive the demo, and I would rather <em>ship something small</em> than describe something big."}	2026-08-26 06:37:17	2026-08-29 09:35:22
+27	about_facts	{"cs": [{"label": "Bydliště", "value": "Pardubice, ČR"}, {"label": "Zaměření", "value": "Backend a web"}, {"label": "Jazyky", "value": "Čeština, angličtina"}, {"label": "Stav", "value": "Otevřen nabídkám"}], "en": [{"label": "Based in", "value": "Pardubice, CZ"}, {"label": "Focus", "value": "Backend & web"}, {"label": "Languages", "value": "Czech, English"}, {"label": "Status", "value": "Open to work"}]}	2026-08-26 06:37:17	2026-08-29 09:35:22
+28	about_available	{"cs": "Volný pro freelance zakázky", "en": "Available for freelance work"}	2026-08-26 06:37:17	2026-08-29 09:35:22
+29	about_cta_title	{"cs": "Máte něco, co je potřeba <em>postavit</em>?", "en": "Have something that needs <em>building</em>?"}	2026-08-26 06:37:17	2026-08-29 09:35:22
+30	about_cta_sub	{"cs": "Zakázka, školní projekt nebo nápad, na který chcete druhý názor — napište a ozvu se.", "en": "Client work, a school project, or an idea you want a second opinion on — write and you will hear back."}	2026-08-26 06:37:17	2026-08-29 09:35:22
+31	about_off_end	{"cs": "Ve všech čtyřech je stejný vzorec, a je to ten, který přináším i do práce: pomalý, opakovatelný, upřímný k tomu, co ještě nefunguje. Šachy mě naučily důsledkům, homelab ladění chyb, posilovna tomu, že se prostě ukážu, a vlaky tomu, že dobré věci jsou tiše promyšlené.", "en": "There is a pattern in all four, and it is the same one I bring to work: slow, repeatable, honest about what is not working yet. Chess taught me consequence, the rack taught me debugging, the gym taught me showing up, and the trains taught me that good things are quietly designed."}	2026-08-26 08:39:42	2026-08-29 09:35:22
+6	reviews_title	{"cs": "Reference", "en": "Reviews"}	2026-07-21 21:29:49	2026-08-29 09:35:22
+7	about_title	{"cs": "O mně", "en": "About me"}	2026-07-21 21:29:49	2026-08-29 09:35:22
+13	about_hero_suptitle	{"cs": "👤 whoami", "en": "👤 whoami"}	2026-08-12 12:52:48	2026-08-29 09:35:22
+14	about_hero_title	{"cs": "Něco <span>o mně</span>,", "en": "A bit <span>about me</span>,"}	2026-08-12 12:52:48	2026-08-29 09:35:22
+15	about_hero_roles	{"cs": ["Život <span>mimo kód</span>", "<span>Arch</span>, mimochodem", "Homelab <span>nadšenec</span>", "Ve dne <span>student</span>", "V noci <span>freelancer</span>", "<span>Šachista</span>"], "en": ["Life <span>outside code</span>", "<span>Arch</span> btw", "<span>Home</span> labber", "Student <span>by day</span>", "Freelancer <span>by night</span>", "<span>Chess</span> player"]}	2026-08-12 12:52:48	2026-08-29 09:35:22
+8	hero_roles	{"cs": ["Full-stack <span>vývojář</span>", "<span>Šachista</span>", "Spring Boot <span>inženýr</span>", "Laravel <span>řemeslník</span>", "Řešitel <span>problémů</span>"], "en": ["Full-stack <span>developer</span>", "Chess <span>player</span>", "Spring Boot <span>engineer</span>", "Laravel <span>craftsman</span>", "Problem <span>solver</span>"]}	2026-07-21 21:33:27	2026-08-29 09:35:22
+26	about_intro_body	{"cs": ["Jsem Richard Hývl, student <b>SPŠE Pardubice</b> a freelancer. Většinu týdne tvoří Java a PHP — na jedné straně Spring Boot, na druhé Laravel — plus vývojářská skupina <b>Prezz</b>, kterou pomáhám vést.", "Pohání mě zvědavost a chuť být užitečný lidem, kteří moje věci používají. Nejrychleji se učím tím, že rozbíjím vlastní věci — proto existuje homelab."], "en": ["I am Richard Hývl, a student at <b>SPŠE Pardubice</b> and a freelancer. Most of my week is Java and PHP — Spring Boot on one side, Laravel on the other — plus a web dev group called <b>Prezz</b> that I help lead.", "What drives me is curiosity and the wish to be useful to the people who use what I build. I learn fastest by breaking things I own, which is why the homelab exists."]}	2026-08-26 06:37:17	2026-08-29 09:35:22
 \.
 
 
@@ -792,16 +794,16 @@ COPY public.settings (id, key, value, created_at, updated_at) FROM stdin;
 --
 
 COPY public.stats (id, value, text, value_id, source, sort_order, created_at, updated_at, tier, note) FROM stdin;
-01a012eb-3da3-7255-807b-0f152c525df2	{"cs": "5+", "en": "5+"}	{"cs": "Vydaných projektů", "en": "Projects shipped"}	\N	\N	0	2026-08-18 03:30:01	2026-08-18 03:30:01	hero	{"cs": "Klientské zakázky, školní projekty a jedna platforma běžící v produkci.", "en": "Client work, school projects and one platform running in production."}
-01a012eb-3da6-7027-b32c-788627ba01ad	\N	{"cs": "Let u kódu", "en": "Years writing code"}	\N	years_experience	1	2026-08-18 03:30:01	2026-08-18 03:30:01	hero	{"cs": "Začal jsem v roce 2020 a zatím nenašel důvod přestat.", "en": "Started in 2020 and have not found a reason to stop."}
-01a012eb-3da9-7014-86fc-83c7faaad8c9	{"cs": "Junior", "en": "Junior"}	{"cs": "Profesionální úroveň", "en": "Professional Level"}	\N	\N	2	2026-08-18 03:30:01	2026-08-18 03:30:01	normal	\N
-01a012eb-3dac-738c-9956-ef736bb808ce	\N	{"cs": "Let věku", "en": "Years old"}	\N	age	3	2026-08-18 03:30:01	2026-08-18 03:30:01	normal	\N
-01a012eb-3daf-7306-b59b-dcd2c9725a8b	{"cs": "2", "en": "2"}	{"cs": "Země dosaženy", "en": "Countries Reached"}	\N	\N	4	2026-08-18 03:30:01	2026-08-18 03:30:01	normal	\N
-01a012eb-3db2-739e-a7c2-95e3641a8d66	{"cs": "18", "en": "18"}	{"cs": "GitHub repozitářů", "en": "GitHub repositories"}	github-repos	\N	5	2026-08-18 03:30:01	2026-08-18 03:30:01	normal	\N
-01a012eb-3db5-7118-a6f5-a46998f83a92	{"cs": "Načítání..", "en": "Loading.."}	{"cs": "Nejvyšší šachové elo", "en": "Highest chess elo"}	elo	\N	6	2026-08-18 03:30:01	2026-08-18 03:30:01	normal	\N
-01a012eb-3db8-72a9-ad11-cf575075dad2	{"cs": "4", "en": "4"}	{"cs": "Vyhraných hackathonů", "en": "Hackathons won"}	\N	\N	7	2026-08-18 03:30:01	2026-08-18 03:30:01	normal	\N
-01a012eb-3dbb-72bb-a1c3-ad75502886ab	{"cs": "∞", "en": "∞"}	{"cs": "Vypitých šálků kávy", "en": "Coffee consumed"}	\N	\N	8	2026-08-18 03:30:01	2026-08-18 03:30:01	soft	\N
-01a012eb-3dbe-7011-8924-e2726d5f3478	{"cs": "404", "en": "404"}	{"cs": "Hodin spánku, nenalezeno", "en": "Hours slept, not found"}	\N	\N	9	2026-08-18 03:30:01	2026-08-18 03:30:01	soft	\N
+01a04cdf-acfc-722c-94ac-30829264c886	{"cs": "5+", "en": "5+"}	{"cs": "Vydaných projektů", "en": "Projects shipped"}	\N	\N	0	2026-08-29 09:35:22	2026-08-29 09:35:22	hero	{"cs": "Klientské zakázky, školní projekty a jedna platforma běžící v produkci.", "en": "Client work, school projects and one platform running in production."}
+01a04cdf-acfe-72bd-ab6e-90eb6216adab	\N	{"cs": "Let u kódu", "en": "Years writing code"}	\N	years_experience	1	2026-08-29 09:35:22	2026-08-29 09:35:22	hero	{"cs": "Začal jsem v roce 2020 a zatím nenašel důvod přestat.", "en": "Started in 2020 and have not found a reason to stop."}
+01a04cdf-acff-73bb-90ab-e271c0ab79b2	{"cs": "Junior", "en": "Junior"}	{"cs": "Profesionální úroveň", "en": "Professional Level"}	\N	\N	2	2026-08-29 09:35:22	2026-08-29 09:35:22	normal	\N
+01a04cdf-ad00-722a-860e-e5787eabf83e	\N	{"cs": "Let věku", "en": "Years old"}	\N	age	3	2026-08-29 09:35:22	2026-08-29 09:35:22	normal	\N
+01a04cdf-ad01-7014-bfa8-15a3d3ad7a77	{"cs": "2", "en": "2"}	{"cs": "Země dosaženy", "en": "Countries Reached"}	\N	\N	4	2026-08-29 09:35:22	2026-08-29 09:35:22	normal	\N
+01a04cdf-ad02-734e-b376-e92b97d299aa	{"cs": "18", "en": "18"}	{"cs": "GitHub repozitářů", "en": "GitHub repositories"}	github-repos	\N	5	2026-08-29 09:35:22	2026-08-29 09:35:22	normal	\N
+01a04cdf-ad03-722f-b81c-6884bd37cee9	{"cs": "Načítání..", "en": "Loading.."}	{"cs": "Nejvyšší šachové elo", "en": "Highest chess elo"}	elo	\N	6	2026-08-29 09:35:22	2026-08-29 09:35:22	normal	\N
+01a04cdf-ad05-73a3-8e3f-6908001318bd	{"cs": "4", "en": "4"}	{"cs": "Vyhraných hackathonů", "en": "Hackathons won"}	\N	\N	7	2026-08-29 09:35:22	2026-08-29 09:35:22	normal	\N
+01a04cdf-ad06-722f-8253-6b08acd0885b	{"cs": "∞", "en": "∞"}	{"cs": "Vypitých šálků kávy", "en": "Coffee consumed"}	\N	\N	8	2026-08-29 09:35:22	2026-08-29 09:35:22	soft	\N
+01a04cdf-ad07-702b-b3b6-7245c91a663c	{"cs": "404", "en": "404"}	{"cs": "Hodin spánku, nenalezeno", "en": "Hours slept, not found"}	\N	\N	9	2026-08-29 09:35:22	2026-08-29 09:35:22	soft	\N
 \.
 
 
@@ -809,50 +811,28 @@ COPY public.stats (id, value, text, value_id, source, sort_order, created_at, up
 -- Data for Name: tools; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-COPY public.tools (id, name, color, frequency, "group", placement, show_on_home, sort_order, created_at, updated_at) FROM stdin;
-01a016d7-40f5-7106-b35f-0232663add06	Spring Boot	#6DB33F	daily	{"cs": "Backend", "en": "Backend"}	grid	t	0	2026-08-18 21:46:40	2026-08-18 21:46:40
-01a016d7-40ff-7312-bed1-3346d2ad7813	Java	#F89820	daily	{"cs": "Backend", "en": "Backend"}	grid	t	1	2026-08-18 21:46:40	2026-08-18 21:46:40
-01a016d7-4102-72e8-af79-99a44741d53c	Laravel	#FF2D20	often	{"cs": "Backend", "en": "Backend"}	grid	t	2	2026-08-18 21:46:40	2026-08-18 21:46:40
-01a016d7-4104-7000-9471-4b4daa141647	PHP	#777BB4	often	{"cs": "Backend", "en": "Backend"}	grid	f	3	2026-08-18 21:46:40	2026-08-18 21:46:40
-01a016d7-4107-70c3-998d-c8e0727fed80	REST APIs	#A3A3A3	daily	{"cs": "Backend", "en": "Backend"}	grid	f	4	2026-08-18 21:46:40	2026-08-18 21:46:40
-01a016d7-410a-724a-8102-7bfee22afcf7	TypeScript	#3178C6	daily	{"cs": "Frontend", "en": "Frontend"}	grid	t	5	2026-08-18 21:46:40	2026-08-18 21:46:40
-01a016d7-410d-7279-b1d1-171c2ab4d75d	JavaScript	#F7DF1E	daily	{"cs": "Frontend", "en": "Frontend"}	grid	f	6	2026-08-18 21:46:40	2026-08-18 21:46:40
-01a016d7-4110-722c-8044-8cd97f29e0b1	HTML & CSS	#E34F26	daily	{"cs": "Frontend", "en": "Frontend"}	grid	f	7	2026-08-18 21:46:40	2026-08-18 21:46:40
-01a016d7-4113-7007-8126-9dbcd2e8c65e	Tailwind	#06B6D4	often	{"cs": "Frontend", "en": "Frontend"}	grid	f	8	2026-08-18 21:46:40	2026-08-18 21:46:40
-01a016d7-4116-716f-8a42-ff069e84942c	Figma	#F24E1E	sometimes	{"cs": "Frontend", "en": "Frontend"}	grid	t	9	2026-08-18 21:46:40	2026-08-18 21:46:40
-01a016d7-4119-72c7-8815-9e63f40133a8	PostgreSQL	#34D399	daily	{"cs": "Data a infrastruktura", "en": "Data & infra"}	grid	t	10	2026-08-18 21:46:40	2026-08-18 21:46:40
-01a016d7-411c-724c-a8e6-712f11a922aa	MySQL	#00758F	often	{"cs": "Data a infrastruktura", "en": "Data & infra"}	grid	f	11	2026-08-18 21:46:40	2026-08-18 21:46:40
-01a016d7-411f-713b-80e6-c7837736212d	Docker	#2496ED	often	{"cs": "Data a infrastruktura", "en": "Data & infra"}	grid	t	12	2026-08-18 21:46:40	2026-08-18 21:46:40
-01a016d7-4122-7116-9ec5-cd496fd27b5a	Arch Linux	#1793D1	daily	{"cs": "Data a infrastruktura", "en": "Data & infra"}	grid	t	13	2026-08-18 21:46:40	2026-08-18 21:46:40
-01a016d7-4125-70a5-97ff-100dab1aa4c6	Git	#F05032	daily	{"cs": "Data a infrastruktura", "en": "Data & infra"}	grid	f	14	2026-08-18 21:46:40	2026-08-18 21:46:40
-01a016d7-4128-73d1-a9a2-f7dd3144178d	Raspberry Pi	#F59E0B	often	{"cs": "Hardware a homelab", "en": "Hardware & homelab"}	grid	f	15	2026-08-18 21:46:40	2026-08-18 21:46:40
-01a016d7-412b-7245-a3a7-a17cc7b41e13	Home Assistant	#818CF8	often	{"cs": "Hardware a homelab", "en": "Hardware & homelab"}	grid	f	16	2026-08-18 21:46:40	2026-08-18 21:46:40
-01a016d7-412e-71a1-bb11-ca89351e23dd	Proxmox	#A3A3A3	sometimes	{"cs": "Hardware a homelab", "en": "Hardware & homelab"}	grid	f	17	2026-08-18 21:46:40	2026-08-18 21:46:40
-01a016d7-4131-70df-96c5-406b68cbba85	Sensors / MQTT	#34D399	sometimes	{"cs": "Hardware a homelab", "en": "Hardware & homelab"}	grid	f	18	2026-08-18 21:46:40	2026-08-18 21:46:40
-01a016d7-4134-73e5-be54-4b72f563f1bf	Soldering iron	#EAB308	rarely	{"cs": "Hardware a homelab", "en": "Hardware & homelab"}	grid	f	19	2026-08-18 21:46:40	2026-08-18 21:46:40
-01a016d7-4137-714d-a3bc-a5b6e6082486	GitHub	\N	\N	\N	rotation	f	20	2026-08-18 21:46:40	2026-08-18 21:46:40
-01a016d7-413a-7286-9884-d248bf5923ea	VS Code	\N	\N	\N	rotation	f	21	2026-08-18 21:46:40	2026-08-18 21:46:40
-01a016d7-413d-71f5-95de-b45b19062601	Claude Code	\N	\N	\N	rotation	f	22	2026-08-18 21:46:40	2026-08-18 21:46:40
-01a016d7-4140-7185-8ee2-4671ea51ceae	Kubernetes	\N	\N	\N	learning	f	23	2026-08-18 21:46:40	2026-08-18 21:46:40
-01a016d7-4143-7309-abf1-ce7782e13211	Kotlin	\N	\N	\N	learning	f	24	2026-08-18 21:46:40	2026-08-18 21:46:40
-01a016d7-4146-7177-87cf-93bccfd9cbc0	Grafana	\N	\N	\N	learning	f	25	2026-08-18 21:46:40	2026-08-18 21:46:40
-\.
-
-
---
--- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: -
---
-
-COPY public.users (id, name, email, email_verified_at, password, two_factor_secret, two_factor_recovery_codes, two_factor_confirmed_at, remember_token, profile_picture_url, created_at, updated_at, is_admin) FROM stdin;
-019f6f4e-4a19-713d-83b1-d375a745aa9f	admin	admin@example.com	2026-07-17 09:00:28	$2y$12$Hf7.EEMXpdFDdaXyYXutIOgYEpFW3qigUre2PoHqiHgLzzczXG9YK	\N	\N	\N	apl5AswCwA	\N	2026-07-17 09:00:29	2026-07-17 09:00:29	f
-01a00c44-ad66-706a-b2f5-d6a8d7d9cd20	Berry Reynolds	nya.heller@example.org	2026-08-16 20:30:22	$2y$12$BkPL73pE38kYPfuEevh48O3MD5nKGUffsObtbHC.nhcmyEg8yg1Ca	\N	\N	\N	5ZCnucmHc4	\N	2026-08-16 20:30:22	2026-08-16 20:30:22	t
-01a00c44-c915-7019-b119-f7bfce122aa7	Omari Bailey	elton.osinski@example.org	2026-08-16 20:30:29	$2y$12$33WUUkGNyJ7dLh6m0IbPhOXQr3AEyleHfNsJzW5O1lbZy.RjrOcOC	\N	\N	\N	YlMyc11CRS	\N	2026-08-16 20:30:29	2026-08-16 20:30:29	t
-01a00c65-89eb-717e-b765-eecc8e3c9cfc	Rosalind Kuhn	vbednar@example.org	2026-08-16 21:06:16	$2y$12$T.c0S098UlG/Zg9NR8t41.snz6zVcs3mPcQxwC5UUcB/ejAI23y0S	\N	\N	\N	jCIFFXqdDX	\N	2026-08-16 21:06:16	2026-08-16 21:06:16	t
-01a00c65-89f4-704c-8f1d-57f29fa27814	Novella Watsica	gust61@example.org	2026-08-16 21:06:16	$2y$12$T.c0S098UlG/Zg9NR8t41.snz6zVcs3mPcQxwC5UUcB/ejAI23y0S	\N	\N	\N	BwBj7BLAWY	\N	2026-08-16 21:06:16	2026-08-16 21:06:16	t
-01a00c65-89f6-7305-a65c-0ebb21f24e13	Alisha Lowe	smith.rosina@example.com	2026-08-16 21:06:16	$2y$12$T.c0S098UlG/Zg9NR8t41.snz6zVcs3mPcQxwC5UUcB/ejAI23y0S	\N	\N	\N	YVActXilaA	\N	2026-08-16 21:06:16	2026-08-16 21:06:16	t
-01a00c65-89f8-7178-a621-77c30a42b868	Karen Mann	susanna31@example.com	2026-08-16 21:06:16	$2y$12$T.c0S098UlG/Zg9NR8t41.snz6zVcs3mPcQxwC5UUcB/ejAI23y0S	\N	\N	\N	DPwVriXrUm	\N	2026-08-16 21:06:16	2026-08-16 21:06:16	t
-01a00c65-89fb-7171-b4ab-b1f10df684ed	Dr. Joannie Bednar	braun.dillan@example.net	2026-08-16 21:06:16	$2y$12$T.c0S098UlG/Zg9NR8t41.snz6zVcs3mPcQxwC5UUcB/ejAI23y0S	\N	\N	\N	jM1UClT4Gp	\N	2026-08-16 21:06:16	2026-08-16 21:06:16	t
-019f805e-737e-716d-8598-f2bc669c5d32	Richard Hyvl	richard.hyvl@gmail.com	2026-08-18 03:30:01	$2y$12$Lu6SJAWBFXNpZfhuVrDvhe5GCB71qFpCx8fR1G0KhGJJCUReMoxT.	\N	\N	\N	0Bw9WCKfU5FMZZdPIAPdD3B2SvV81ghLW0r6Ukolas51ZtfbrQwv34QFM112	\N	2026-07-20 16:31:41	2026-08-18 03:30:01	t
+COPY public.tools (id, name, color, state, "group", placement, show_on_home, sort_order, created_at, updated_at, group_note) FROM stdin;
+01a04cdf-ad28-71d3-8af5-8a4c8ee28f88	Java (Spring Boot)	#F97316	using	{"cs": "Backend", "en": "Backend"}	grid	t	0	2026-08-29 09:35:22	2026-08-29 09:35:22	{"cs": "kde vážně bydlím", "en": "where I actually live"}
+01a04cdf-ad2a-711e-bee1-28f2a0ff893c	PHP (Laravel)	#FF2D20	using	{"cs": "Backend", "en": "Backend"}	grid	t	1	2026-08-29 09:35:22	2026-08-29 09:35:22	\N
+01a04cdf-ad2b-7361-8220-03b9bca6b130	TypeScript (Next.js)	#A1A1AA	using	{"cs": "Backend", "en": "Backend"}	grid	f	2	2026-08-29 09:35:22	2026-08-29 09:35:22	\N
+01a04cdf-ad2c-7017-b653-b9d6d1629476	TypeScript (React)	#3178C6	using	{"cs": "Frontend", "en": "Frontend"}	grid	t	3	2026-08-29 09:35:22	2026-08-29 09:35:22	{"cs": "dost na to dodat celou věc", "en": "enough to ship a whole thing"}
+01a04cdf-ad2d-70b0-8db1-96356cf74e7f	HTML & CSS	#38BDF8	using	{"cs": "Frontend", "en": "Frontend"}	grid	f	4	2026-08-29 09:35:22	2026-08-29 09:35:22	\N
+01a04cdf-ad2e-7005-b01a-06506bb5d4fe	Blade / Twig	#818CF8	using	{"cs": "Frontend", "en": "Frontend"}	grid	f	5	2026-08-29 09:35:22	2026-08-29 09:35:22	\N
+01a04cdf-ad2f-71e9-8cb6-c69308e2df5a	Tailwind	#60A5FA	using	{"cs": "Frontend", "en": "Frontend"}	grid	t	6	2026-08-29 09:35:22	2026-08-29 09:35:22	\N
+01a04cdf-ad30-714c-bb5f-dfec7812cb8b	MySQL	#34D399	using	{"cs": "Data a infrastruktura", "en": "Data & infra"}	grid	f	7	2026-08-29 09:35:22	2026-08-29 09:35:22	{"cs": "naučeno rozbíjením vlastních serverů", "en": "learned by breaking my own servers"}
+01a04cdf-ad31-70da-aea3-4651a848adfb	PostgreSQL	#22D3EE	using	{"cs": "Data a infrastruktura", "en": "Data & infra"}	grid	t	8	2026-08-29 09:35:22	2026-08-29 09:35:22	\N
+01a04cdf-ad32-7126-a19b-1d7cb000fc21	Proxmox VE	#E57000	using	{"cs": "Data a infrastruktura", "en": "Data & infra"}	grid	t	9	2026-08-29 09:35:22	2026-08-29 09:35:22	\N
+01a04cdf-ad33-713a-b406-6bad2c9194d8	Raspberry Pi	#F59E0B	experience	{"cs": "Hardware a homelab", "en": "Hardware & homelab"}	grid	f	10	2026-08-29 09:35:22	2026-08-29 09:35:22	{"cs": "testovací stůl, ne práce", "en": "the test bench, not the job"}
+01a04cdf-ad34-71c1-977f-792427eda1f8	3D printing	#A3A3A3	experience	{"cs": "Hardware a homelab", "en": "Hardware & homelab"}	grid	f	11	2026-08-29 09:35:22	2026-08-29 09:35:22	\N
+01a04cdf-ad35-735b-af9f-9e7251613839	Soldering	#F87171	experience	{"cs": "Hardware a homelab", "en": "Hardware & homelab"}	grid	f	12	2026-08-29 09:35:22	2026-08-29 09:35:22	\N
+01a04cdf-ad36-7369-9c20-e21d4d955707	Home automation	#FBBF24	experience	{"cs": "Hardware a homelab", "en": "Hardware & homelab"}	grid	f	13	2026-08-29 09:35:22	2026-08-29 09:35:22	\N
+01a04cdf-ad37-7166-acf4-644eaec5056f	Figma	#A259FF	using	{"cs": "Kreativní práce", "en": "Creative work"}	grid	f	14	2026-08-29 09:35:22	2026-08-29 09:35:22	{"cs": "drátěné modely dřív než první řádek kódu", "en": "wireframes before a line of code"}
+01a04cdf-ad38-7342-82b3-76522413bf71	Kdenlive	#1E88E5	using	{"cs": "Kreativní práce", "en": "Creative work"}	grid	f	15	2026-08-29 09:35:22	2026-08-29 09:35:22	\N
+01a04cdf-ad39-72bf-93a2-6da38a1d8799	GitHub	#9CA3AF	using	{"cs": "Vývojářské nástroje", "en": "Dev tools"}	grid	f	16	2026-08-29 09:35:22	2026-08-29 09:35:22	{"cs": "denní chleba, ne odznak do portfolia", "en": "daily driver, not a portfolio badge"}
+01a04cdf-ad3a-7129-b2b6-a164e7fbd590	VS Code	#007ACC	using	{"cs": "Vývojářské nástroje", "en": "Dev tools"}	grid	f	17	2026-08-29 09:35:22	2026-08-29 09:35:22	\N
+01a04cdf-ad3b-73e2-b40a-b665e4285087	Claude Code	#D97757	using	{"cs": "Vývojářské nástroje", "en": "Dev tools"}	grid	f	18	2026-08-29 09:35:22	2026-08-29 09:35:22	\N
+01a04cdf-ad3c-729d-bf70-21e0cbd4b545	Arch Linux	#1793D1	using	{"cs": "Vývojářské nástroje", "en": "Dev tools"}	grid	f	19	2026-08-29 09:35:22	2026-08-29 09:35:22	\N
+01a04cdf-ad3c-729d-bf70-21e0cc05727f	Docker	\N	\N	\N	rotation	f	20	2026-08-29 09:35:22	2026-08-29 09:35:22	\N
 \.
 
 
@@ -860,7 +840,7 @@ COPY public.users (id, name, email, email_verified_at, password, two_factor_secr
 -- Name: experiences_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public.experiences_id_seq', 84, true);
+SELECT pg_catalog.setval('public.experiences_id_seq', 76, true);
 
 
 --
@@ -881,14 +861,14 @@ SELECT pg_catalog.setval('public.jobs_id_seq', 1, false);
 -- Name: migrations_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public.migrations_id_seq', 39, true);
+SELECT pg_catalog.setval('public.migrations_id_seq', 42, true);
 
 
 --
 -- Name: settings_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public.settings_id_seq', 31, true);
+SELECT pg_catalog.setval('public.settings_id_seq', 34, true);
 
 
 --
@@ -1254,5 +1234,5 @@ ALTER TABLE ONLY public.project_badge
 -- PostgreSQL database dump complete
 --
 
-\unrestrict XN5lOnrUByfYvsluOSmmuTmjqvfeB2hMCoYpU5tecgTBkopBwPp503xvlxqpxca
+\unrestrict vGS1WxhKy92BQdRwt8s47blv2WneVqQpITkwLpW7wLa9gWfEGdXExtGiwr1P4bI
 

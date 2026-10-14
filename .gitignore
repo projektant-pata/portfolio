@@ -33,3 +33,21 @@ yarn-error.log
 /storage/logs/*
 /bootstrap/cache/*.php
 /database/*.sqlite
+
+/tests/Browser/Screenshots
+
+# Local scratch: design handoffs, source media and notes kept in the project root
+/*.zip
+/*.webm
+/*.mp4
+/*.jpg
+/*.png
+/balls
+/list
+
+# Third-party agent skills installed via `npx skills` (Boost skills stay tracked)
+/.agents
+/skills-lock.json
+/.claude/skills/brandkit
+/.claude/skills/design-taste-frontend
+/.claude/skills/high-end-visual-design
