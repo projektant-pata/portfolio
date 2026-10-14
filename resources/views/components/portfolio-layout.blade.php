@@ -1,4 +1,4 @@
-@props(['title' => config('app.name'), 'description' => '', 'styles' => []])
+@props(['title' => config('app.name'), 'description' => '', 'styles' => [], 'cta' => true])
 
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
@@ -47,6 +47,15 @@
         <div class="portfolio-col">
             <main class="portfolio-main">
                 {{ $slot }}
+
+                {{-- The closing band runs under every public page; /about-me
+                     opts out with :cta="false" because its own last section
+                     is the same band, fed from Settings. --}}
+                @if ($cta)
+                    <section id="page-cta" class="portfolio-section">
+                        <x-portfolio.cta-band />
+                    </section>
+                @endif
             </main>
         </div>
 

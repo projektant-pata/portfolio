@@ -1,0 +1,92 @@
+/* ================================================================
+   CTA BAND (.cta-band)
+   ================================================================
+   The closing band every public page ends on. It was /about-me's
+   seventh section first; the rules moved here unchanged when the
+   layout started rendering it under every page.
+
+   It stays the page's only tinted surface — that is what makes it
+   read as end punctuation rather than one more card.
+   ================================================================ */
+
+.cta-band {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 2.5rem;
+    padding: 2.8rem 3rem;
+    border: var(--border-w) solid var(--c-primary-lt);
+    border-radius: var(--r-card);
+    background: linear-gradient(
+        120deg,
+        color-mix(in srgb, var(--c-primary) 9%, var(--c-surface)),
+        var(--c-surface) 62%
+    );
+}
+
+.cta-band-available {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 11px;
+    font-weight: var(--fw-semibold);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--c-fg);
+    margin-bottom: 0.9rem;
+}
+
+.cta-band h2 {
+    font-family: var(--font-display);
+    font-size: clamp(1.8rem, 1.1rem + 2vw, 2.5rem);
+    font-weight: var(--fw-bold);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+}
+
+.cta-band h2 em {
+    font-style: normal;
+    font-weight: 500;
+    color: var(--c-primary);
+}
+
+.cta-band-sub {
+    margin-top: 0.7rem;
+    font-size: 0.95rem;
+    font-weight: var(--fw-light);
+    color: var(--c-muted);
+    max-width: 44ch;
+}
+
+.cta-band-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.8rem;
+}
+
+.cta-band-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.cta-band-fine {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.05em;
+    color: var(--c-muted);
+}
+
+/* ── Responsive ────────────────────────────────────────────────── */
+@media (max-width: 1100px) {
+    .cta-band { grid-template-columns: 1fr; }
+    .cta-band-actions { align-items: flex-start; }
+    .cta-band-row { justify-content: flex-start; }
+}
+
+@media (max-width: 760px) {
+    .cta-band { padding: 2rem 1.5rem; }
+}
