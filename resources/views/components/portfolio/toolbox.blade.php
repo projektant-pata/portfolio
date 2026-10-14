@@ -3,6 +3,7 @@
     'variant' => 'cells',
     'chips' => null,
     'chipsLabel' => '',
+    'chipsNote' => '',
     'link' => '',
     'linkLabel' => '',
 ])
@@ -10,32 +11,62 @@
 @php
     $locale = app()->getLocale();
     $chips = $chips ?? collect();
+    $groups = $variant === 'rows' ? \App\Models\Tool::groupByArea($tools) : collect();
 @endphp
 
-{{-- An empty toolbox draws no frame: the home section keeps its head, like
+{{-- An empty toolbox draws nothing: the home section keeps its head, like
      every other home section on an empty database. --}}
 @if ($tools->isNotEmpty() || $chips->isNotEmpty())
 
 {{--
-    The toolbox both pages share. `cells` is the home silhouette — eight
-    weekly drivers in hairline-divided cells; `cols` is the about-me one — the
-    same atom grouped into four labelled columns. The footer carries the
-    chip-only rows (also in rotation / learning now) and an optional link.
+    The toolbox both pages share. `list` is the home silhouette — the weekly
+    drivers as one flat, ungrouped run of rows; `rows` is the about-me
+    one, a borderless grouped list built on the same listing rhythm as /blog
+    and /projects so the three pages read as one family. Each group opens
+    with the outlined heading, gradient hairline and monospace note the year
+    heads on /projects use, then splits into two columns of rows.
 
-    No brand logos on purpose: ten third-party marks force a second visual
-    language onto the page, the 6px dot carries the same colour information.
+    The rows are a static list, not links: no hover, no focus, no cursor.
+
+    No brand logos on purpose: seventeen third-party marks force a second
+    visual language onto the page, the dot carries the same information.
 --}}
-<div class="tk">
-    @if ($variant === 'cols')
-        <div class="tk-cols">
-            @foreach (\App\Models\Tool::groupColumns($tools) as $column)
-                <div class="tk-col">
-                    <h3>{{ $column->first()->getTranslation('group', $locale) }}</h3>
-                    <div class="tk-list">
-                        @foreach ($column as $tool)
-                            <x-portfolio.tool-item :tool="$tool" />
+<div class="tk tk--{{ $variant }}">
+    @if ($variant === 'rows')
+        <div class="tk-groups">
+            @foreach ($groups as $group)
+                @php $note = \App\Models\Tool::noteFor($group, $locale); @endphp
+                <div class="tk-group">
+                    <div class="tk-ghead">
+                        <h3>{{ $group->first()->getTranslation('group', $locale) }}</h3>
+                        <span class="tk-gline"></span>
+                        @if ($note !== '')
+                            <span class="tk-gnote">{{ $note }}</span>
+                        @endif
+                    </div>
+                    <div class="tk-rows">
+                        @foreach ($group as $tool)
+                            <div class="tk-row">
+                                <x-portfolio.tool-item :tool="$tool" />
+                                @if ($tool->state)
+                                    <span class="tk-state" data-s="{{ $tool->state }}">{{ __('pages/toolbox.state.'.$tool->state) }}</span>
+                                @endif
+                            </div>
                         @endforeach
                     </div>
+                </div>
+            @endforeach
+        </div>
+    @elseif ($variant === 'list')
+        {{-- Home: the same rows, minus the group heads and their rules — the
+             section head already says what this is. --}}
+        <div class="tk-rows">
+            @foreach ($tools as $tool)
+                <div class="tk-row">
+                    <x-portfolio.tool-item :tool="$tool" />
+                    @if ($tool->state)
+                        <span class="tk-state" data-s="{{ $tool->state }}">{{ __('pages/toolbox.state.'.$tool->state) }}</span>
+                    @endif
                 </div>
             @endforeach
         </div>
@@ -52,16 +83,23 @@
     @if ($chips->isNotEmpty() || $link !== '')
         <div class="tk-foot">
             @if ($chips->isNotEmpty())
-                <b>{{ $chipsLabel }}</b>
-                <div class="tk-chips">
-                    @foreach ($chips as $chip)
-                        <span class="tk-chip">{{ $chip->name }}</span>
-                    @endforeach
+                <div class="tk-foot-chips">
+                    <b>{{ $chipsLabel }}</b>
+                    <div class="tk-chips">
+                        @foreach ($chips as $chip)
+                            <span class="tk-chip">{{ $chip->name }}</span>
+                        @endforeach
+                    </div>
+                    @if ($chipsNote !== '')
+                        <span class="tk-chips-note">{{ $chipsNote }}</span>
+                    @endif
                 </div>
             @endif
 
             @if ($link !== '')
-                <a class="tk-link" href="{{ $link }}">{{ $linkLabel }}</a>
+                <div class="tk-foot-side">
+                    <a class="tk-link" href="{{ $link }}">{{ $linkLabel }}</a>
+                </div>
             @endif
         </div>
     @endif

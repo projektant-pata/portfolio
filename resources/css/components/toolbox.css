@@ -1,26 +1,26 @@
 /* ================================================================
    TOOLBOX (.tk)
    ================================================================
-   One frame, one atom, two silhouettes: the home page renders eight
-   weekly drivers in hairline-divided cells (.tk-cells), /about-me
-   renders the full set in four labelled columns (.tk-cols). Both use
-   the same row — 6px brand dot, name, monospace frequency — so the
-   two pages read as one system.
+   One atom, three silhouettes. The home page renders the weekly
+   drivers as one flat, ungrouped run of rows (.tk--list);
+   /about-me renders the full set as the same rows, grouped under
+   outlined headings (.tk--rows) — the listing rhythm of /blog and
+   /projects, so the pages read as one family. (.tk--cells, the old
+   home card, is kept for anything that still wants a framed grid.)
 
-   Dividers are drawn per cell with nth-child rules, not with a
-   modifier class, so the responsive column counts stay correct.
+   The old four-step frequency scale is gone. A row says `using` or
+   `experience` and nothing else: never a percentage, never a skill
+   bar.
+
+   Rows are a static list, not links: no hover, no focus, no cursor
+   change, no transition. Dividers are drawn per row with nth-child
+   rules, not with a modifier class, so the responsive column counts
+   stay correct.
    ================================================================ */
 
-.tk {
-    border: var(--border-w) solid var(--c-primary-fade);
-    border-radius: var(--r-card);
-    background: var(--c-surface);
-    overflow: hidden;
-}
-
-/* ── The shared row ────────────────────────────────────────────── */
+/* ── The shared atom ───────────────────────────────────────────── */
 .tk-item {
-    display: flex;
+    display: inline-flex;
     align-items: baseline;
     gap: 0.6rem;
     font-size: 0.95rem;
@@ -38,47 +38,107 @@
     translate: 0 -2px;
 }
 
-.tk-item small {
-    margin-left: auto;
-    font-family: var(--font-mono);
-    font-size: 10px;
-    letter-spacing: 0.05em;
-    color: var(--c-muted);
-    text-transform: uppercase;
-}
-
-/* ── About me · four grouped columns ───────────────────────────── */
-.tk-cols {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-}
-
-.tk-col {
+/* ── Rows · about-me groups, home flat run ─────────────────────── */
+.tk-groups {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
-    padding: 1.9rem 1.6rem;
+    gap: 2.3rem;
 }
 
-.tk-col:not(:nth-child(4n + 1)) {
-    border-left: 1px solid color-mix(in srgb, var(--c-primary-fade) 45%, transparent);
+.tk-group {
+    display: grid;
 }
 
-.tk-col h3 {
-    font-size: 11px;
-    font-weight: var(--fw-semibold);
-    letter-spacing: 0.14em;
+/* The year-head device from /projects, reused rather than reinvented:
+   outlined display heading, gradient hairline, monospace note. */
+.tk-ghead {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 1.1rem;
+    padding-bottom: 0.55rem;
+}
+
+.tk-ghead h3 {
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    font-weight: var(--fw-bold);
+    letter-spacing: -0.035em;
+    line-height: 0.9;
+    color: transparent;
+    -webkit-text-stroke: 1px var(--c-primary);
+}
+
+/* Group names keep the accent outline in light mode — they are content,
+   not texture, unlike the watermark-style headings that turn solid sand. */
+html:not(.dark) .portfolio-page .tk-ghead h3 {
+    color: transparent;
+    -webkit-text-stroke: 1px var(--c-primary);
+}
+
+.tk-gline {
+    height: 1px;
+    background: linear-gradient(
+        90deg,
+        color-mix(in srgb, var(--c-primary-fade) 90%, transparent),
+        color-mix(in srgb, var(--c-primary-fade) 15%, transparent)
+    );
+}
+
+.tk-gnote {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
+    color: var(--c-muted);
+    white-space: nowrap;
+}
+
+.tk-rows {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    column-gap: 3rem;
+}
+
+.tk-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: baseline;
+    gap: 1rem;
+    padding: 0.72rem 0.15rem;
+    border-top: 1px solid color-mix(in srgb, var(--c-primary-fade) 45%, transparent);
+}
+
+/* The first row of *each* column loses its rule, which is what lines the
+   hairlines up across the two columns. */
+.tk-rows .tk-row:nth-child(-n + 2) {
+    border-top: 0;
+}
+
+.tk-state {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--c-muted);
+}
+
+.tk-state[data-s='using'] {
     color: var(--c-primary);
 }
 
-.tk-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.55rem;
+.tk-state[data-s='experience'] {
+    color: color-mix(in srgb, var(--c-muted) 78%, transparent);
 }
 
-/* ── Home · 4×2 divided cells ──────────────────────────────────── */
+/* ── Home · divided cells in a card ────────────────────────────── */
+.tk--cells {
+    border: var(--border-w) solid var(--c-primary-fade);
+    border-radius: var(--r-card);
+    background: var(--c-surface);
+    overflow: hidden;
+}
+
 .tk-cells {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -102,15 +162,39 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 1rem;
+    gap: 1rem 1.6rem;
     flex-wrap: wrap;
-    padding: 1rem 1.6rem;
+    font-size: 0.9rem;
+    font-weight: var(--fw-light);
+    color: var(--c-muted);
+}
+
+/* The home footer is a sunken bar inside the card; the about-me one stays
+   borderless top to bottom, carried by a single hairline. */
+.tk--cells .tk-foot {
+    padding: 1rem 1.7rem;
     background: var(--c-surface-sunken);
     border-top: 1px solid color-mix(in srgb, var(--c-primary-fade) 45%, transparent);
 }
 
+.tk--rows .tk-foot,
+.tk--list .tk-foot {
+    margin-top: 2.3rem;
+    padding-top: 1.3rem;
+    border-top: 1px solid color-mix(in srgb, var(--c-primary-fade) 50%, transparent);
+}
+
+.tk-foot-chips,
+.tk-foot-side {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+}
+
 .tk-foot b {
-    font-size: 10.5px;
+    font-family: var(--font-mono);
+    font-size: 10px;
     font-weight: var(--fw-semibold);
     letter-spacing: 0.12em;
     text-transform: uppercase;
@@ -119,7 +203,7 @@
 
 .tk-chips {
     display: flex;
-    gap: 0.5rem;
+    gap: 0.6rem;
     flex-wrap: wrap;
 }
 
@@ -144,23 +228,20 @@
 
 /* ── Responsive ────────────────────────────────────────────────── */
 @media (max-width: 1100px) {
-    .tk-cols,
+    .tk-rows {
+        column-gap: 2rem;
+    }
+
     .tk-cells {
         grid-template-columns: repeat(2, 1fr);
     }
 
-    .tk-col:not(:nth-child(4n + 1)),
     .tk-cells > .tk-cell:not(:nth-child(4n + 1)) {
         border-left: 0;
     }
 
-    .tk-col:nth-child(even),
     .tk-cells > .tk-cell:nth-child(even) {
         border-left: 1px solid color-mix(in srgb, var(--c-primary-fade) 45%, transparent);
-    }
-
-    .tk-col:nth-child(n + 3) {
-        border-top: 1px solid color-mix(in srgb, var(--c-primary-fade) 45%, transparent);
     }
 
     .tk-cells > .tk-cell:nth-child(-n + 4) {
@@ -173,20 +254,31 @@
 }
 
 @media (max-width: 760px) {
-    .tk-cols,
+    /* One column means "the first row of each column" no longer describes the
+       second row, which gets its hairline back. */
+    .tk-rows {
+        grid-template-columns: 1fr;
+    }
+
+    .tk-rows .tk-row:nth-child(2) {
+        border-top: 1px solid color-mix(in srgb, var(--c-primary-fade) 45%, transparent);
+    }
+
     .tk-cells {
         grid-template-columns: 1fr;
     }
 
     /* `:nth-child(n)` only to outweigh the two-column rules above. */
-    .tk-cols > .tk-col:nth-child(n),
     .tk-cells > .tk-cell:nth-child(n) {
         border-left: 0;
         border-top: 1px solid color-mix(in srgb, var(--c-primary-fade) 45%, transparent);
     }
 
-    .tk-cols > .tk-col:first-child,
     .tk-cells > .tk-cell:first-child {
         border-top: 0;
+    }
+
+    .tk--cells .tk-foot {
+        padding: 1rem 1.3rem;
     }
 }

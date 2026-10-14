@@ -9,8 +9,9 @@ test('an admin can create a grid tool', function () {
         ->test('pages::manage.tools')
         ->set('name', 'Spring Boot')
         ->set('color', '#6DB33F')
-        ->set('frequency', 'daily')
+        ->set('state', 'using')
         ->set('group', ['en' => 'Backend', 'cs' => 'Backend'])
+        ->set('groupNote', ['en' => 'where I actually live', 'cs' => 'kde vážně bydlím'])
         ->set('placement', 'grid')
         ->set('showOnHome', true)
         ->call('save')
@@ -19,7 +20,9 @@ test('an admin can create a grid tool', function () {
     $tool = Tool::first();
 
     expect($tool->name)->toBe('Spring Boot')
+        ->and($tool->state)->toBe('using')
         ->and($tool->group)->toEqual(['en' => 'Backend', 'cs' => 'Backend'])
+        ->and($tool->group_note)->toEqual(['en' => 'where I actually live', 'cs' => 'kde vážně bydlím'])
         ->and($tool->show_on_home)->toBeTrue();
 });
 
@@ -32,12 +35,13 @@ test('a tool requires a name and rejects a malformed colour', function () {
         ->assertHasErrors(['name', 'color']);
 });
 
-test('a chip tool drops the group, frequency, colour and home flag', function () {
+test('a chip tool drops the group, state, colour and home flag', function () {
     Livewire::actingAs(User::factory()->create())
         ->test('pages::manage.tools')
         ->set('name', 'Kubernetes')
         ->set('group', ['en' => 'Backend', 'cs' => 'Backend'])
-        ->set('frequency', 'daily')
+        ->set('groupNote', ['en' => 'where I actually live'])
+        ->set('state', 'using')
         ->set('color', '#6DB33F')
         ->set('showOnHome', true)
         ->set('placement', 'learning')
@@ -48,7 +52,8 @@ test('a chip tool drops the group, frequency, colour and home flag', function ()
 
     expect($tool->placement)->toBe('learning')
         ->and($tool->group)->toBeNull()
-        ->and($tool->frequency)->toBeNull()
+        ->and($tool->group_note)->toBeNull()
+        ->and($tool->state)->toBeNull()
         ->and($tool->color)->toBeNull()
         ->and($tool->show_on_home)->toBeFalse();
 });

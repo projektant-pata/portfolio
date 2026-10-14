@@ -15,6 +15,9 @@ class Interest extends Model
         'highlight',
         'body',
         'meta',
+        'label',
+        'pull',
+        'facts',
         'image_path',
         'sort_order',
     ];
@@ -24,6 +27,9 @@ class Interest extends Model
         'highlight' => 'array',
         'body' => 'array',
         'meta' => 'array',
+        'label' => 'array',
+        'pull' => 'array',
+        'facts' => 'array',
         'sort_order' => 'integer',
     ];
 
@@ -60,5 +66,44 @@ class Interest extends Model
         }
 
         return str_replace($escapedHighlight, '<span>'.$escapedHighlight.'</span>', $title);
+    }
+
+    /**
+     * `body` split into paragraphs on a blank line, trimmed, empty ones dropped.
+     * A single-paragraph body still comes back as a one-element array.
+     *
+     * @return array<int, string>
+     */
+    public function paragraphs(string $locale): array
+    {
+        $body = $this->getTranslation('body', $locale);
+
+        if ($body === '') {
+            return [];
+        }
+
+        return collect(preg_split('/\R\s*\R/', $body))
+            ->map(fn (string $paragraph) => trim($paragraph))
+            ->filter()
+            ->values()
+            ->all();
+    }
+
+    /**
+     * The chapter's fact rows for the given locale, falling back to English.
+     * Named `factRows` rather than `facts` so it does not collide with the
+     * `facts` attribute/cast.
+     *
+     * @return array<int, array{dt: string, dd: string}>
+     */
+    public function factRows(string $locale): array
+    {
+        $facts = $this->facts[$locale] ?? $this->facts['en'] ?? [];
+
+        if (! is_array($facts)) {
+            return [];
+        }
+
+        return $facts;
     }
 }

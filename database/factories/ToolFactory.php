@@ -15,8 +15,9 @@ class ToolFactory extends Factory
         return [
             'name' => $this->faker->unique()->word(),
             'color' => $this->faker->hexColor(),
-            'frequency' => $this->faker->randomElement(Tool::FREQUENCIES),
+            'state' => $this->faker->randomElement(Tool::STATES),
             'group' => ['en' => 'Backend'],
+            'group_note' => null,
             'placement' => 'grid',
             'show_on_home' => false,
             'sort_order' => 0,
@@ -28,13 +29,13 @@ class ToolFactory extends Factory
         return $this->state(fn () => ['show_on_home' => true]);
     }
 
-    /** A chip in one of the two footers: no group, no frequency. */
+    /** A chip in one of the two footers: no group, no state. */
     public function chip(string $placement = 'rotation'): static
     {
         return $this->state(fn () => [
             'placement' => $placement,
             'group' => null,
-            'frequency' => null,
+            'state' => null,
             'color' => null,
         ]);
     }

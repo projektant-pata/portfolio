@@ -1,14 +1,13 @@
 <?php
 
 return [
-    'frequency' => [
-        'daily' => 'daily',
-        'often' => 'often',
-        'sometimes' => 'sometimes',
-        'rarely' => 'rarely',
+    'state' => [
+        'using' => 'using',
+        'experience' => 'experience',
     ],
 
     'rotation_label' => 'Also in rotation',
     'learning_label' => 'Learning now',
+    'learning_note' => '— the homelab is my test bench for all three.',
     'about_link' => 'Full toolbox on About me →',
 ];

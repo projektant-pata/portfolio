@@ -11,8 +11,9 @@ new #[Title('Manage tools')] class extends Component {
     public ?string $editingId = null;
     public string $name = '';
     public string $color = '';
-    public string $frequency = 'daily';
+    public string $state = 'using';
     public array $group = ['en' => '', 'cs' => ''];
+    public array $groupNote = ['en' => '', 'cs' => ''];
     public string $placement = 'grid';
     public bool $showOnHome = false;
 
@@ -66,8 +67,9 @@ new #[Title('Manage tools')] class extends Component {
         $this->editingId = $id;
         $this->name = $tool->name;
         $this->color = $tool->color ?? '';
-        $this->frequency = $tool->frequency ?? '';
+        $this->state = $tool->state ?? '';
         $this->group = array_merge(['en' => '', 'cs' => ''], $tool->group ?? []);
+        $this->groupNote = array_merge(['en' => '', 'cs' => ''], $tool->group_note ?? []);
         $this->placement = $tool->placement;
         $this->showOnHome = $tool->show_on_home;
         $this->modal('form')->show();
@@ -80,23 +82,27 @@ new #[Title('Manage tools')] class extends Component {
         $validated = $this->validate([
             'name' => ['required', 'string', 'max:80'],
             'color' => ['nullable', 'string', 'regex:/^#[0-9A-Fa-f]{6}$/'],
-            'frequency' => ['nullable', 'string', 'in:'.implode(',', Tool::FREQUENCIES)],
+            'state' => ['nullable', 'string', 'in:'.implode(',', Tool::STATES)],
             'group' => ['nullable', 'array'],
             'group.en' => ['nullable', 'string', 'max:60'],
             'group.cs' => ['nullable', 'string', 'max:60'],
+            'groupNote' => ['nullable', 'array'],
+            'groupNote.en' => ['nullable', 'string', 'max:60'],
+            'groupNote.cs' => ['nullable', 'string', 'max:60'],
             'placement' => ['required', 'string', 'in:'.implode(',', Tool::PLACEMENTS)],
             'showOnHome' => ['boolean'],
         ]);
 
         /* Chips carry a name and nothing else: a group would invent a fifth
-           column and a frequency would render a label the chip cannot show. */
+           heading and a state would render a label the chip cannot show. */
         $isGrid = $validated['placement'] === 'grid';
 
         $data = [
             'name' => $validated['name'],
             'color' => $isGrid ? ($validated['color'] ?: null) : null,
-            'frequency' => $isGrid ? ($validated['frequency'] ?: null) : null,
+            'state' => $isGrid ? ($validated['state'] ?: null) : null,
             'group' => $isGrid ? array_filter($validated['group'] ?? [], fn ($v) => filled($v)) : null,
+            'group_note' => $isGrid ? array_filter($validated['groupNote'] ?? [], fn ($v) => filled($v)) : null,
             'placement' => $validated['placement'],
             'show_on_home' => $isGrid && $validated['showOnHome'],
         ];
@@ -134,8 +140,9 @@ new #[Title('Manage tools')] class extends Component {
         $this->editingId = null;
         $this->name = '';
         $this->color = '';
-        $this->frequency = 'daily';
+        $this->state = 'using';
         $this->group = ['en' => '', 'cs' => ''];
+        $this->groupNote = ['en' => '', 'cs' => ''];
         $this->placement = 'grid';
         $this->showOnHome = false;
         $this->resetValidation();
@@ -156,7 +163,7 @@ new #[Title('Manage tools')] class extends Component {
             <flux:table.column></flux:table.column>
             <flux:table.column>Name</flux:table.column>
             <flux:table.column>Group (EN)</flux:table.column>
-            <flux:table.column>Frequency</flux:table.column>
+            <flux:table.column>State</flux:table.column>
             <flux:table.column>Placement</flux:table.column>
             <flux:table.column>Home</flux:table.column>
             <flux:table.column></flux:table.column>
@@ -170,7 +177,7 @@ new #[Title('Manage tools')] class extends Component {
                     </flux:table.cell>
                     <flux:table.cell variant="strong">{{ $tool->name }}</flux:table.cell>
                     <flux:table.cell>{{ $tool->group['en'] ?? '—' }}</flux:table.cell>
-                    <flux:table.cell>{{ $tool->frequency ?? '—' }}</flux:table.cell>
+                    <flux:table.cell>{{ $tool->state ?? '—' }}</flux:table.cell>
                     <flux:table.cell>{{ $tool->placement }}</flux:table.cell>
                     <flux:table.cell>{{ $tool->show_on_home ? 'Yes' : '—' }}</flux:table.cell>
                     <flux:table.cell wire:sort:ignore>
@@ -189,7 +196,7 @@ new #[Title('Manage tools')] class extends Component {
     {{-- Create / Edit modal --}}
     <flux:modal name="form" class="w-full md:w-[640px]">
         <flux:heading>{{ $editingId ? 'Edit tool' : 'New tool' }}</flux:heading>
-        <flux:text class="mt-1 mb-5">Grid tools fill the four about-me columns; rotation and learning rows are chips in the two footers.</flux:text>
+        <flux:text class="mt-1 mb-5">Grid tools fill the about-me groups; rotation and learning rows are chips in the two footers.</flux:text>
 
         <form wire:submit="save" class="space-y-4">
             <flux:field>
@@ -214,8 +221,14 @@ new #[Title('Manage tools')] class extends Component {
                         <flux:field>
                             <flux:label>Group</flux:label>
                             <flux:input wire:model="group.en" placeholder="e.g. Backend" />
-                            <flux:description>The column heading. Tools sharing an English group land in one column.</flux:description>
+                            <flux:description>The group heading. Tools sharing an English group land under one heading.</flux:description>
                             <flux:error name="group.en" />
+                        </flux:field>
+                        <flux:field>
+                            <flux:label>Group note</flux:label>
+                            <flux:input wire:model="groupNote.en" placeholder="e.g. where I actually live" />
+                            <flux:description>Prints beside the group heading. The first tool in the group that has one speaks for all of them.</flux:description>
+                            <flux:error name="groupNote.en" />
                         </flux:field>
                     </x-slot:en>
                     <x-slot:cs>
@@ -224,17 +237,23 @@ new #[Title('Manage tools')] class extends Component {
                             <flux:input wire:model="group.cs" placeholder="např. Backend" />
                             <flux:error name="group.cs" />
                         </flux:field>
+                        <flux:field>
+                            <flux:label>Group note</flux:label>
+                            <flux:input wire:model="groupNote.cs" placeholder="např. kde vážně bydlím" />
+                            <flux:error name="groupNote.cs" />
+                        </flux:field>
                     </x-slot:cs>
                 </x-manage.locale-tabs>
 
                 <flux:field>
-                    <flux:label>Frequency</flux:label>
-                    <flux:select wire:model="frequency">
-                        @foreach (\App\Models\Tool::FREQUENCIES as $option)
+                    <flux:label>State</flux:label>
+                    <flux:select wire:model="state">
+                        @foreach (\App\Models\Tool::STATES as $option)
                             <flux:select.option value="{{ $option }}">{{ $option }}</flux:select.option>
                         @endforeach
                     </flux:select>
-                    <flux:error name="frequency" />
+                    <flux:description>Using is what you build with now; experience is what you have shipped with before.</flux:description>
+                    <flux:error name="state" />
                 </flux:field>
 
                 <flux:field>
