@@ -9,6 +9,9 @@
 
 @import '../components/dock-hero.css';
 @import '../components/section-head.css';
+@import '../components/availability-dot.css';
+@import '../components/pill-button.css';
+@import '../components/cta-band.css';
 
 :root {
     --blog-ink:        color-mix(in srgb, var(--c-fg) 88%, var(--c-bg));

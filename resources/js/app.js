@@ -33,6 +33,54 @@ function updateClock() {
     }
 }
 
+// ── Mobile nav easter eggs ──────────────────────────────────
+
+function initEggCalendar() {
+    const btn = document.getElementById('mobile-nav-egg-calendar');
+    if (!btn) return;
+
+    const weekdayEl = document.getElementById('mobile-nav-egg-calendar-weekday');
+    const dayEl = document.getElementById('mobile-nav-egg-calendar-day');
+    const eggLocale = btn.dataset.locale === 'cs' ? 'cs-CZ' : 'en-US';
+    const now = new Date();
+
+    if (weekdayEl) weekdayEl.textContent = new Intl.DateTimeFormat(eggLocale, { weekday: 'long' }).format(now);
+    if (dayEl) dayEl.textContent = now.getDate();
+
+    btn.addEventListener('click', () => {
+        if (window.confirm(btn.dataset.confirm)) {
+            window.open(btn.dataset.url, '_blank', 'noopener,noreferrer');
+        }
+    });
+}
+
+function initEggLightbulb() {
+    const btn = document.getElementById('mobile-nav-egg-lightbulb');
+    if (!btn) return;
+
+    let quotes = [];
+    try {
+        quotes = JSON.parse(btn.dataset.quotes || '[]');
+    } catch {
+        quotes = [];
+    }
+
+    btn.addEventListener('click', () => {
+        if (!quotes.length) return;
+        const { quote, author } = quotes[Math.floor(Math.random() * quotes.length)];
+        window.alert(`"${quote}"\n— ${author}`);
+    });
+}
+
+function initEggSettings() {
+    const btn = document.getElementById('mobile-nav-egg-settings');
+    if (!btn) return;
+
+    btn.addEventListener('click', () => {
+        window.alert(btn.dataset.info);
+    });
+}
+
 function toggleMobileNav() {
     if (window.innerWidth > 992) {
         return;
@@ -89,50 +137,42 @@ function setTheme(preference) {
 window.getThemePreference = () => getCookie('theme') || 'dark';
 window.setThemePreference = setTheme;
 
-// ── Work / Education tab toggle ──────────────────────────────
+// ── Work & Life scope toggle ─────────────────────────────────
 
-function crossfadeContent(target, other) {
-    if (target === other || target.style.display === 'block') {
+/**
+ * One listener for the home timeline: it flips `aria-pressed` on the two
+ * segment buttons, hides every entry and photo belonging to the other scope,
+ * and swaps the footer count. The counts are rendered server-side into
+ * `data-count`, so this file never has to know a translation.
+ */
+function initWorkLifeToggle() {
+    const seg = document.getElementById('wl-seg');
+    const count = document.getElementById('wl-count');
+
+    if (!seg) {
         return;
     }
 
-    other.classList.add('is-fading');
-    target.classList.add('is-fading');
+    seg.addEventListener('click', (event) => {
+        const button = event.target.closest('button');
 
-    setTimeout(() => {
-        other.style.display = 'none';
-        target.style.display = 'block';
+        if (!button) {
+            return;
+        }
 
-        requestAnimationFrame(() => {
-            requestAnimationFrame(() => target.classList.remove('is-fading'));
+        const scope = button.dataset.scope;
+
+        seg.querySelectorAll('button').forEach((other) => {
+            other.setAttribute('aria-pressed', String(other === button));
         });
-    }, 180);
-}
 
-function initWorkToggle() {
-    const workBtn = document.getElementById('work-top-btn-work');
-    const lifeBtn = document.getElementById('work-top-btn-life');
-    const workContent = document.getElementById('work-bot-content-work');
-    const lifeContent = document.getElementById('work-bot-content-life');
+        document.querySelectorAll('.wl-e, .wl-shot, .wl-empty').forEach((element) => {
+            element.hidden = element.dataset.scope !== scope;
+        });
 
-    if (!workBtn || !lifeBtn) {
-        return;
-    }
-
-    workBtn.addEventListener('click', () => {
-        crossfadeContent(workContent, lifeContent);
-        workBtn.classList.add('active');
-        lifeBtn.classList.remove('active');
-        workBtn.setAttribute('aria-pressed', 'true');
-        lifeBtn.setAttribute('aria-pressed', 'false');
-    });
-
-    lifeBtn.addEventListener('click', () => {
-        crossfadeContent(lifeContent, workContent);
-        lifeBtn.classList.add('active');
-        workBtn.classList.remove('active');
-        lifeBtn.setAttribute('aria-pressed', 'true');
-        workBtn.setAttribute('aria-pressed', 'false');
+        if (count && button.dataset.count) {
+            count.innerHTML = button.dataset.count;
+        }
     });
 }
 
@@ -614,7 +654,10 @@ document.addEventListener('DOMContentLoaded', () => {
         toggleTheme();
     });
 
-    initWorkToggle();
+    initWorkLifeToggle();
+    initEggCalendar();
+    initEggLightbulb();
+    initEggSettings();
 
     fetchChessElo();
     fetchGithubRepos();

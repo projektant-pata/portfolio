@@ -22,6 +22,8 @@ class BadgesSeeder extends Seeder
             ['education',   'Education',   'Vzdělání',      '#38BDF8'], // sky
             ['hardware',    'Hardware',    'Hardware',      '#F59E0B'], // amber
             ['it',          'IT',          'IT',            '#818CF8'], // indigo
+            ['hackathon',   'Hackathon',   'Hackathon',     '#F472B6'], // pink
+            ['non-profit',  'Non-profit',  'Nezisková organizace', '#4ADE80'], // green
             // tech
             ['java',        'Java',        'Java',          '#F97316'], // orange
             ['php',         'PHP',         'PHP',           '#A78BFA'], // violet
@@ -30,6 +32,9 @@ class BadgesSeeder extends Seeder
             ['symfony',     'Symfony',     'Symfony',       '#64748B'], // slate (brand black)
             ['spring-boot', 'Spring Boot', 'Spring Boot',   '#6DB33F'], // Spring green
             ['javascript',  'JavaScript',  'JavaScript',    '#F7DF1E'], // JS yellow
+            ['typescript',  'TypeScript',  'TypeScript',    '#3178C6'], // TS blue
+            ['html',        'HTML',        'HTML',          '#E34F26'], // HTML orange
+            ['css',         'CSS',         'CSS',           '#2965F1'], // CSS blue
             ['blockchain',  'Blockchain',  'Blockchain',    '#22D3EE'], // cyan
         ];
 

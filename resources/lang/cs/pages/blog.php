@@ -4,6 +4,7 @@ return [
     'hero_wordmark' => 'Blog',
     'hero_tags' => ['Zápisky ze stavění', 'Homelab', 'Soutěže', 'Backend', 'Postmortemy'],
 
+    'head_ghost' => 'Archiv',
     'head_eyebrow' => 'Archiv',
     'head_title' => 'Všechno, co jsem <em>vydal</em>',
     'count_one' => ':count z :total článku',
@@ -21,6 +22,7 @@ return [
     'reading_time' => ':minutes min čtení',
     'back' => 'Všechny články',
     'read_next' => 'Číst dál',
+    'read_next_ghost' => 'Číst dál',
     'read_next_eyebrow' => 'Čti dál',
     'foot_written' => 'Napsáno v Markdownu, publikováno Laravelem.',
     'foot_mistake' => 'Našli jste chybu? <a href=":url">Napište mi</a>.',

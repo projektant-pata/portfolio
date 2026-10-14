@@ -29,6 +29,8 @@ new #[Title('Manage Site content')] class extends Component {
         'projects_hero_title',
         'blog_hero_suptitle',
         'blog_hero_title',
+        'contact_hero_suptitle',
+        'contact_hero_title',
         'stats_title',
         'tools_title',
         'reviews_title',
@@ -37,6 +39,7 @@ new #[Title('Manage Site content')] class extends Component {
         'about_available',
         'about_cta_title',
         'about_cta_sub',
+        'about_off_end',
     ];
 
     /** @var array<int, string> Keys edited as a newline-separated textarea. */
@@ -46,6 +49,7 @@ new #[Title('Manage Site content')] class extends Component {
         'experience_hero_roles',
         'projects_hero_roles',
         'blog_hero_roles',
+        'contact_hero_roles',
     ];
 
     /** @var array<int, string> Keys edited as a newline-separated list of paragraphs. */
@@ -66,8 +70,9 @@ new #[Title('Manage Site content')] class extends Component {
         'Experience hero' => ['experience_hero_suptitle', 'experience_hero_title', 'experience_hero_roles'],
         'Projects hero' => ['projects_hero_suptitle', 'projects_hero_title', 'projects_hero_roles'],
         'Blog hero' => ['blog_hero_suptitle', 'blog_hero_title', 'blog_hero_roles'],
+        'Contact hero' => ['contact_hero_suptitle', 'contact_hero_title', 'contact_hero_roles'],
         'Section titles' => ['stats_title', 'tools_title', 'reviews_title', 'about_title'],
-        'About me page' => ['about_intro_lead', 'about_intro_body', 'about_facts', 'about_available', 'about_cta_title', 'about_cta_sub'],
+        'About me page' => ['about_intro_lead', 'about_intro_body', 'about_facts', 'about_available', 'about_off_end', 'about_cta_title', 'about_cta_sub'],
     ];
 
     public function mount(): void

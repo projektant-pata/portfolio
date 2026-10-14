@@ -1,219 +1,16 @@
 @import '../components/dock-hero.css';
 @import '../components/section-head.css';
+@import '../components/availability-dot.css';
+@import '../components/pill-button.css';
+@import '../components/cta-band.css';
+@import '../components/filter-bar.css';
 
 /* ================================================================
    EXPERIENCE PAGE STYLES
    ================================================================ */
 
-/* ── Filter bar ── */
-
-.exp-filterbar {
-    display: grid;
-    gap: 0.8rem;
-    margin-bottom: 2.25rem;
-    padding: 0.8rem 1rem;
-    background: var(--c-surface);
-    border: var(--border-w) solid var(--c-primary-fade);
-    border-radius: var(--r-card-sm);
-    position: relative;
-    z-index: 2;
-}
-
-.exp-filterbar-row {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 0.6rem 1rem;
-}
-
-.exp-filterbar-row + .exp-filterbar-row {
-    border-top: 1px solid color-mix(in srgb, var(--c-primary-fade) 55%, transparent);
-    padding-top: 0.8rem;
-}
-
-/* ── Scope segmented control ── */
-
-.exp-scope {
-    position: relative;
-    display: inline-flex;
-    gap: 0.1rem;
-    padding: 0.2rem;
-    border-radius: 999px;
-    background: var(--c-surface-sunken);
-    border: 1px solid color-mix(in srgb, var(--c-primary-fade) 60%, transparent);
-}
-
-/* Width and translateX are set from JS off the pressed button's box. */
-.exp-scope-thumb {
-    position: absolute;
-    top: 0.2rem;
-    bottom: 0.2rem;
-    left: 0.2rem;
-    width: 0;
-    border-radius: 999px;
-    background: var(--c-primary);
-    transition: transform var(--t-fast), width var(--t-fast);
-}
-
-.exp-scope button {
-    position: relative;
-    font: inherit;
-    font-size: var(--fs-sm);
-    font-weight: var(--fw-semibold);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    padding: 0.35rem 1.05rem;
-    border: 0;
-    border-radius: 999px;
-    background: transparent;
-    color: var(--c-muted);
-    cursor: pointer;
-    transition: color var(--t-fast);
-}
-
-.exp-scope button:hover {
-    color: var(--c-fg);
-}
-
-.exp-scope button[aria-pressed="true"] {
-    color: var(--c-bg);
-}
-
-/* ── Search ── */
-
-.exp-search {
-    flex: 1 1 15rem;
-    min-width: 11rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.4rem 0.85rem;
-    border-radius: 999px;
-    background: var(--c-surface-sunken);
-    border: 1px solid transparent;
-    transition: border-color var(--t-fast);
-}
-
-.exp-search:focus-within {
-    border-color: var(--c-primary);
-}
-
-.exp-search svg {
-    flex-shrink: 0;
-    width: 14px;
-    height: 14px;
-    fill: none;
-    stroke: var(--c-muted);
-    stroke-width: 1.6;
-    transition: stroke var(--t-fast);
-}
-
-.exp-search:focus-within svg {
-    stroke: var(--c-primary);
-}
-
-.exp-search input {
-    flex: 1;
-    min-width: 0;
-    border: 0;
-    background: transparent;
-    color: var(--c-fg);
-    font-family: inherit;
-    font-size: var(--fs-sm);
-    outline: none;
-}
-
-.exp-search input::placeholder {
-    color: var(--c-muted);
-}
-
-/* ── Result count ── */
-
-.exp-count {
-    margin-left: auto;
-    font-family: ui-monospace, monospace;
-    font-size: var(--fs-mini);
-    color: var(--c-muted);
-    white-space: nowrap;
-}
-
-.exp-count b {
-    color: var(--c-primary);
-    font-weight: var(--fw-semibold);
-}
-
-/* ── Badge tag chips ── */
-
-.exp-tags {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.4rem;
-    flex: 1;
-}
-
-.exp-tag {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.45rem;
-    font-family: inherit;
-    font-size: var(--fs-mini);
-    padding: 0.25rem 0.75rem 0.25rem 0.6rem;
-    border-radius: 999px;
-    border: 1px solid color-mix(in srgb, var(--c-primary-fade) 70%, transparent);
-    background: transparent;
-    color: var(--c-muted);
-    cursor: pointer;
-    transition: color var(--t-fast), border-color var(--t-fast), background var(--t-fast);
-}
-
-.exp-tag::before {
-    content: '';
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--badge-color, var(--c-primary));
-    transition: box-shadow var(--t-fast);
-}
-
-.exp-tag:hover {
-    color: var(--c-fg);
-    border-color: color-mix(in srgb, var(--badge-color, var(--c-primary)) 55%, transparent);
-}
-
-.exp-tag[aria-pressed="true"] {
-    color: var(--badge-color, var(--c-primary));
-    border-color: color-mix(in srgb, var(--badge-color, var(--c-primary)) 60%, transparent);
-    background: color-mix(in srgb, var(--badge-color, var(--c-primary)) 14%, transparent);
-}
-
-.exp-tag[aria-pressed="true"]::before {
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--badge-color, var(--c-primary)) 28%, transparent);
-}
-
-/* ── Clear ── */
-
-.exp-clear {
-    font-family: inherit;
-    font-size: var(--fs-mini);
-    color: var(--c-muted);
-    background: transparent;
-    border: 0;
-    padding: 0.25rem 0.2rem;
-    cursor: pointer;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity var(--t-fast), color var(--t-fast);
-}
-
-.exp-filterbar.has-filters .exp-clear {
-    opacity: 1;
-    pointer-events: auto;
-}
-
-.exp-clear:hover {
-    color: var(--c-primary);
-}
+/* Filter bar itself lives in components/filter-bar.css (shared with
+   /projects). */
 
 /* ── Empty state ── */
 
@@ -238,14 +35,6 @@
 
 .exp-empty-reset:hover {
     color: var(--c-primary);
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .exp-scope-thumb,
-    .exp-tag,
-    .exp-clear {
-        transition: none;
-    }
 }
 
 /* ── Grid layout ── */
@@ -662,15 +451,15 @@ html:not(.dark) .exp-badge {
         display: none;
     }
 
-    .exp-scope {
+    #exp-scope {
         /* Full row of its own so centering has the whole bar width to work
-           with — sharing the row with .exp-search left it centered inside
-           only its own flex share, which still read as pinned left. */
+           with — sharing the row with the search box left it centered
+           inside only its own flex share, which still read as pinned left. */
         flex-basis: 100%;
         justify-content: center;
     }
 
-    .exp-count {
+    #exp-count {
         margin-left: 0;
     }
 
@@ -682,11 +471,7 @@ html:not(.dark) .exp-badge {
 }
 
 @media (max-width: 576px) {
-    .exp-filterbar {
-        padding: 0.7rem 0.8rem;
-    }
-
-    .exp-scope button {
+    #exp-scope button {
         padding: 0.35rem 0.7rem;
         font-size: var(--fs-mini);
     }

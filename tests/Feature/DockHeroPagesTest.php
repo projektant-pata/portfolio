@@ -107,7 +107,7 @@ test('each page renders its own wordmark and tags in both locales', function (st
         ->assertSee('aria-hidden="true">'.$wordmarkCs.'<', false)
         ->assertSee('>'.$tagCs.'</li>', false);
 })->with([
-    ['home', 'Portfolio', 'Laravel', 'Portfolio', 'Laravel'],
+    ['home', 'Portfolio', 'Full-stack', 'Portfolio', 'Full-stack'],
     ['about-me', 'About me', 'Chess', 'O mně', 'Šachy'],
     ['projects', 'Projects', 'Hackathons', 'Projekty', 'Hackathony'],
     ['experience', 'Experience', 'Backend', 'Zkušenosti', 'Soutěže'],

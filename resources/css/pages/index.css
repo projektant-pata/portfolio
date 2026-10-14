@@ -3,6 +3,9 @@
 @import '../components/section-head.css';
 @import '../components/reviews-carousel.css';
 @import '../components/toolbox.css';
+@import '../components/availability-dot.css';
+@import '../components/pill-button.css';
+@import '../components/cta-band.css';
 
 /* ================================================================
    INDEX (HOME) PAGE STYLES
@@ -16,118 +19,289 @@
     gap: 1.875rem;
 }
 
-/* ── Work & Education ── */
-.work {
-    width: 100%;
-    overflow: hidden;
+/* ── Work & Life ────────────────────────────────────────────────
+   Uncontained on purpose: no frame border, no card fill, no sunken
+   footer plate. The section's edges are two full-width hairlines —
+   one under the head, one above the foot — and everything between
+   them hangs off the timeline rail. From design_handoff_home_work_life.
+   ─────────────────────────────────────────────────────────────── */
+.wl {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 400px;
+    grid-template-rows: auto auto 1fr auto;
+    column-gap: 3.5rem;
 }
 
-.work-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: var(--c-primary-fade);
-    height: 100px;
-    border-radius: var(--r-card);
-    padding: 8px;
+/* The shared section head spans both columns; the toggle row below it
+   carries the rule that forms the section's top edge. */
+.wl > .sechead,
+.wl-head,
+.wl-foot {
+    grid-column: 1 / -1;
 }
 
-.work-top-btn {
+.wl-head {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 50%;
-    height: 100%;
-    background-color: var(--c-surface);
-    border-radius: 22px;
+    justify-content: flex-end;
+    align-items: flex-end;
+    gap: 2rem;
+    flex-wrap: wrap;
+    padding-bottom: 1.4rem;
+    border-bottom: var(--border-w) solid var(--c-primary-fade);
+}
+
+.wl-seg {
+    display: inline-flex;
+    gap: 2px;
+    padding: 3px;
+    border: 1px solid var(--c-primary-fade);
+    border-radius: var(--r-pill);
+}
+
+.wl-seg button {
+    padding: 0.42rem 1.4rem;
+    border: 0;
+    border-radius: var(--r-pill);
+    background: none;
     cursor: pointer;
+    font-family: inherit;
+    font-size: 12.5px;
+    letter-spacing: 0.04em;
+    color: var(--c-muted);
+    transition: var(--t-fast);
 }
 
-.work-top-btn:first-child { margin-right: 10px; }
+.wl-seg button:hover { color: var(--c-fg); }
 
-.work-top-btn h4 { transition: var(--t-fast); }
+/* State lives on aria-pressed, not on a class — the gold thumb and the
+   accessible state can never disagree. */
+.wl-seg button[aria-pressed='true'] {
+    background: var(--c-primary);
+    color: var(--c-bg);
+    font-weight: var(--fw-semibold);
+}
 
-.work-top-btn:hover h4,
-.work-top-btn.active h4 { color: var(--c-primary); }
+/* ── Track ── */
+.wl-track { padding-top: 0.4rem; }
 
-.work-bot {
+.wl-e {
+    display: grid;
+    grid-template-columns: 92px minmax(0, 1fr);
+    gap: 1.5rem;
+    align-items: start;
+}
+
+.wl-e[hidden] { display: none; }
+
+.wl-when {
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    letter-spacing: 0.05em;
+    color: var(--c-muted);
+    white-space: nowrap;
+    padding-top: 1.45rem;
+    transition: var(--t-fast);
+}
+
+.wl-e:hover .wl-when { color: var(--c-primary); }
+
+.wl-body {
     position: relative;
-    width: 100%;
-    margin-top: 20px;
-    border-radius: var(--r-card);
-    border: 3px solid var(--c-primary-fade);
-    background-color: var(--c-surface);
+    padding: 1.3rem 0 1.3rem 1.9rem;
+    border-left: 1px solid color-mix(in srgb, var(--c-primary-fade) 55%, transparent);
 }
 
-.work-bot-line {
+/* The node is punched through the rail, not laid over it: the outline is
+   the page background, because the section sits on the page, not a card. */
+.wl-body::before {
+    content: '';
     position: absolute;
-    width: 1px;
-    height: 100%;
-    left: 115px;
-    background-color: var(--c-primary-fade);
-    z-index: 0;
+    left: -4px;
+    top: 1.5rem;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--c-primary-fade);
+    outline: 4px solid var(--c-bg);
+    transition: var(--t-fast);
 }
 
-.work-bot-content {
-    width: 100%;
-    padding: 3.125rem 5rem;
-    position: relative;
-    z-index: 1;
-    opacity: 1;
-    transition: opacity 0.18s ease-out;
-}
+.wl-e:hover .wl-body::before { background: var(--c-primary); }
 
-.work-bot-content.is-fading { opacity: 0; }
-
-.work-bot-content-row {
+.wl-title {
     display: flex;
-    margin-bottom: 3.125rem;
+    align-items: baseline;
+    gap: 0.75rem;
+    flex-wrap: wrap;
 }
 
-.work-bot-content-row:last-child { margin-bottom: 0; }
+.wl-title h3 {
+    font-size: 1.05rem;
+    font-weight: var(--fw-regular);
+    line-height: 1.3;
+}
 
-.work-bot-content-row:hover .work-bot-content-row-text h4 {
+.wl-res {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
     color: var(--c-primary);
 }
 
-.work-bot-content-row img {
-    width: 70px;
-    height: 70px;
+.wl-body p {
+    margin-top: 0.3rem;
+    font-size: 0.85rem;
+    font-weight: var(--fw-light);
+    line-height: 1.55;
+    color: var(--c-muted);
+    max-width: 52ch;
+    text-wrap: pretty;
+}
+
+.wl-tags {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+    margin-top: 0.7rem;
+}
+
+.wl-tag {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.22rem 0.6rem;
+    border: 1px solid color-mix(in srgb, var(--c-primary-fade) 70%, transparent);
+    border-radius: var(--r-pill);
+    font-size: 10.5px;
+    letter-spacing: 0.02em;
+    color: var(--c-fg);
+}
+
+.wl-tag::before {
+    content: '';
+    width: 5px;
+    height: 5px;
     border-radius: 50%;
-    object-fit: contain;
+    background: var(--bc, var(--c-primary));
     flex-shrink: 0;
 }
 
-.work-bot-content-row-text {
-    margin-left: 10px;
-    max-width: 600px;
+.wl-empty {
+    padding-top: 1.6rem;
+    font-size: 0.85rem;
+    font-weight: var(--fw-light);
+    color: var(--c-muted);
 }
 
-.work-bot-content-row-meta {
+.wl-empty[hidden] { display: none; }
+
+/* ── Media ── */
+.wl-plate {
+    position: relative;
+    padding-top: 2.1rem;
+}
+
+.wl-shot {
+    position: relative;
+    margin: 0;
+    overflow: hidden;
+    aspect-ratio: 4 / 5;
+}
+
+.wl-shot[hidden] { display: none; }
+
+.wl-shot img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 52% 22%;
+    display: block;
+}
+
+.wl-shot::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(19, 18, 16, 0.92) 0 18%, transparent 52%);
+}
+
+/* Caption colours are literal: they sit on the photo in both themes. */
+.wl-cap {
+    position: absolute;
+    left: 1.4rem;
+    right: 1.4rem;
+    bottom: 1.2rem;
+    z-index: 3;
+    font-size: 11.5px;
+    font-weight: var(--fw-light);
+    line-height: 1.55;
+    color: #d6d3d1;
+}
+
+.wl-cap b {
+    display: block;
+    font-size: 12.5px;
+    font-weight: var(--fw-semibold);
+    color: #fff;
+    margin-bottom: 0.15rem;
+}
+
+.wl-shot--empty {
+    background-image: repeating-linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--c-primary-fade) 26%, transparent) 0 1px,
+        transparent 1px 9px
+    );
+    display: flex;
+    align-items: flex-end;
+}
+
+.wl-shot--empty::after { display: none; }
+
+.wl-slot {
+    position: relative;
+    z-index: 3;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.06em;
+    line-height: 1.6;
+    color: var(--c-muted);
+    padding: 1.2rem 1.4rem;
+}
+
+/* ── Foot ── */
+.wl-foot {
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
     flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-bottom: 7px;
+    margin-top: 1.4rem;
+    padding-top: 1rem;
+    border-top: var(--border-w) solid var(--c-primary-fade);
 }
 
-.work-bot-content-row-meta .mini { margin-bottom: 0; }
-
-.work-bot-content-row-badges {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem;
+.wl-count {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    color: var(--c-muted);
 }
 
-.work-bot-badge {
-    font-size: var(--fs-mini);
-    line-height: 1;
-    padding: 0.2rem 0.6rem;
-    border-radius: 999px;
-    border: 1px solid color-mix(in srgb, var(--badge-color, var(--c-primary)) 45%, transparent);
-    color: var(--badge-color, var(--c-primary));
-    background: color-mix(in srgb, var(--badge-color, var(--c-primary)) 12%, transparent);
+.wl-count b {
+    color: var(--c-primary);
+    font-weight: var(--fw-semibold);
 }
+
+.wl-link {
+    font-size: 12.5px;
+    color: var(--c-primary);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+}
+
+.wl-link:hover { border-bottom-color: var(--c-primary); }
 
 /* ── Responsive ── */
 
@@ -152,11 +326,38 @@
 @media (max-width: 576px) {
     .stats-cards { grid-template-columns: 1fr; }
 
-    .work-bot-line    { left: 55px; }
-    .work-bot-content { padding: 3.125rem 1.25rem !important; }
-
     .projects-row       { flex-direction: column; height: auto; }
     .projects-row > img { order: 1; margin-bottom: 20px; height: auto; max-height: 300px; width: 100%; }
     .projects-row-text  { order: 2; }
 
+}
+
+/* Work & Life: the plate drops under the track, then the year moves above
+   the title and the rail moves out to the entry so it stays continuous. */
+@media (max-width: 1100px) {
+    .wl { grid-template-columns: minmax(0, 1fr); }
+    .wl-plate { padding-top: 1.6rem; }
+    .wl-shot { aspect-ratio: 16 / 9; }
+    .wl-shot img { object-position: 52% 26%; }
+}
+
+@media (max-width: 760px) {
+    .wl-e {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 0;
+        padding-left: 1.9rem;
+        border-left: 1px solid color-mix(in srgb, var(--c-primary-fade) 55%, transparent);
+    }
+
+    .wl-when { padding: 1.2rem 0 0; }
+
+    .wl-body {
+        padding: 0.35rem 0 1.3rem;
+        border-left: 0;
+    }
+
+    .wl-body::before {
+        left: calc(-1.9rem - 4px);
+        top: 0.6rem;
+    }
 }

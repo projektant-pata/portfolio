@@ -66,9 +66,9 @@ test('the reviews head renders with a ghost and no note', function () {
 test('every h2 on the home page belongs to a section head', function () {
     $html = $this->get(route('home'))->getContent();
 
-    // 5 section heads + the footer wordmark, which keeps its own oversized
-    // treatment and is not a section head.
-    expect(preg_match_all('/<h2[\s>]/', $html))->toBe(6)
+    // 5 section heads + the closing CTA band and the footer wordmark, neither
+    // of which is a section head.
+    expect(preg_match_all('/<h2[\s>]/', $html))->toBe(7)
         ->and(preg_match_all('/<p class="sechead-eyebrow">/', $html))->toBe(5)
         ->and($html)->toContain('<h2 class="portfolio-footer-watermark">');
 });

@@ -13,6 +13,9 @@ return [
     'projects_title' => 'Projects',
     'projects_desc' => 'Browse a collection of Richard Hývl’s web and software development projects.',
 
+    'contact_title' => 'Contact me',
+    'contact_desc' => 'Get in touch with Richard Hývl (aka projektant-pata) — one form, three direct channels and an answer within 24 hours. Freelance work, junior roles, hackathons.',
+
     'blog_title' => 'Blog',
     'blog_desc' => 'Build logs, competition write-ups and things that broke. Backend, homelab hardware and the occasional chess tangent.',
 ];

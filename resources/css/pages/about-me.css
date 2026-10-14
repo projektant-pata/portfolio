@@ -5,13 +5,15 @@
 @import '../components/pill-button.css';
 @import '../components/reviews-carousel.css';
 @import '../components/toolbox.css';
+@import '../components/cta-band.css';
 
 /* ================================================================
    ABOUT ME PAGE
    ================================================================
    Seven sections, seven silhouettes: a bento, a borderless
-   timeline, the toolbox frame, three photo cells in one frame, a
-   flat tile strip, the reviews carousel and a tinted contact band.
+   timeline, the toolbox frame, four alternating photo/text
+   chapters, a flat tile strip, the reviews carousel and a tinted
+   contact band.
    Section rhythm comes from .portfolio-section. Numbers below are
    the page order — 3 (toolbox) and 6 (carousel) are shared
    components and live in ../components/.
@@ -117,11 +119,6 @@
     border: var(--border-w) solid color-mix(in srgb, var(--c-primary-fade) 80%, transparent);
     border-radius: var(--r-card-sm);
     background: var(--c-surface);
-    transition: border-color var(--t-fast);
-}
-
-.about-me-tile:hover {
-    border-color: var(--c-primary);
 }
 
 .about-me-tile-value {
@@ -174,60 +171,139 @@
 }
 
 /* ── 4 · Off the screen ────────────────────────────────────── */
-.about-me-beyond {
+/* Four long chapters, alternating photo/text sides. No card, no
+   frame — the section reads as a run of pages, not a boxed grid.
+   Each chapter after the first gets a hairline top border that
+   fades out toward the far edge (a border-image gradient, not an
+   ::before, since a plain border can't fade and this avoids a
+   second stacking layer). The media column is a fixed 4:3 box;
+   image-slot itself sizes by --image-slot-h, so the aspect ratio
+   is enforced on the wrapper and the slot/img are stretched to
+   fill it. */
+.about-me-off {
+    display: flex;
+    flex-direction: column;
+}
+
+.about-me-chapter {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    border: var(--border-w) solid var(--c-primary-fade);
-    border-radius: var(--r-card);
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: center;
+    padding: 3.2rem 0;
+    border-top: 1px solid transparent;
+    border-image: linear-gradient(
+        to right,
+        color-mix(in srgb, var(--c-primary-fade) 60%, transparent),
+        transparent
+    ) 1;
+}
+
+.about-me-chapter:first-child {
+    border-top: 0;
+}
+
+.about-me-chapter-media {
+    aspect-ratio: 4 / 3;
     overflow: hidden;
-    background: var(--c-surface);
+    border-radius: var(--r-card-sm);
 }
 
-.about-me-beyond-cell {
+.about-me-chapter-media .image-slot,
+.about-me-chapter-media .image-slot-img {
+    height: 100%;
+}
+
+.about-me-chapter-copy {
     display: flex;
     flex-direction: column;
-    border-left: 1px solid color-mix(in srgb, var(--c-primary-fade) 45%, transparent);
+    gap: 0.6rem;
+    max-width: 54ch;
 }
 
-.about-me-beyond-cell:first-child {
-    border-left: 0;
+/* --flip moves the media to the right column; the order swap is
+   the only difference from the base layout. */
+.about-me-chapter--flip .about-me-chapter-media {
+    order: 2;
 }
 
-.about-me-beyond-text {
-    padding: 1.5rem 1.5rem 1.7rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    flex: 1;
+.about-me-chapter--flip .about-me-chapter-copy {
+    order: 1;
 }
 
-.about-me-beyond-text h3 {
-    font-size: 1.15rem;
-    font-weight: var(--fw-regular);
-}
-
-.about-me-beyond-text h3 span {
+.about-me-chapter-n {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
     color: var(--c-primary);
 }
 
-.about-me-beyond-text p {
-    font-size: 0.9rem;
+.about-me-chapter-copy h3 {
+    font-size: 1.6rem;
+    font-weight: var(--fw-regular);
+    line-height: 1.25;
+}
+
+.about-me-chapter-copy h3 span {
+    color: var(--c-primary);
+}
+
+.about-me-chapter-copy p {
+    font-size: 0.95rem;
     font-weight: var(--fw-light);
-    line-height: 1.65;
+    line-height: 1.7;
     color: var(--c-muted);
     text-wrap: pretty;
 }
 
-/* margin-top:auto pins the metas to the bottom so they align across cells
-   regardless of how long the copy above them runs. */
-.about-me-beyond-meta {
-    margin-top: auto;
-    padding-top: 0.9rem;
+.about-me-chapter-pull {
+    padding-left: 1rem;
+    border-left: 2px solid var(--c-primary);
+    font-size: 1.1rem;
+    font-weight: var(--fw-light);
+    line-height: 1.5;
+    color: var(--c-fg);
+}
+
+.about-me-chapter-facts {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 0.4rem;
+}
+
+.about-me-chapter-fact {
+    display: flex;
+    gap: 0.8rem;
+    align-items: baseline;
+}
+
+.about-me-chapter-fact dt {
     font-family: var(--font-mono);
-    font-size: 10.5px;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--c-primary);
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+    color: var(--c-muted);
+    flex-shrink: 0;
+}
+
+.about-me-chapter-fact dd {
+    font-size: 0.9rem;
+    font-weight: var(--fw-light);
+    color: var(--c-fg);
+}
+
+.about-me-off-end {
+    margin-top: 2.4rem;
+    padding-top: 2.4rem;
+    border-top: 1px solid color-mix(in srgb, var(--c-primary-fade) 50%, transparent);
+    max-width: 54ch;
+    font-size: 1rem;
+    font-weight: var(--fw-light);
+    line-height: 1.7;
+    color: var(--c-muted);
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 /* ── 5 · Things I show up for ──────────────────────────────── */
@@ -290,96 +366,26 @@
     text-wrap: pretty;
 }
 
-/* ── 7 · Contact ───────────────────────────────────────────── */
-.about-me-cta {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    align-items: center;
-    gap: 2.5rem;
-    padding: 2.8rem 3rem;
-    border: var(--border-w) solid var(--c-primary-lt);
-    border-radius: var(--r-card);
-    /* The page's only tinted surface, so it lands as the end punctuation. */
-    background: linear-gradient(
-        120deg,
-        color-mix(in srgb, var(--c-primary) 9%, var(--c-surface)),
-        var(--c-surface) 62%
-    );
-}
-
-.about-me-cta-available {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 11px;
-    font-weight: var(--fw-semibold);
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--c-fg);
-    margin-bottom: 0.9rem;
-}
-
-.about-me-cta h2 {
-    font-family: var(--font-display);
-    font-size: clamp(1.8rem, 1.1rem + 2vw, 2.5rem);
-    font-weight: var(--fw-bold);
-    line-height: 1.05;
-    letter-spacing: -0.02em;
-}
-
-.about-me-cta h2 em {
-    font-style: normal;
-    font-weight: 500;
-    color: var(--c-primary);
-}
-
-.about-me-cta-sub {
-    margin-top: 0.7rem;
-    font-size: 0.95rem;
-    font-weight: var(--fw-light);
-    color: var(--c-muted);
-    max-width: 44ch;
-}
-
-.about-me-cta-actions {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 0.8rem;
-}
-
-.about-me-cta-row {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    flex-wrap: wrap;
-    justify-content: flex-end;
-}
-
-.about-me-cta-fine {
-    font-family: var(--font-mono);
-    font-size: 10.5px;
-    letter-spacing: 0.05em;
-    color: var(--c-muted);
-}
-
 /* ── Responsive ────────────────────────────────────────────── */
 @media (max-width: 1100px) {
     .about-me-bento { grid-template-columns: repeat(3, 1fr); }
     .about-me-tile--hero { grid-column: span 3; }
 
-    .about-me-beyond { grid-template-columns: 1fr; }
-
-    .about-me-beyond-cell {
-        border-left: 0;
-        border-top: 1px solid color-mix(in srgb, var(--c-primary-fade) 45%, transparent);
+    .about-me-chapter {
+        grid-template-columns: 1fr;
+        gap: 1.4rem;
+        padding: 2.4rem 0;
     }
 
-    .about-me-beyond-cell:first-child { border-top: 0; }
+    .about-me-chapter--flip .about-me-chapter-media,
+    .about-me-chapter--flip .about-me-chapter-copy {
+        order: 0;
+    }
 
-    .about-me-cta { grid-template-columns: 1fr; }
-    .about-me-cta-actions { align-items: flex-start; }
-    .about-me-cta-row { justify-content: flex-start; }
+    .about-me-chapter-copy {
+        max-width: none;
+    }
+
 }
 
 @media (max-width: 760px) {
@@ -390,5 +396,8 @@
     .about-me-node::before { left: calc(64px + 0.55rem); }
     .about-me-node::after { left: calc(64px + 0.55rem - 4px); }
 
-    .about-me-cta { padding: 2rem 1.5rem; }
+    .about-me-chapter { padding: 1.8rem 0; gap: 1rem; }
+    .about-me-chapter-copy h3 { font-size: 1.3rem; }
+    .about-me-chapter-pull { font-size: 1rem; }
+    .about-me-off-end { margin-top: 1.8rem; padding-top: 1.8rem; }
 }

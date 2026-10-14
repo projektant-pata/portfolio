@@ -56,15 +56,26 @@ test('an experience defaults to hidden on the about page', function () {
         ->and(Experience::factory()->create(['show_on_about' => true])->fresh()->show_on_about)->toBeTrue();
 });
 
-test('grid tools bucket by their english group and chips never form a column', function () {
-    Tool::factory()->create(['name' => 'Java', 'group' => ['en' => 'Backend', 'cs' => 'Backend'], 'sort_order' => 0]);
-    Tool::factory()->create(['name' => 'Tailwind', 'group' => ['en' => 'Frontend', 'cs' => 'Frontend'], 'sort_order' => 1]);
-    Tool::factory()->create(['name' => 'Laravel', 'group' => ['en' => 'Backend', 'cs' => 'Backend'], 'sort_order' => 2]);
+test('grid tools bucket by their english group, lead with the current ones and never bucket a chip', function () {
+    Tool::factory()->create(['name' => 'Java', 'group' => ['en' => 'Backend', 'cs' => 'Backend'], 'state' => 'experience', 'sort_order' => 0]);
+    Tool::factory()->create(['name' => 'Tailwind', 'group' => ['en' => 'Frontend', 'cs' => 'Frontend'], 'state' => 'using', 'sort_order' => 1]);
+    Tool::factory()->create(['name' => 'Laravel', 'group' => ['en' => 'Backend', 'cs' => 'Backend'], 'state' => 'using', 'sort_order' => 2]);
     Tool::factory()->chip('learning')->create(['name' => 'Kotlin', 'sort_order' => 3]);
 
-    $columns = Tool::groupColumns(Tool::orderBy('sort_order')->get());
+    $groups = Tool::groupByArea(Tool::orderBy('sort_order')->get());
 
-    expect($columns->keys()->all())->toBe(['Backend', 'Frontend'])
-        ->and($columns['Backend']->pluck('name')->all())->toBe(['Java', 'Laravel'])
-        ->and($columns['Backend']->first()->getTranslation('group', 'cs'))->toBe('Backend');
+    expect($groups->keys()->all())->toBe(['Backend', 'Frontend'])
+        ->and($groups['Backend']->pluck('name')->all())->toBe(['Laravel', 'Java'])
+        ->and($groups['Backend']->first()->getTranslation('group', 'cs'))->toBe('Backend');
+});
+
+test('the group note is taken from the first tool in the group that carries one', function () {
+    Tool::factory()->create(['name' => 'Java', 'group' => ['en' => 'Backend'], 'group_note' => null, 'sort_order' => 0]);
+    Tool::factory()->create(['name' => 'Laravel', 'group' => ['en' => 'Backend'], 'group_note' => ['en' => 'where I actually live', 'cs' => 'kde vážně bydlím'], 'sort_order' => 1]);
+
+    $group = Tool::groupByArea(Tool::orderBy('sort_order')->get())['Backend'];
+
+    expect(Tool::noteFor($group, 'en'))->toBe('where I actually live')
+        ->and(Tool::noteFor($group, 'cs'))->toBe('kde vážně bydlím')
+        ->and(Tool::noteFor(collect(), 'en'))->toBe('');
 });

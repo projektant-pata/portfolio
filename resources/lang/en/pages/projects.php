@@ -3,6 +3,7 @@
 return [
     'hero_wordmark' => 'Projects',
     'hero_tags' => ['Web apps', 'APIs', 'Hackathons', 'Open source', 'Freelance'],
+    'hero_photo_caption' => '<b>Funnovation \'26</b>Holding our team shirt, named after my car.',
     'head_eyebrow' => 'Selected work',
     'head_title' => 'Everything worth <em>showing</em>',
     'head_note' => 'Filter by kind or stack. The list is split by year, newest first.',
@@ -12,6 +13,7 @@ return [
     'filter_kind' => 'Kind',
     'filter_stack' => 'Stack',
     'kind_all' => 'All',
+    'search_placeholder' => 'Search projects…',
     'count_one' => ':count shown · :total total',
     'count_few' => ':count shown · :total total',
     'count_many' => ':count shown · :total total',

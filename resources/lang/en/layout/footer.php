@@ -8,6 +8,7 @@ return [
     'nav3' => 'Experience',
     'nav4' => 'Projects',
     'nav5' => 'Blog',
+    'nav6' => 'Contact me',
 
     'soc_title' => 'Follow me',
     'soc1' => 'Email',

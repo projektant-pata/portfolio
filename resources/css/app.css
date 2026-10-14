@@ -759,9 +759,13 @@ html:not(.dark) .portfolio-footer-watermark {
 }
 
 #mobile-nav p {
-    color: #fff !important;
+    color: #1C1B17 !important;
     font-weight: var(--fw-regular) !important;
     font-size: 0.75rem !important;
+}
+
+.dark #mobile-nav p {
+    color: #fff !important;
 }
 
 /* ── Status bar (top of phone) ── */
@@ -870,6 +874,42 @@ html:not(.dark) .portfolio-footer-watermark {
     text-align: center;
     margin-top: 5px;
     font-weight: var(--fw-regular) !important;
+}
+
+/* ── Easter egg: Apple Calendar-style live date tile ── */
+.mobile-nav-app button.mobile-nav-calendar {
+    width: 60px;
+    height: 60px;
+    border-radius: 15px;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 0 4px;
+    border: 0;
+    cursor: pointer;
+    transition: scale var(--t-fast);
+    overflow: hidden;
+}
+
+.mobile-nav-calendar:hover {
+    scale: 1.12;
+}
+
+.mobile-nav-calendar-weekday {
+    color: #ff3b30;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: capitalize;
+    line-height: 1;
+}
+
+.mobile-nav-calendar-day {
+    color: #1c1c1e;
+    font-size: 28px;
+    font-weight: 600;
+    line-height: 1.15;
 }
 
 /* ── Bottom dock ──

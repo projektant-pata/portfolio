@@ -18,10 +18,10 @@ class PathNodeSeeder extends Seeder
         $nodes = [
             [
                 'year' => ['en' => '2019', 'cs' => '2019'],
-                'title' => ['en' => 'Back to elementary school', 'cs' => 'Zpátky na základní školu'],
+                'title' => ['en' => 'First touch with IT', 'cs' => 'První dotek s IT'],
                 'body' => [
-                    'en' => 'Health issues pulled me out of gymnasium. The school I returned to happened to teach extended IT — the luckiest bad break I have had.',
-                    'cs' => 'Kvůli zdravotním problémům jsem musel odejít z gymnázia. Základka, na kterou jsem se vrátil, měla rozšířenou výuku IT — nejšťastnější smůla, jakou jsem zažil.',
+                    'en' => 'Took an IT extended class — the first touch with the world of IT, the touch that decided my career. Ever since, I have been hooked on technology.',
+                    'cs' => 'Nastoupil jsem do třídy s rozšířenou výukou IT — první dotek se světem IT, dotek, který rozhodl o mé kariéře. Od té doby jsem na technologiích závislý.',
                 ],
                 'is_now' => false,
             ],

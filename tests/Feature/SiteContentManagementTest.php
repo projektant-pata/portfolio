@@ -110,14 +110,18 @@ test('site content editor persists settings and every rotating role list', funct
         ->set('texts.projects_hero_title', ['en' => 'Shipped', 'cs' => 'Vydáno'])
         ->set('texts.blog_hero_suptitle', ['en' => 'Thinking', 'cs' => 'Myslím'])
         ->set('texts.blog_hero_title', ['en' => 'Build logs', 'cs' => 'Zápisky'])
+        ->set('texts.contact_hero_suptitle', ['en' => 'Say hello', 'cs' => 'Ozvěte se'])
+        ->set('texts.contact_hero_title', ['en' => 'Let us talk', 'cs' => 'Pojďme si napsat'])
         ->set('texts.about_intro_lead', ['en' => 'I build backends.', 'cs' => 'Stavím backendy.'])
         ->set('texts.about_cta_title', ['en' => 'Need something built?', 'cs' => 'Potřebujete něco postavit?'])
         ->set('texts.about_cta_sub', ['en' => 'Write me.', 'cs' => 'Napište mi.'])
+        ->set('texts.about_off_end', ['en' => 'That is the lot.', 'cs' => 'A to je vše.'])
         ->set('roleLists.hero_roles', ['en' => "Developer\nChess player", 'cs' => "Vývojář\nŠachista"])
         ->set('roleLists.about_hero_roles', ['en' => "Student\nFreelancer", 'cs' => "Student\nFreelancer"])
         ->set('roleLists.experience_hero_roles', ['en' => "Certificates\nWork", 'cs' => "Certifikáty\nPráce"])
         ->set('roleLists.projects_hero_roles', ['en' => "Laravel\nSpring Boot", 'cs' => "Laravel\nSpring Boot"])
         ->set('roleLists.blog_hero_roles', ['en' => "Writes on break\nMarkdown maximalist", 'cs' => "Píše, když\nMarkdown fanatik"])
+        ->set('roleLists.contact_hero_roles', ['en' => "Replies in 24 h\nFreelance work", 'cs' => "Odpovídám do 24 h\nFreelance zakázky"])
         ->set('lists.about_intro_body', ['en' => "First paragraph.\nSecond paragraph.", 'cs' => "První odstavec.\nDruhý odstavec."])
         ->set('facts.about_facts', ['en' => "Based in | Pardubice, CZ\nFocus | Backend", 'cs' => "Bydliště | Pardubice, ČR\nZaměření | Backend"])
         ->call('save')
@@ -130,7 +134,9 @@ test('site content editor persists settings and every rotating role list', funct
         ->and(Setting::list('about_hero_roles', 'cs'))->toBe(['Student', 'Freelancer'])
         ->and(Setting::list('experience_hero_roles', 'en'))->toBe(['Certificates', 'Work'])
         ->and(Setting::list('projects_hero_roles', 'cs'))->toBe(['Laravel', 'Spring Boot'])
-        ->and(Setting::list('blog_hero_roles', 'en'))->toBe(['Writes on break', 'Markdown maximalist']);
+        ->and(Setting::list('blog_hero_roles', 'en'))->toBe(['Writes on break', 'Markdown maximalist'])
+        ->and(Setting::text('contact_hero_title', 'cs'))->toBe('Pojďme si napsat')
+        ->and(Setting::list('contact_hero_roles', 'en'))->toBe(['Replies in 24 h', 'Freelance work']);
 });
 
 test('the site content editor persists the about page copy and the fact strip', function () {

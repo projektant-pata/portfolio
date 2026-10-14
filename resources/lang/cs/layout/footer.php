@@ -9,6 +9,7 @@ return [
     'nav3' => 'Zkušenosti',
     'nav4' => 'Projekty',
     'nav5' => 'Blog',
+    'nav6' => 'Kontakt',
 
     'soc_title' => 'Sleduj mě',
     'soc1' => 'Pošta',

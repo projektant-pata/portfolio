@@ -4,6 +4,7 @@ return [
     'hero_wordmark' => 'Blog',
     'hero_tags' => ['Build logs', 'Homelab', 'Competitions', 'Backend', 'Postmortems'],
 
+    'head_ghost' => 'Archive',
     'head_eyebrow' => 'Archive',
     'head_title' => 'Everything I <em>published</em>',
     'count_one' => ':count of :total post',
@@ -21,6 +22,7 @@ return [
     'reading_time' => ':minutes min read',
     'back' => 'All posts',
     'read_next' => 'Read next',
+    'read_next_ghost' => 'Read next',
     'read_next_eyebrow' => 'Keep reading',
     'foot_written' => 'Written in Markdown, published with Laravel.',
     'foot_mistake' => 'Found a mistake? <a href=":url">Tell me</a>.',

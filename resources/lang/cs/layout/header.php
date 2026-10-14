@@ -13,6 +13,9 @@ return [
     'projects_title' => 'Projekty',
     'projects_desc' => 'Prohlédněte si sbírku projektů Richarda Hývla v oblasti vývoje webu a softwaru.',
 
+    'contact_title' => 'Kontakt',
+    'contact_desc' => 'Ozvěte se Richardu Hývlovi (aka projektant-pata) — jeden formulář, tři přímé kanály a odpověď do 24 hodin. Freelance zakázky, juniorní pozice, hackathony.',
+
     'blog_title' => 'Blog',
     'blog_desc' => 'Zápisky ze stavění, reporty ze soutěží a věci, co se rozbily. Backend, domácí hardware a občas šachy.',
 ];

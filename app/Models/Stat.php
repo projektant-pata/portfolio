@@ -14,8 +14,8 @@ class Stat extends Model
     /** Birthday used to auto-compute the "years old" stat. */
     private const BIRTH_DATE = '2006-10-05';
 
-    /** Year the developer journey started, for the "years of experience" stat. */
-    private const CAREER_START_YEAR = 2022;
+    /** Date the developer journey started, for the "years of experience" stat. */
+    private const CAREER_START_DATE = '2020-09-01';
 
     /** Bento weights: hero tiles span two columns and carry a note; soft tiles are the jokes. */
     public const TIERS = ['hero', 'normal', 'soft'];
@@ -56,7 +56,7 @@ class Stat extends Model
     {
         return match ($this->source) {
             'age' => (string) (int) CarbonImmutable::parse(self::BIRTH_DATE)->diffInYears(now()),
-            'years_experience' => (now()->year - self::CAREER_START_YEAR).'+',
+            'years_experience' => round(CarbonImmutable::parse(self::CAREER_START_DATE)->diffInYears(now())).'+',
             default => $this->getTranslation('value', $locale),
         };
     }

@@ -16,9 +16,15 @@
         @endif
     </div>
 
-    <div class="proj-shot">
+    <div class="proj-shot @if (! $project->img_url) proj-shot--empty @endif">
         @if ($project->img_url)
             <img src="{{ asset($project->img_url) }}" alt="{{ $project->getTranslation('header', $locale) }}" loading="lazy">
+        @else
+            <svg class="proj-shot-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="2.5" y="4.5" width="19" height="15" rx="1.5"/>
+                <circle cx="8.5" cy="10" r="1.75"/>
+                <path d="M21.5 15.5 16 10l-9.5 9.5"/>
+            </svg>
         @endif
     </div>
 

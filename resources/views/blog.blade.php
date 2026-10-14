@@ -25,6 +25,7 @@
         @endphp
 
         <x-portfolio.section-head
+            :ghost="__('pages/blog.head_ghost')"
             :eyebrow="__('pages/blog.head_eyebrow')"
             :title="__('pages/blog.head_title')"
             :note="str_replace(

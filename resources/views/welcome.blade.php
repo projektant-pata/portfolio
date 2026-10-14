@@ -32,37 +32,100 @@
         </article>
     </section>
 
-    {{-- Work & Life --}}
-    <section class="work portfolio-section">
+    {{--
+        Work & Life — the uncontained timeline. No frame and no card: the two
+        full-width hairlines (under the head, above the foot) and the rail down
+        the track are the whole structure. Both scopes render into the same
+        track and the toggle flips `hidden`, so switching costs no request.
+    --}}
+    @php
+        $scopes = ['work' => $workExperiences, 'life' => $lifeExperiences];
+        $counts = collect($scopes)->map(fn ($entries, $scope) => __(
+            'home/experience.wl_count_'.$scope,
+            ['count' => $entries->count(), 'span' => \App\Models\Experience::timelineSpan($entries, $locale)],
+        ));
+    @endphp
+    <section id="work-life" class="portfolio-section wl">
         <x-portfolio.section-head
             :ghost="__('home/experience.head_ghost')"
             :eyebrow="__('home/experience.head_eyebrow')"
             :title="__('home/experience.head_title')"
             :note="__('home/experience.head_note', ['url' => route('experience')])"
         />
-        <article class="work-top">
-            <button type="button" id="work-top-btn-work" class="work-top-btn" aria-pressed="false">
-                <h4>{{ __('home/experience.title_work') }}</h4>
-            </button>
-            <button type="button" id="work-top-btn-life" class="work-top-btn active" aria-pressed="true">
-                <h4>{{ __('home/experience.title_life') }}</h4>
-            </button>
-        </article>
-        <article class="work-bot">
-            <div class="work-bot-line"></div>
 
-            <div id="work-bot-content-life" class="work-bot-content">
-                @foreach ($lifeExperiences as $experience)
-                    <x-portfolio.experience-row :experience="$experience" :locale="$locale" />
+        <div class="wl-head">
+            <div class="wl-seg" id="wl-seg" role="group" aria-label="{{ __('home/experience.wl_scope_label') }}">
+                @foreach ($scopes as $scope => $entries)
+                    <button
+                        type="button"
+                        data-scope="{{ $scope }}"
+                        data-count="{{ $counts[$scope] }}"
+                        aria-pressed="{{ $scope === 'work' ? 'true' : 'false' }}"
+                    >{{ __('home/experience.title_'.$scope) }}</button>
                 @endforeach
             </div>
+        </div>
 
-            <div id="work-bot-content-work" class="work-bot-content" style="display: none">
-                @foreach ($workExperiences as $experience)
-                    <x-portfolio.experience-row :experience="$experience" :locale="$locale" />
-                @endforeach
-            </div>
-        </article>
+        <div class="wl-track">
+            @foreach ($scopes as $scope => $entries)
+                @forelse ($entries as $experience)
+                    @php
+                        $subtitle = $experience->getTranslation('subtitle', $locale);
+                        $content = $experience->getTranslation('content', $locale);
+                    @endphp
+                    <article class="wl-e" data-scope="{{ $scope }}"{!! $scope === 'work' ? '' : ' hidden' !!}>
+                        <div class="wl-when">{{ $experience->getTranslation('year', $locale) }}</div>
+                        <div class="wl-body">
+                            <div class="wl-title">
+                                <h3>{{ $experience->getTranslation('title', $locale) }}</h3>
+                                @if ($subtitle !== '')
+                                    <span class="wl-res">{{ $subtitle }}</span>
+                                @endif
+                            </div>
+                            @if ($content !== '')
+                                {{-- A teaser, not the record: the full, formatted
+                                     entry lives on /experience. --}}
+                                <p>{{ Str::of(strip_tags(Str::markdown($content)))->squish()->limit(180) }}</p>
+                            @endif
+                            @if ($experience->badges->isNotEmpty())
+                                <div class="wl-tags">
+                                    @foreach ($experience->badges as $badge)
+                                        <span class="wl-tag" style="--bc: {{ $badge->color }}">{{ $badge->getTranslation('name', $locale) }}</span>
+                                    @endforeach
+                                </div>
+                            @endif
+                        </div>
+                    </article>
+                @empty
+                    <p class="wl-empty" data-scope="{{ $scope }}"{!! $scope === 'work' ? '' : ' hidden' !!}>{{ __('home/experience.wl_empty') }}</p>
+                @endforelse
+            @endforeach
+        </div>
+
+        <div class="wl-plate">
+            @foreach (['work', 'life'] as $scope)
+                @php $photo = config('portfolio.section_images.work_life_'.$scope); @endphp
+                @if ($photo)
+                    <figure class="wl-shot" data-scope="{{ $scope }}"{!! $scope === 'work' ? '' : ' hidden' !!}>
+                        <img src="{{ asset($photo) }}" alt="{{ __('home/experience.wl_photo_alt') }}">
+                        <figcaption class="wl-cap">
+                            <b>{{ __('home/experience.wl_photo_title') }}</b>{{ __('home/experience.wl_photo_caption') }}
+                        </figcaption>
+                    </figure>
+                @else
+                    {{-- No crop for this scope yet: the striped plate holds the
+                         column open rather than collapsing the grid. --}}
+                    <figure class="wl-shot wl-shot--empty" data-scope="{{ $scope }}"{!! $scope === 'work' ? '' : ' hidden' !!}>
+                        <figcaption class="wl-slot">{!! __('home/experience.wl_life_slot') !!}</figcaption>
+                    </figure>
+                @endif
+            @endforeach
+        </div>
+
+        <div class="wl-foot">
+            <span class="wl-count" id="wl-count">{!! $counts['work'] !!}</span>
+            <a class="wl-link" href="{{ route('experience') }}">{{ __('home/experience.wl_link') }}</a>
+        </div>
     </section>
 
     {{-- Projects --}}
@@ -86,15 +149,11 @@
             :ghost="__('home/tools.head_ghost')"
             :eyebrow="__('home/tools.head_eyebrow')"
             :title="__('home/tools.head_title')"
-            :note="__('home/tools.head_note')"
+            :note="__('home/tools.head_note', ['url' => route('about-me').'#about-me-tools'])"
         />
         <x-portfolio.toolbox
             :tools="$tools"
-            variant="cells"
-            :chips="$toolChips"
-            :chips-label="__('pages/toolbox.rotation_label')"
-            :link="route('about-me').'#about-me-tools'"
-            :link-label="__('pages/toolbox.about_link')"
+            variant="list"
         />
     </section>
 

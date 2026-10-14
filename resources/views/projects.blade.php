@@ -11,6 +11,7 @@
         :photo="config('portfolio.hero_images.projects')"
         photo-alt=""
         photo-position="50% 30%"
+        :caption="__('pages/projects.hero_photo_caption')"
     />
 
     {{-- No fade-up: the hero leaves this section's top edge inside the first
@@ -22,43 +23,59 @@
             :note="__('pages/projects.head_note')"
         />
 
-        <div class="proj-filters" id="proj-filters">
-            <div class="proj-fgroup" role="group" aria-labelledby="proj-flabel-kind">
-                <span class="proj-flabel" id="proj-flabel-kind">{{ __('pages/projects.filter_kind') }}</span>
-                <div class="proj-seg" id="proj-seg">
-                    <span class="proj-seg-thumb" id="proj-seg-thumb" aria-hidden="true"></span>
-                    <button type="button" data-kind-filter="all" aria-pressed="true">{{ __('pages/projects.kind_all') }}</button>
-                    <button type="button" data-kind-filter="personal" aria-pressed="false">{{ __('pages/projects.kind_personal') }}</button>
-                    <button type="button" data-kind-filter="client" aria-pressed="false">{{ __('pages/projects.kind_client') }}</button>
-                    <button type="button" data-kind-filter="school" aria-pressed="false">{{ __('pages/projects.kind_school') }}</button>
+        <div class="filter-bar" id="proj-filters">
+            <div class="filter-row">
+                <div class="filter-group" role="group" aria-labelledby="proj-flabel-kind">
+                    <span class="filter-label" id="proj-flabel-kind">{{ __('pages/projects.filter_kind') }}</span>
+                    <div class="filter-seg" id="proj-seg">
+                        <span class="filter-seg-thumb" id="proj-seg-thumb" aria-hidden="true"></span>
+                        <button type="button" data-kind-filter="all" aria-pressed="true">{{ __('pages/projects.kind_all') }}</button>
+                        <button type="button" data-kind-filter="personal" aria-pressed="false">{{ __('pages/projects.kind_personal') }}</button>
+                        <button type="button" data-kind-filter="client" aria-pressed="false">{{ __('pages/projects.kind_client') }}</button>
+                        <button type="button" data-kind-filter="school" aria-pressed="false">{{ __('pages/projects.kind_school') }}</button>
+                    </div>
                 </div>
+
+                <label class="filter-search">
+                    <svg viewBox="0 0 16 16" aria-hidden="true">
+                        <circle cx="6.8" cy="6.8" r="4.6" />
+                        <line x1="10.4" y1="10.4" x2="14" y2="14" />
+                    </svg>
+                    <input
+                        type="search"
+                        id="proj-search"
+                        placeholder="{{ __('pages/projects.search_placeholder') }}"
+                        autocomplete="off"
+                    >
+                </label>
+
+                <div
+                    class="filter-count"
+                    id="proj-count"
+                    aria-live="polite"
+                    data-one="{{ __('pages/projects.count_one') }}"
+                    data-few="{{ __('pages/projects.count_few') }}"
+                    data-many="{{ __('pages/projects.count_many') }}"
+                >{!! __('pages/projects.count_many', ['count' => '<b>'.$projects->flatten(1)->count().'</b>', 'total' => $projects->flatten(1)->count()]) !!}</div>
             </div>
 
-            @if ($stackBadges->isNotEmpty())
-                <div class="proj-fgroup" role="group" aria-labelledby="proj-flabel-stack" id="proj-stack">
-                    <span class="proj-flabel" id="proj-flabel-stack">{{ __('pages/projects.filter_stack') }}</span>
-                    @foreach ($stackBadges as $badge)
-                        <button
-                            type="button"
-                            class="proj-fchip"
-                            aria-pressed="false"
-                            data-stack-filter="{{ $badge->slug }}"
-                            style="--bc: {{ $badge->color }}"
-                        >{{ $badge->getTranslation('name', $locale) }}</button>
-                    @endforeach
-                </div>
-            @endif
-
-            <button type="button" class="proj-fclear" id="proj-clear" hidden>{{ __('pages/projects.clear_filters') }}</button>
-
-            <div
-                class="proj-fcount"
-                id="proj-count"
-                aria-live="polite"
-                data-one="{{ __('pages/projects.count_one') }}"
-                data-few="{{ __('pages/projects.count_few') }}"
-                data-many="{{ __('pages/projects.count_many') }}"
-            >{!! __('pages/projects.count_many', ['count' => '<b>'.$projects->flatten(1)->count().'</b>', 'total' => $projects->flatten(1)->count()]) !!}</div>
+            <div class="filter-row">
+                @if ($stackBadges->isNotEmpty())
+                    <div class="filter-group" role="group" aria-labelledby="proj-flabel-stack" id="proj-stack">
+                        <span class="filter-label" id="proj-flabel-stack">{{ __('pages/projects.filter_stack') }}</span>
+                        @foreach ($stackBadges as $badge)
+                            <button
+                                type="button"
+                                class="filter-chip"
+                                aria-pressed="false"
+                                data-stack-filter="{{ $badge->slug }}"
+                                style="--fc: {{ $badge->color }}"
+                            >{{ $badge->getTranslation('name', $locale) }}</button>
+                        @endforeach
+                    </div>
+                @endif
+                <button type="button" class="filter-clear" id="proj-clear" hidden>{{ __('pages/projects.clear_filters') }}</button>
+            </div>
         </div>
 
         <div class="proj-list">
@@ -78,7 +95,7 @@
         <div class="proj-empty" id="proj-empty" hidden>
             <h3 class="proj-etitle">{{ __('pages/projects.empty_title') }}</h3>
             <p class="proj-ebody" id="proj-empty-body" data-template="{{ __('pages/projects.empty_body') }}"></p>
-            <button type="button" class="proj-fclear" id="proj-empty-clear">{{ __('pages/projects.clear_filters') }}</button>
+            <button type="button" class="filter-clear" id="proj-empty-clear">{{ __('pages/projects.clear_filters') }}</button>
         </div>
     </section>
 
@@ -109,10 +126,17 @@
         const emptyEl = document.getElementById('proj-empty');
         const emptyBody = document.getElementById('proj-empty-body');
         const emptyClear = document.getElementById('proj-empty-clear');
+        const searchInput = document.getElementById('proj-search');
 
         const rows = Array.from(list.querySelectorAll('.proj-item'));
         const groups = Array.from(list.querySelectorAll('.proj-group'));
         const total = rows.length;
+
+        // Cached once: search matches the row's whole visible text, and reading
+        // textContent on every keystroke would be wasteful.
+        rows.forEach(function (row) {
+            row.dataset.searchText = row.textContent.replace(/\s+/g, ' ').trim().toLowerCase();
+        });
 
         // No projects at all: `.proj-none` (server-rendered) already covers
         // this. Skip filter wiring so `.proj-empty` — meant for "filters
@@ -135,6 +159,9 @@
                 if (!slugs.some(function (slug) { return activeStack.has(slug); })) { return false; }
             }
 
+            const query = searchInput.value.trim().toLowerCase();
+            if (query && !row.dataset.searchText.includes(query)) { return false; }
+
             return true;
         }
 
@@ -156,10 +183,11 @@
                 labels.push(segEl.querySelector('button[aria-pressed="true"]').textContent.trim());
             }
             if (stackEl) {
-                stackEl.querySelectorAll('.proj-fchip[aria-pressed="true"]').forEach(function (chip) {
+                stackEl.querySelectorAll('.filter-chip[aria-pressed="true"]').forEach(function (chip) {
                     labels.push(chip.textContent.trim());
                 });
             }
+            if (searchInput.value.trim()) { labels.push('"' + searchInput.value.trim() + '"'); }
             return labels;
         }
 
@@ -172,6 +200,8 @@
             } else {
                 params.set('stack', Array.from(activeStack).join(','));
             }
+            const q = searchInput.value.trim();
+            if (q === '') { params.delete('q'); } else { params.set('q', q); }
 
             const query = params.toString();
             history.replaceState(null, '', query ? '?' + query : window.location.pathname);
@@ -229,7 +259,7 @@
 
         if (stackEl) {
             stackEl.addEventListener('click', function (e) {
-                const btn = e.target.closest('.proj-fchip');
+                const btn = e.target.closest('.filter-chip');
                 if (!btn) { return; }
 
                 const on = btn.getAttribute('aria-pressed') !== 'true';
@@ -242,11 +272,12 @@
         function clearFilters() {
             kind = 'all';
             activeStack.clear();
+            searchInput.value = '';
             segEl.querySelectorAll('button[data-kind-filter]').forEach(function (b) {
                 b.setAttribute('aria-pressed', String(b.dataset.kindFilter === 'all'));
             });
             if (stackEl) {
-                stackEl.querySelectorAll('.proj-fchip').forEach(function (c) { c.setAttribute('aria-pressed', 'false'); });
+                stackEl.querySelectorAll('.filter-chip').forEach(function (c) { c.setAttribute('aria-pressed', 'false'); });
             }
             moveThumb();
             apply();
@@ -254,9 +285,10 @@
 
         clearBtn.addEventListener('click', clearFilters);
         emptyClear.addEventListener('click', clearFilters);
+        searchInput.addEventListener('input', apply);
 
-        // Restore state from ?kind=&stack= so a filtered list can be shared and
-        // the back button behaves.
+        // Restore state from ?kind=&stack=&q= so a filtered list can be shared
+        // and the back button behaves.
         (function readUrl() {
             const params = new URLSearchParams(window.location.search);
             const urlKind = params.get('kind');
@@ -272,13 +304,15 @@
 
             if (stackEl) {
                 urlStack.forEach(function (slug) {
-                    const chip = stackEl.querySelector('.proj-fchip[data-stack-filter="' + CSS.escape(slug) + '"]');
+                    const chip = stackEl.querySelector('.filter-chip[data-stack-filter="' + CSS.escape(slug) + '"]');
                     if (chip) {
                         chip.setAttribute('aria-pressed', 'true');
                         activeStack.add(slug);
                     }
                 });
             }
+
+            searchInput.value = params.get('q') || '';
         })();
 
         let resizeTimer;

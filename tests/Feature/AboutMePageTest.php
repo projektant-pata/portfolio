@@ -39,8 +39,7 @@ test('the stats section opens the page without a fade-up', function () {
 
     /* The hero leaves the first section's top edge inside the first viewport,
        so that section must already be painted — it never fades up. */
-    expect($html)->toContain('id="about-me-stats" class="portfolio-section portfolio-section--no-reveal"')
-        ->and($html)->toContain('sechead--noghost');
+    expect($html)->toContain('id="about-me-stats" class="portfolio-section portfolio-section--no-reveal"');
 });
 
 test('the retired intro section is gone', function () {
@@ -52,12 +51,12 @@ test('the retired intro section is gone', function () {
         ->and($html)->not->toContain('about-me-fact');
 });
 
-test('the about me page carries exactly one ghost wordmark', function () {
+test('every about me section head carries a ghost wordmark', function () {
     seedAboutPage();
 
     $html = $this->get(route('about-me'))->getContent();
 
-    expect(preg_match_all('/<div class="sechead-ghost"/', $html))->toBe(1);
+    expect(preg_match_all('/<div class="sechead-ghost"/', $html))->toBe(6);
 });
 
 test('show ups are filtered by the about flag', function () {
@@ -91,7 +90,7 @@ test('every section renders nothing on an empty database', function () {
     $html = $this->get(route('about-me'))->assertOk()->getContent();
 
     expect($html)->not->toContain('about-me-path')
-        ->and($html)->not->toContain('tk-cols')
+        ->and($html)->not->toContain('tk-rows')
         ->and($html)->not->toContain('about-me-bento')
         ->and($html)->not->toContain('about-me-beyond')
         ->and($html)->not->toContain('about-me-showups')
@@ -103,8 +102,8 @@ test('the czech locale renders the czech copy of the new sections', function () 
 
     $this->withSession(['locale' => 'cs'])
         ->get(route('about-me'))
-        ->assertSee('Zpátky na základní školu')
-        ->assertSee('Šachy od druhé třídy');
+        ->assertSee('První dotek s IT')
+        ->assertSee('Šachy od <span>druhé třídy</span>', false);
 });
 
 test('the availability dot appears in the contact band', function () {
@@ -162,23 +161,37 @@ test('the path node marked now takes the now modifier', function () {
         ->and(PathNode::where('is_now', true)->count())->toBe(1);
 });
 
-test('the about me toolbox groups tools into columns and lists the learning chips', function () {
+test('the about me toolbox groups tools under their headings and lists the rotation chips', function () {
     seedAboutPage();
 
     $html = $this->get(route('about-me'))->getContent();
 
-    expect($html)->toContain('tk-cols')
-        ->and(substr_count($html, '<div class="tk-col">'))->toBe(4)
+    expect(substr_count($html, '<div class="tk-group">'))->toBe(6)
         ->and($html)->toContain('Spring Boot')
-        ->and($html)->toContain('--bc: #6DB33F')
-        ->and($html)->toContain('Kubernetes');
+        ->and($html)->toContain('--bc: #F97316')
+        ->and($html)->toContain('where I actually live')
+        ->and($html)->toContain('Docker');
 });
 
-test('the about me toolbox translates the frequency labels', function () {
+test('a tool row says using or experience and nothing else', function () {
+    seedAboutPage();
+
+    $html = $this->get(route('about-me'))->getContent();
+
+    /* Two states, no scale: the four-step frequency legend is gone and no
+       row carries a hidden second label. */
+    expect($html)->toContain('<span class="tk-state" data-s="using">using</span>')
+        ->and($html)->toContain('<span class="tk-state" data-s="experience">experience</span>')
+        ->and($html)->not->toContain('tk-legend')
+        ->and($html)->not->toContain('tk-sr');
+});
+
+test('the about me toolbox translates the state labels and the group notes', function () {
     seedAboutPage();
 
     $this->withSession(['locale' => 'cs'])
         ->get(route('about-me'))
-        ->assertSee('denně')
-        ->assertSee('Právě se učím');
+        ->assertSee('používám')
+        ->assertSee('kde vážně bydlím')
+        ->assertSee('denní chleba, ne odznak do portfolia');
 });

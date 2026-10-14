@@ -47,7 +47,7 @@ test('the light page sits on bone, not cream', function (string $path) use ($goL
     $page->wait($themeTransition);
 
     expect($page->script($colorOf('.portfolio-page', 'backgroundColor')))->toBe('rgb(250, 249, 246)');
-})->with(['/', '/about-me', '/projects', '/experience', '/blog']);
+})->with(['/', '/about-me', '/projects', '/experience', '/blog', '/contact']);
 
 test('the footer wordmark is sand in light mode, never the gold accent', function () use ($goLight, $colorOf, $themeTransition) {
     $this->seed(SettingSeeder::class);
@@ -89,16 +89,16 @@ test('light-mode body and muted text clear WCAG AA on their own surface', functi
 
     expect($page->script($contrastOf('.portfolio-page h3', '.portfolio-page')))->toBeGreaterThanOrEqual(4.5)
         ->and($page->script($contrastOf('.about-me-node-body p', '.portfolio-page')))->toBeGreaterThanOrEqual(4.5)
-        ->and($page->script($contrastOf('.tk-item', '.tk')))->toBeGreaterThanOrEqual(4.5);
+        ->and($page->script($contrastOf('.tk-item', '.portfolio-page')))->toBeGreaterThanOrEqual(4.5);
 });
 
 test('badge chip text clears the WCAG floor in light mode, both as a row chip and as a pressed stack filter', function () use ($goLight, $contrastOf, $themeTransition) {
     $this->seed(SettingSeeder::class);
 
     // #A78BFA is the lavender badge hex that measured at 2.58:1 (row `.proj-chip`)
-    // and 1.65:1 (pressed `.proj-fchip`) against the light bg before bab43a3 —
-    // both selectors used the badge's raw --bc hex directly as text color.
-    // bab43a3 blends --bc toward --c-fg in light mode only; this pins that fix
+    // and 1.65:1 (pressed `.filter-chip`) against the light bg before bab43a3 —
+    // both selectors used the badge's raw --fc hex directly as text color.
+    // bab43a3 blends --fc toward --c-fg in light mode only; this pins that fix
     // to a 3.0:1 floor so a regression (e.g. reverting the blend, or raising
     // the badge-color share back toward 100%) fails this test.
     $badge = Badge::factory()->create([
@@ -112,10 +112,10 @@ test('badge chip text clears the WCAG floor in light mode, both as a row chip an
     $page->script($goLight);
     $page->wait($themeTransition);
 
-    // Press the stack filter so `.proj-fchip[aria-pressed="true"]` exists —
-    // the pressed state is the only one that colors its label from --bc.
+    // Press the stack filter so `.filter-chip[aria-pressed="true"]` exists —
+    // the pressed state is the only one that colors its label from --fc.
     $page->click('[data-stack-filter="lavender"]');
 
     expect($page->script($contrastOf('.proj-chip', '.portfolio-page')))->toBeGreaterThanOrEqual(3.0)
-        ->and($page->script($contrastOf('.proj-fchip[aria-pressed="true"]', '.portfolio-page')))->toBeGreaterThanOrEqual(3.0);
+        ->and($page->script($contrastOf('.filter-chip[aria-pressed="true"]', '.portfolio-page')))->toBeGreaterThanOrEqual(3.0);
 });

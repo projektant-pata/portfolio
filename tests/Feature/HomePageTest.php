@@ -54,15 +54,19 @@ test('home page renders projects in the locale of the request', function () {
         ->assertDontSee('English Header');
 });
 
-test('experience links open in a new tab with rel noopener', function () {
+test('the home timeline is a static list — entry links live on the experience page', function () {
     Experience::factory()->create([
-        'type' => 'life',
+        'type' => 'work',
         'title' => ['en' => 'Linked Role'],
-        'links' => [['url' => 'https://example.com']],
+        'links' => [['url' => 'https://example.com/role']],
     ]);
 
     $this->get(route('home'))
-        ->assertSee('target="_blank" rel="noopener noreferrer"', false);
+        ->assertSee('Linked Role')
+        ->assertDontSee('https://example.com/role');
+
+    $this->get(route('experience'))
+        ->assertSee('href="https://example.com/role" target="_blank" rel="noopener"', false);
 });
 
 test('home page renders every seeded review inside the carousel track', function () {
@@ -92,23 +96,23 @@ test('hero_roles markup survives to the page unescaped', function () {
         ->assertDontSee('Full-stack &lt;span&gt;developer&lt;/span&gt;', false);
 });
 
-test('the home toolbox shows only the tools flagged for home, plus the rotation chips', function () {
-    Tool::factory()->onHome()->create(['name' => 'Spring Boot', 'color' => '#6DB33F', 'frequency' => 'daily']);
+test('the home toolbox shows only the tools flagged for home, no rotation chips', function () {
+    Tool::factory()->onHome()->create(['name' => 'Spring Boot', 'color' => '#6DB33F', 'state' => 'using']);
     Tool::factory()->create(['name' => 'Proxmox']);
     Tool::factory()->chip()->create(['name' => 'VS Code']);
 
     $html = $this->get(route('home'))->getContent();
 
-    expect($html)->toContain('tk-cells')
+    expect($html)->toContain('tk--list')
         ->and($html)->toContain('Spring Boot')
         ->and($html)->toContain('--bc: #6DB33F')
-        ->and($html)->toContain('VS Code')
+        ->and($html)->not->toContain('VS Code')
         ->and($html)->not->toContain('Proxmox');
 });
 
-test('an empty toolbox draws no frame under the tools head', function () {
+test('an empty toolbox draws no rows under the tools head', function () {
     $html = $this->get(route('home'))->getContent();
 
     expect($html)->toContain('id="tools"')
-        ->and($html)->not->toContain('class="tk"');
+        ->and($html)->not->toContain('tk--list');
 });

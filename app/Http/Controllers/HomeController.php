@@ -32,14 +32,13 @@ class HomeController extends Controller
         $stats = Stat::orderBy('sort_order')->take(4)->get();
         $reviews = Review::orderBy('sort_order')->get();
 
-        // The home toolbox is deliberately less than the about-me one: the
-        // weekly drivers as cells, everything else folded into three chips.
+        // The home toolbox is deliberately less than the about-me one: just
+        // the weekly drivers as rows, no rotation chips.
         $tools = Tool::where('placement', 'grid')
             ->where('show_on_home', true)
             ->orderBy('sort_order')
             ->get();
-        $toolChips = Tool::where('placement', 'rotation')->orderBy('sort_order')->get();
 
-        return view('welcome', compact('workExperiences', 'lifeExperiences', 'featuredProjects', 'stats', 'reviews', 'tools', 'toolChips'));
+        return view('welcome', compact('workExperiences', 'lifeExperiences', 'featuredProjects', 'stats', 'reviews', 'tools'));
     }
 }

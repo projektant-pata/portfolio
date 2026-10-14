@@ -53,11 +53,11 @@ test('the experience page still renders exactly one h1 and one rotator', functio
 test('the dock hero renders the photo caption from the lang files', function () {
     $this->get(route('experience'))
         ->assertSee('class="dock-hero-cap"', false)
-        ->assertSee('Talking to students about getting into programming.');
+        ->assertSee('Presenting our winning project.');
 
     $this->withSession(['locale' => 'cs'])
         ->get(route('experience'))
-        ->assertSee('Přednáška pro studenty o cestě k programování.');
+        ->assertSee('Prezentace našeho vítězného projektu.');
 });
 
 test('the dock hero omits the caption markup when no caption is passed', function () {

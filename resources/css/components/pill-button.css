@@ -46,6 +46,33 @@
     color: var(--c-primary);
 }
 
+/* Row-scale variant for listings that carry two controls per line. It drops
+   below the 44px touch target, so the modifier is cancelled on touch widths
+   rather than dialled down further. */
+.pill-button--sm {
+    font-size: 0.825rem;
+    padding: 0.5rem 1.05rem;
+}
+
+@media (max-width: 760px) {
+    .pill-button--sm {
+        font-size: 0.95rem;
+        padding: 0.75rem 1.5rem;
+    }
+}
+
 .pill-button:active {
     transform: translateY(1px);
+}
+
+.pill-button[disabled] {
+    opacity: 0.45;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.pill-button:focus-visible {
+    outline: none;
+    border-color: var(--c-primary);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--c-primary) 18%, transparent);
 }

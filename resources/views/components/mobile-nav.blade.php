@@ -49,6 +49,12 @@
         {{-- Row 2 — social links --}}
         <div class="mobile-nav-row">
             <div class="mobile-nav-app">
+                <a href="{{ route('contact') }}">
+                    <img src="{{ asset('images/mobile/icons/messages.webp') }}" alt="contact me">
+                </a>
+                <p class="mini">{{ __('layout/mobile.nav6') }}</p>
+            </div>
+            <div class="mobile-nav-app">
                 <a href="{{ route('blog') }}">
                     <img src="{{ asset('images/mobile/icons/safari.webp') }}" alt="blog">
                 </a>
@@ -66,16 +72,16 @@
                 </a>
                 <p class="mini">{{ __('layout/mobile.soc2') }}</p>
             </div>
+        </div>
+
+        {{-- Row 3 — misc links --}}
+        <div class="mobile-nav-row">
             <div class="mobile-nav-app">
                 <a href="{{ config('portfolio.social.x') }}" target="_blank" rel="noopener noreferrer">
                     <img src="{{ asset('images/mobile/icons/x.webp') }}" alt="x">
                 </a>
                 <p class="mini">{{ __('layout/mobile.soc3') }}</p>
             </div>
-        </div>
-
-        {{-- Row 3 — misc links --}}
-        <div class="mobile-nav-row">
             <div class="mobile-nav-app">
                 <a href="{{ config('portfolio.social.linkedin') }}" target="_blank" rel="noopener noreferrer">
                     <img src="{{ asset('images/mobile/icons/linkedin.webp') }}" alt="linkedin">
@@ -94,16 +100,37 @@
                 </a>
                 <p class="mini">{{ __('layout/mobile.soc6') }}</p>
             </div>
-            <div class="mobile-nav-app"></div>
+        </div>
+
+        {{-- Row 4 — easter egg: fake "Calendar" app, live date, confirm before leaving --}}
+        <div class="mobile-nav-row">
+            <div class="mobile-nav-app">
+                <button
+                    type="button"
+                    id="mobile-nav-egg-calendar"
+                    class="mobile-nav-calendar"
+                    data-confirm="{{ __('layout/mobile.egg_calendar_confirm') }}"
+                    data-url="{{ config('portfolio.easter_eggs.fathers_site') }}"
+                    data-locale="{{ app()->getLocale() }}"
+                >
+                    <span class="mobile-nav-calendar-weekday" id="mobile-nav-egg-calendar-weekday"></span>
+                    <span class="mobile-nav-calendar-day" id="mobile-nav-egg-calendar-day"></span>
+                </button>
+                <p class="mini">{{ __('layout/mobile.nav7') }}</p>
+            </div>
         </div>
 
     </div>
 
     <div id="mobile-nav-bottom">
         <div class="mobile-nav-app">
-            <a href="{{ config('portfolio.social.email') }}">
-                <img src="{{ asset('images/mobile/icons/messages.webp') }}" alt="messages">
-            </a>
+            <button
+                type="button"
+                id="mobile-nav-egg-lightbulb"
+                data-quotes="{{ json_encode(__('layout/mobile.egg_quotes')) }}"
+            >
+                <img src="{{ asset('images/mobile/icons/lightbulb.jpg') }}" alt="quote of the moment">
+            </button>
         </div>
         <div id="mobile-nav-weather" class="mobile-nav-app">
             <button type="button">
@@ -118,8 +145,14 @@
                 </button>
             </form>
         </div>
-        <div class="mobile-nav-app mobile-nav-app--decorative">
-            <img src="{{ asset('images/mobile/icons/music.webp') }}" alt="">
+        <div class="mobile-nav-app">
+            <button
+                type="button"
+                id="mobile-nav-egg-settings"
+                data-info="{{ __('layout/mobile.egg_settings_info') }}"
+            >
+                <img src="{{ asset('images/mobile/icons/settings.png') }}" alt="device info">
+            </button>
         </div>
     </div>
 </nav>

@@ -1,0 +1,262 @@
+/* ================================================================
+   FILTER BAR — shared by /projects and /experience. One design: a
+   sticky flat bar (top/bottom hairline, no card box) that dissolves
+   into the list below it via a gradient fade.
+   ================================================================ */
+
+.filter-bar {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    display: grid;
+    gap: 0.55rem;
+    padding: 1rem 0;
+    margin-bottom: 2.25rem;
+    background: var(--c-bg);
+    border-top: 1px solid color-mix(in srgb, var(--c-primary-fade) 55%, transparent);
+    border-bottom: 1px solid color-mix(in srgb, var(--c-primary-fade) 55%, transparent);
+}
+
+.filter-bar::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
+    height: 1.25rem;
+    background: linear-gradient(var(--c-bg), transparent);
+    pointer-events: none;
+}
+
+.filter-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.55rem 1.6rem;
+}
+
+.filter-row + .filter-row {
+    border-top: 1px solid color-mix(in srgb, var(--c-primary-fade) 55%, transparent);
+    padding-top: 0.8rem;
+}
+
+.filter-group {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    flex-wrap: wrap;
+}
+
+.filter-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--c-muted) 80%, transparent);
+    margin-right: 0.15rem;
+}
+
+/* ── Segmented control (single-select) ── */
+
+.filter-seg {
+    position: relative;
+    display: inline-flex;
+    gap: 0.1rem;
+    padding: 0.2rem;
+    border-radius: var(--r-pill);
+    background: var(--c-surface-sunken);
+    border: 1px solid color-mix(in srgb, var(--c-primary-fade) 60%, transparent);
+}
+
+.filter-seg-thumb {
+    position: absolute;
+    top: 0.2rem;
+    bottom: 0.2rem;
+    left: 0.2rem;
+    width: 0;
+    border-radius: var(--r-pill);
+    background: var(--c-primary);
+    transition: transform var(--t-fast), width var(--t-fast);
+}
+
+.filter-seg button {
+    position: relative;
+    font: inherit;
+    font-size: 11.5px;
+    font-weight: var(--fw-semibold);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0.34rem 0.95rem;
+    border: 0;
+    border-radius: var(--r-pill);
+    background: transparent;
+    color: var(--c-muted);
+    cursor: pointer;
+    transition: color var(--t-fast);
+}
+
+.filter-seg button:hover {
+    color: var(--c-fg);
+}
+
+.filter-seg button[aria-pressed='true'] {
+    color: var(--c-bg);
+}
+
+/* ── Search ── */
+
+.filter-search {
+    flex: 1 1 15rem;
+    min-width: 11rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0.85rem;
+    border-radius: var(--r-pill);
+    background: var(--c-surface-sunken);
+    border: 1px solid transparent;
+    transition: border-color var(--t-fast);
+}
+
+.filter-search:focus-within {
+    border-color: var(--c-primary);
+}
+
+.filter-search svg {
+    flex-shrink: 0;
+    width: 14px;
+    height: 14px;
+    fill: none;
+    stroke: var(--c-muted);
+    stroke-width: 1.6;
+    transition: stroke var(--t-fast);
+}
+
+.filter-search:focus-within svg {
+    stroke: var(--c-primary);
+}
+
+.filter-search input {
+    flex: 1;
+    min-width: 0;
+    border: 0;
+    background: transparent;
+    color: var(--c-fg);
+    font-family: inherit;
+    font-size: 11.5px;
+    outline: none;
+}
+
+.filter-search input::placeholder {
+    color: var(--c-muted);
+}
+
+/* ── Tag/stack chip (multi-select) ── */
+
+.filter-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 11.5px;
+    font-weight: var(--fw-semibold);
+    padding: 0.28rem 0.75rem 0.28rem 0.6rem;
+    border-radius: var(--r-pill);
+    border: 1px solid color-mix(in srgb, var(--c-primary-fade) 75%, transparent);
+    background: none;
+    color: var(--c-muted);
+    cursor: pointer;
+    transition: color var(--t-fast), border-color var(--t-fast), background var(--t-fast);
+}
+
+.filter-chip::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--fc, var(--c-primary));
+    transition: box-shadow var(--t-fast);
+}
+
+.filter-chip:hover {
+    color: var(--c-fg);
+    border-color: color-mix(in srgb, var(--fc, var(--c-primary)) 55%, transparent);
+}
+
+.filter-chip[aria-pressed='true'] {
+    color: var(--fc, var(--c-primary));
+    border-color: color-mix(in srgb, var(--fc, var(--c-primary)) 60%, transparent);
+    background: color-mix(in srgb, var(--fc, var(--c-primary)) 14%, transparent);
+}
+
+/* Badge hex colors can be too light to read as text on a light background. */
+html:not(.dark) .portfolio-page .filter-chip[aria-pressed='true'] {
+    color: color-mix(in srgb, var(--fc, var(--c-primary)) 50%, var(--c-fg) 50%);
+}
+
+.filter-chip[aria-pressed='true']::before {
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--fc, var(--c-primary)) 28%, transparent);
+}
+
+/* ── Result count ── */
+
+.filter-count {
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--c-muted);
+    white-space: nowrap;
+}
+
+.filter-count b {
+    color: var(--c-fg);
+    font-weight: var(--fw-semibold);
+}
+
+/* ── Clear ── */
+
+.filter-clear {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--c-muted);
+    background: none;
+    border: 0;
+    border-bottom: 1px solid var(--c-primary-fade);
+    padding: 0 0 2px;
+    cursor: pointer;
+}
+
+.filter-clear:hover {
+    color: var(--c-primary);
+    border-color: var(--c-primary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .filter-seg-thumb,
+    .filter-chip,
+    .filter-clear {
+        transition: none;
+    }
+}
+
+@media (max-width: 576px) {
+    .filter-bar {
+        gap: 0.5rem 0.9rem;
+        padding: 0.85rem 0;
+    }
+
+    .filter-count {
+        margin-left: 0;
+        flex-basis: 100%;
+    }
+
+    /* A segmented control must never break onto two lines. */
+    .filter-seg {
+        max-width: 100%;
+        overflow-x: auto;
+        scrollbar-width: none;
+    }
+}

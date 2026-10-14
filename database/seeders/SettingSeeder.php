@@ -44,6 +44,12 @@ class SettingSeeder extends Seeder
                 'en' => ['Writes only when <span>something breaks</span>', 'Markdown <span>maximalist</span>', '<span>Arch</span> btw', 'Still not a <span>frontend dev</span>', 'Commits at 2am, <span>posts at 2pm</span>'],
                 'cs' => ['Píše, jen když se <span>něco rozbije</span>', 'Markdown <span>fanatik</span>', '<span>Arch</span>, mimochodem', 'Pořád ne <span>frontend vývojář</span>', 'Commituje ve 2 ráno, <span>publikuje ve 2 odpoledne</span>'],
             ],
+            'contact_hero_suptitle' => ['en' => '✉️ Say hello', 'cs' => '✉️ Ozvěte se'],
+            'contact_hero_title' => ['en' => 'Let’s <span>talk</span>,', 'cs' => 'Pojďme si <span>napsat</span>,'],
+            'contact_hero_roles' => [
+                'en' => ['Replies within <span>24 hours</span>', 'Freelance <span>work</span>', 'Junior <span>roles</span>', 'Hackathon <span>team-ups</span>', 'A yes, a no, or <span>a date</span>'],
+                'cs' => ['Odpovídám do <span>24 hodin</span>', 'Freelance <span>zakázky</span>', 'Juniorní <span>pozice</span>', 'Hackathonové <span>týmy</span>', 'Ano, ne, nebo <span>datum</span>'],
+            ],
             'about_intro_lead' => [
                 'en' => 'I build backends that outlive the demo, and I would rather <em>ship something small</em> than describe something big.',
                 'cs' => 'Stavím backendy, které přežijí demo, a radši <em>vydám něco malého</em>, než abych popisoval něco velkého.',
@@ -77,6 +83,10 @@ class SettingSeeder extends Seeder
             'about_cta_sub' => [
                 'en' => 'Client work, a school project, or an idea you want a second opinion on — write and you will hear back.',
                 'cs' => 'Zakázka, školní projekt nebo nápad, na který chcete druhý názor — napište a ozvu se.',
+            ],
+            'about_off_end' => [
+                'en' => 'There is a pattern in all four, and it is the same one I bring to work: slow, repeatable, honest about what is not working yet. Chess taught me consequence, the rack taught me debugging, the gym taught me showing up, and the trains taught me that good things are quietly designed.',
+                'cs' => 'Ve všech čtyřech je stejný vzorec, a je to ten, který přináším i do práce: pomalý, opakovatelný, upřímný k tomu, co ještě nefunguje. Šachy mě naučily důsledkům, homelab ladění chyb, posilovna tomu, že se prostě ukážu, a vlaky tomu, že dobré věci jsou tiše promyšlené.',
             ],
         ];
 

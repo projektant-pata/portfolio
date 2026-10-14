@@ -27,7 +27,7 @@ test('the projects seeder gives every project a kind, a status and a bilingual r
 
     $projects = Project::all();
 
-    expect($projects)->toHaveCount(3);
+    expect($projects)->toHaveCount(8);
 
     $projects->each(function ($project) {
         expect($project->kind)->toBeIn(Project::KINDS)
@@ -53,7 +53,7 @@ test('the database seeder fills the about page with path nodes, interests and se
 
     expect(PathNode::count())->toBe(5)
         ->and(PathNode::where('is_now', true)->count())->toBe(1)
-        ->and(Interest::count())->toBe(3)
+        ->and(Interest::count())->toBe(4)
         ->and(Experience::where('show_on_about', true)->count())->toBeGreaterThanOrEqual(4)
         ->and(Stat::where('tier', 'hero')->count())->toBe(2)
         ->and(Stat::where('tier', 'soft')->count())->toBe(2);
@@ -98,7 +98,7 @@ test('the stat seeder fills the about-me bento to a whole number of rows', funct
         ->and($stats->where('tier', 'soft')->count())->toBe(2);
 });
 
-test('the tool seeder fills four columns, eight home cells and both chip footers', function () {
+test('the tool seeder fills six groups, seven home cells and both chip footers', function () {
     $this->seed(DatabaseSeeder::class);
 
     $groups = Tool::where('placement', 'grid')->get()
@@ -106,9 +106,10 @@ test('the tool seeder fills four columns, eight home cells and both chip footers
         ->unique()
         ->values();
 
-    expect($groups)->toHaveCount(4)
-        ->and(Tool::where('show_on_home', true)->count())->toBe(8)
-        ->and(Tool::where('placement', 'rotation')->count())->toBe(3)
-        ->and(Tool::where('placement', 'learning')->count())->toBe(3)
-        ->and(Tool::whereNull('frequency')->where('placement', 'grid')->count())->toBe(0);
+    expect($groups)->toHaveCount(6)
+        ->and(Tool::where('show_on_home', true)->count())->toBe(6)
+        ->and(Tool::where('placement', 'rotation')->count())->toBe(1)
+        ->and(Tool::where('placement', 'learning')->count())->toBe(0)
+        ->and(Tool::whereNull('state')->where('placement', 'grid')->count())->toBe(0)
+        ->and(Tool::whereNotNull('group_note')->count())->toBe(6);
 });

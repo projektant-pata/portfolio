@@ -1,6 +1,10 @@
 @import '../components/project-list.css';
 @import '../components/dock-hero.css';
 @import '../components/section-head.css';
+@import '../components/availability-dot.css';
+@import '../components/pill-button.css';
+@import '../components/cta-band.css';
+@import '../components/filter-bar.css';
 
 /* ================================================================
    PROJECTS PAGE STYLES

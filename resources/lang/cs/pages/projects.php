@@ -3,6 +3,7 @@
 return [
     'hero_wordmark' => 'Projekty',
     'hero_tags' => ['Webové aplikace', 'API', 'Hackathony', 'Open source', 'Freelance'],
+    'hero_photo_caption' => '<b>Funnovation \'26</b>Držím naše týmové tričko, pojmenované po mém autě.',
     'head_eyebrow' => 'Vybraná práce',
     'head_title' => 'Všechno, co stojí za <em>ukázání</em>',
     'head_note' => 'Filtruj podle typu nebo technologie. Seznam je dělený po letech, od nejnovějších.',
@@ -12,6 +13,7 @@ return [
     'filter_kind' => 'Druh',
     'filter_stack' => 'Technologie',
     'kind_all' => 'Vše',
+    'search_placeholder' => 'Hledat projekty…',
     'count_one' => 'zobrazen :count z :total',
     'count_few' => 'zobrazeny :count z :total',
     'count_many' => 'zobrazeno :count z :total',

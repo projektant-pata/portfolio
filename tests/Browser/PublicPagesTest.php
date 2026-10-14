@@ -4,7 +4,7 @@ use App\Models\Project;
 use App\Models\Review;
 
 test('public pages render without javascript or console errors', function () {
-    $pages = visit(['/', '/about-me', '/projects', '/experience']);
+    $pages = visit(['/', '/about-me', '/projects', '/experience', '/contact']);
 
     $pages->assertNoJavaScriptErrors()->assertNoConsoleLogs();
 });

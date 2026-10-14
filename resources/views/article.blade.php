@@ -61,6 +61,7 @@
     @if ($readNext->isNotEmpty())
         <section class="portfolio-section portfolio-section--no-reveal">
             <x-portfolio.section-head
+                :ghost="__('pages/blog.read_next_ghost')"
                 :eyebrow="__('pages/blog.read_next_eyebrow')"
                 :title="__('pages/blog.read_next')"
             />

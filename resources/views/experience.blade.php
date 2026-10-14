@@ -26,16 +26,16 @@
         />
 
         {{-- Filter bar --}}
-        <div class="exp-filterbar" id="exp-filterbar">
-            <div class="exp-filterbar-row">
-                <div class="exp-scope" id="exp-scope">
-                    <span class="exp-scope-thumb" id="exp-scope-thumb" aria-hidden="true"></span>
+        <div class="filter-bar" id="exp-filterbar">
+            <div class="filter-row">
+                <div class="filter-seg" id="exp-scope">
+                    <span class="filter-seg-thumb" id="exp-scope-thumb" aria-hidden="true"></span>
                     <button type="button" data-scope="all" aria-pressed="true">{{ __('home/experience.title_all') }}</button>
                     <button type="button" data-scope="work" aria-pressed="false">{{ __('home/experience.title_work') }}</button>
                     <button type="button" data-scope="life" aria-pressed="false">{{ __('home/experience.title_life') }}</button>
                 </div>
 
-                <label class="exp-search">
+                <label class="filter-search">
                     <svg viewBox="0 0 16 16" aria-hidden="true">
                         <circle cx="6.8" cy="6.8" r="4.6" />
                         <line x1="10.4" y1="10.4" x2="14" y2="14" />
@@ -49,7 +49,7 @@
                 </label>
 
                 <div
-                    class="exp-count"
+                    class="filter-count"
                     id="exp-count"
                     aria-live="polite"
                     data-one="{{ __('home/experience.count_one') }}"
@@ -58,22 +58,22 @@
                 ></div>
             </div>
 
-            @if ($badges->isNotEmpty())
-                <div class="exp-filterbar-row">
-                    <div class="exp-tags" id="exp-tags">
+            <div class="filter-row">
+                @if ($badges->isNotEmpty())
+                    <div class="filter-group" id="exp-tags">
                         @foreach ($badges as $badge)
                             <button
                                 type="button"
-                                class="exp-tag"
+                                class="filter-chip"
                                 aria-pressed="false"
                                 data-tag="{{ $badge->slug }}"
-                                style="--badge-color: {{ $badge->color }}"
+                                style="--fc: {{ $badge->color }}"
                             >{{ $badge->getTranslation('name', $locale) }}</button>
                         @endforeach
                     </div>
-                    <button type="button" class="exp-clear" id="exp-clear">{{ __('home/experience.clear_filters') }}</button>
-                </div>
-            @endif
+                @endif
+                <button type="button" class="filter-clear" id="exp-clear" hidden>{{ __('home/experience.clear_filters') }}</button>
+            </div>
         </div>
 
         {{-- Masonry grid --}}
@@ -163,7 +163,6 @@
         const gridEl = document.getElementById('exp-grid');
         const gridLine = document.getElementById('exp-grid-line');
 
-        const bar = document.getElementById('exp-filterbar');
         const scopeEl = document.getElementById('exp-scope');
         const thumb = document.getElementById('exp-scope-thumb');
         const tagRow = document.getElementById('exp-tags');          // null when there are no badges
@@ -303,10 +302,9 @@
 
             countEl.innerHTML = countLabel(visible, allCards.length);
             emptyEl.hidden = visible !== 0;
-            bar.classList.toggle(
-                'has-filters',
-                scope !== 'all' || activeTags.size > 0 || searchInput.value.trim() !== ''
-            );
+            if (clearBtn) {
+                clearBtn.hidden = !(scope !== 'all' || activeTags.size > 0 || searchInput.value.trim() !== '');
+            }
         }
 
         scopeEl.addEventListener('click', function (e) {

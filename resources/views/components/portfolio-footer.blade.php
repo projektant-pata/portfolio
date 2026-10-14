@@ -31,6 +31,10 @@
                     <img src="{{ asset('images/mobile/icons/safari.webp') }}" alt="">
                     <p>{{ __('layout/footer.nav5') }}</p>
                 </a>
+                <a href="{{ route('contact') }}" class="portfolio-footer-nav-link">
+                    <img src="{{ asset('images/mobile/icons/messages.webp') }}" alt="">
+                    <p>{{ __('layout/footer.nav6') }}</p>
+                </a>
             </div>
         </nav>
 
