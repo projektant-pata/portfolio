@@ -1,0 +1,593 @@
+@import '../components/dock-hero.css';
+@import '../components/section-head.css';
+@import '../components/availability-dot.css';
+@import '../components/pill-button.css';
+@import '../components/cta-band.css';
+
+/* ================================================================
+   CONTACT PAGE
+   ================================================================
+   Five sections: the borderless channel list, the form and its
+   rail, three outline step tiles, a two-column FAQ and the shared
+   tinted closing band from the layout.
+
+   Ported from design_handoff_contact. The handoff shipped its own
+   `.ct-sec-head`, `.ct-dot` and `.ct-btn`; all three already exist
+   here as <x-portfolio.section-head>, <x-portfolio.availability-dot>
+   and .pill-button, so only the page body lives in this file.
+
+   Sole colour literal: #F87171 for the invalid-field state. The
+   availability green is --c-available. Channel accents come in
+   per row as --bc, from the badge palette.
+   ================================================================ */
+
+/* ── 1 · Direct channels ───────────────────────────────────── */
+.ct-ways {
+    display: flex;
+    flex-direction: column;
+}
+
+.ct-way {
+    display: grid;
+    grid-template-columns: 150px 1fr auto;
+    align-items: center;
+    gap: 1.6rem;
+    padding: 1.4rem 0.2rem;
+    border-top: 1px solid color-mix(in srgb, var(--c-primary-fade) 50%, transparent);
+}
+
+.ct-way:last-child {
+    border-bottom: 1px solid color-mix(in srgb, var(--c-primary-fade) 50%, transparent);
+}
+
+.ct-ways .ct-way-k {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 10.5px;
+    font-weight: var(--fw-semibold);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--bc, var(--c-primary));
+}
+
+/* Text glyph in a ring — same family as the footer's social marks, so no
+   icon set has to be pulled in for four rows. */
+.ct-way-k .ct-way-ico {
+    width: 22px;
+    height: 22px;
+    display: grid;
+    place-items: center;
+    border: 1px solid color-mix(in srgb, var(--bc, var(--c-primary)) 45%, transparent);
+    border-radius: 50%;
+    font-size: 11px;
+    color: var(--bc, var(--c-primary));
+}
+
+.ct-way-main {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    min-width: 0;
+}
+
+.ct-ways .ct-way-v {
+    font-family: var(--font-mono);
+    font-size: 1.05rem;
+    color: var(--c-fg);
+    overflow-wrap: anywhere;
+}
+
+.ct-ways .ct-way-n {
+    font-size: 0.875rem;
+    font-weight: var(--fw-light);
+    color: var(--c-muted);
+}
+
+.ct-way-acts {
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* ── 3 · Form ──────────────────────────────────────────────── */
+.ct-formwrap {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 2.4rem;
+    align-items: start;
+}
+
+.ct-form {
+    border: var(--border-w) solid var(--c-primary-fade);
+    border-radius: var(--r-card);
+    background: var(--c-surface);
+    padding: 2.4rem 2.4rem 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.3rem;
+}
+
+.ct-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.3rem;
+}
+
+.ct-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+}
+
+.ct-label {
+    display: flex;
+    align-items: baseline;
+    gap: 0.4rem;
+    font-size: 11px;
+    font-weight: var(--fw-semibold);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--c-fg);
+}
+
+.ct-label span {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.05em;
+    text-transform: none;
+    color: var(--c-muted);
+}
+
+.ct-input,
+.ct-select,
+.ct-textarea {
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    font-weight: var(--fw-light);
+    color: var(--c-fg);
+    background: var(--c-surface-sunken);
+    border: 1px solid color-mix(in srgb, var(--c-primary-fade) 60%, transparent);
+    border-radius: var(--r-card-sm);
+    padding: 0.8rem 0.95rem;
+    transition: border-color var(--t-fast), box-shadow var(--t-fast);
+    width: 100%;
+}
+
+.ct-input::placeholder,
+.ct-textarea::placeholder {
+    color: color-mix(in srgb, var(--c-muted) 70%, transparent);
+}
+
+/* The only focus indicator the fields have — the default outline is
+   removed here, so this rule must not be dropped. */
+.ct-input:focus,
+.ct-select:focus,
+.ct-textarea:focus {
+    outline: none;
+    border-color: var(--c-primary);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--c-primary) 18%, transparent);
+}
+
+.ct-textarea {
+    min-height: 150px;
+    resize: vertical;
+    line-height: 1.6;
+}
+
+/* Two stacked triangles drawn in gradients — an SVG chevron would be the
+   only inline asset on the page. */
+.ct-select {
+    appearance: none;
+    cursor: pointer;
+    background-image:
+        linear-gradient(45deg, transparent 50%, var(--c-muted) 50%),
+        linear-gradient(135deg, var(--c-muted) 50%, transparent 50%);
+    background-position: calc(100% - 18px) 55%, calc(100% - 13px) 55%;
+    background-size: 5px 5px, 5px 5px;
+    background-repeat: no-repeat;
+}
+
+.ct-form .ct-help,
+.ct-state .ct-help {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.04em;
+    color: var(--c-muted);
+}
+
+.ct-count {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.ct-field--err .ct-input,
+.ct-field--err .ct-select,
+.ct-field--err .ct-textarea {
+    border-color: #F87171;
+}
+
+.ct-form .ct-err {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: #F87171;
+}
+
+.ct-check {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.65rem;
+    font-size: 0.85rem;
+    font-weight: var(--fw-light);
+    color: var(--c-muted);
+    line-height: 1.5;
+    cursor: pointer;
+}
+
+.ct-check input {
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+    border: 1px solid var(--c-primary-fade);
+    border-radius: 4px;
+    background: var(--c-surface-sunken);
+    cursor: pointer;
+    transition: background-color var(--t-fast), border-color var(--t-fast);
+}
+
+.ct-check input:checked {
+    background: var(--c-primary);
+    border-color: var(--c-primary);
+}
+
+.ct-check input:focus-visible {
+    outline: none;
+    border-color: var(--c-primary);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--c-primary) 18%, transparent);
+}
+
+.ct-check button {
+    color: var(--c-fg);
+    background: none;
+    border: 0;
+    padding: 0;
+    font: inherit;
+    cursor: pointer;
+    text-decoration: underline;
+    text-decoration-color: var(--c-primary-fade);
+}
+
+.ct-form-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    padding-top: 1.1rem;
+    border-top: 1px solid color-mix(in srgb, var(--c-primary-fade) 50%, transparent);
+}
+
+.ct-form .ct-form-fine {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    color: var(--c-muted);
+}
+
+.ct-form-fine a {
+    color: var(--c-primary);
+    text-decoration: none;
+}
+
+.ct-form-fine a:hover {
+    text-decoration: underline;
+}
+
+.ct-form-foot .pill-button--gold {
+    color: #000;
+}
+
+/* ── Side rail ─────────────────────────────────────────────── */
+.ct-rail {
+    display: flex;
+    flex-direction: column;
+    gap: 1.4rem;
+    padding: 0 0 0 1.6rem;
+    border-left: 1px solid color-mix(in srgb, var(--c-primary-fade) 50%, transparent);
+}
+
+.ct-rail h3 {
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    font-weight: 500;
+}
+
+.ct-rail-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+}
+
+.ct-rail-item {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.6rem;
+    align-items: start;
+}
+
+.ct-rail-item .ct-rail-n {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--c-primary);
+    padding-top: 0.15rem;
+}
+
+.ct-rail-item p {
+    font-size: 0.875rem;
+    font-weight: var(--fw-light);
+    line-height: 1.55;
+    color: var(--c-muted);
+}
+
+.ct-rail-item b {
+    color: var(--c-fg);
+    font-weight: var(--fw-semibold);
+}
+
+.ct-rail .ct-rail-note {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    line-height: 1.6;
+    color: var(--c-muted);
+    padding-top: 1rem;
+    border-top: 1px solid color-mix(in srgb, var(--c-primary-fade) 50%, transparent);
+}
+
+/* ── Form outcome panel ────────────────────────────────────────
+   One panel at a time, in the form's place — never the handoff's
+   three-up specimen strip. */
+.ct-state {
+    border: 1px solid color-mix(in srgb, var(--c-primary-fade) 60%, transparent);
+    border-radius: var(--r-card);
+    padding: 2.4rem;
+    background: var(--c-surface);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.7rem;
+}
+
+.ct-state .ct-state-k {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--c-primary);
+}
+
+.ct-state h4 {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    font-weight: 500;
+}
+
+.ct-state p {
+    font-size: 0.925rem;
+    font-weight: var(--fw-light);
+    line-height: 1.6;
+    color: var(--c-muted);
+    max-width: 52ch;
+}
+
+.ct-state a {
+    color: var(--c-primary);
+}
+
+.ct-state--ok {
+    border-color: color-mix(in srgb, var(--c-available) 45%, transparent);
+}
+
+.ct-state--ok .ct-state-k {
+    color: var(--c-available);
+}
+
+.ct-state--err {
+    border-color: color-mix(in srgb, #F87171 45%, transparent);
+}
+
+.ct-state--err .ct-state-k {
+    color: #F87171;
+}
+
+.ct-state-acts {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    margin-top: 0.4rem;
+}
+
+/* ── 4 · What happens next ─────────────────────────────────── */
+.ct-steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+}
+
+.ct-step {
+    border: 1px solid color-mix(in srgb, var(--c-primary-fade) 70%, transparent);
+    border-radius: var(--r-card-sm);
+    padding: 1.6rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.ct-step-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.ct-step-n {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.1em;
+    color: var(--c-primary);
+}
+
+.ct-step-t {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    color: var(--c-muted);
+}
+
+.ct-step h3 {
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    font-weight: 500;
+}
+
+.ct-step p {
+    font-size: 0.875rem;
+    font-weight: var(--fw-light);
+    line-height: 1.6;
+    color: var(--c-muted);
+}
+
+/* ── 5 · FAQ ───────────────────────────────────────────────── */
+.ct-faq {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Five answers read faster than they unfold — flat rows, not an accordion. */
+.ct-qa {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2.5rem;
+    padding: 1.5rem 0;
+    border-top: 1px solid color-mix(in srgb, var(--c-primary-fade) 50%, transparent);
+}
+
+.ct-qa:last-child {
+    border-bottom: 1px solid color-mix(in srgb, var(--c-primary-fade) 50%, transparent);
+}
+
+.ct-qa h3 {
+    font-size: 1.05rem;
+    font-weight: var(--fw-regular);
+    max-width: 30ch;
+}
+
+.ct-qa p {
+    font-size: 0.925rem;
+    font-weight: var(--fw-light);
+    line-height: 1.7;
+    color: var(--c-muted);
+    max-width: 56ch;
+    text-wrap: pretty;
+}
+
+.ct-qa b {
+    color: var(--c-fg);
+    font-weight: var(--fw-semibold);
+}
+
+/* ── Privacy note dialog ───────────────────────────────────────
+   The consent line's only escape hatch. A <dialog> rather than a
+   route: three paragraphs do not need a page, and the reader is
+   mid-form. */
+.ct-privacy {
+    border: var(--border-w) solid var(--c-primary-fade);
+    border-radius: var(--r-card);
+    background: var(--c-surface);
+    color: var(--c-fg);
+    padding: 2rem 2.2rem;
+    max-width: min(46rem, 92vw);
+}
+
+.ct-privacy::backdrop {
+    background: color-mix(in srgb, #000 62%, transparent);
+}
+
+.ct-privacy h3 {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+}
+
+.ct-privacy p {
+    font-size: 0.925rem;
+    font-weight: var(--fw-light);
+    line-height: 1.7;
+    color: var(--c-muted);
+    margin-bottom: 0.8rem;
+}
+
+.ct-privacy-foot {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1.2rem;
+}
+
+/* ── Responsive ────────────────────────────────────────────── */
+@media (max-width: 1100px) {
+    .ct-formwrap {
+        grid-template-columns: 1fr;
+    }
+
+    .ct-rail {
+        padding: 1.6rem 0 0;
+        border-left: none;
+        border-top: 1px solid color-mix(in srgb, var(--c-primary-fade) 50%, transparent);
+    }
+
+    .ct-steps {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+@media (max-width: 760px) {
+    .ct-way {
+        grid-template-columns: 1fr;
+        gap: 0.8rem;
+        padding: 1.2rem 0.1rem;
+    }
+
+    .ct-way-acts {
+        justify-content: flex-start;
+    }
+
+    .ct-form {
+        padding: 1.6rem 1.3rem 1.4rem;
+    }
+
+    .ct-row {
+        grid-template-columns: 1fr;
+    }
+
+    .ct-form-foot {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .ct-form-foot .pill-button {
+        justify-content: center;
+    }
+
+    .ct-qa {
+        grid-template-columns: 1fr;
+        gap: 0.6rem;
+    }
+
+    .ct-state {
+        padding: 1.6rem 1.3rem;
+    }
+}

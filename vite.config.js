@@ -11,6 +11,7 @@ export default defineConfig({
                 'resources/css/app.css',
                 'resources/css/pages/about-me.css',
                 'resources/css/pages/blog.css',
+                'resources/css/pages/contact.css',
                 'resources/css/pages/dashboard.css',
                 'resources/css/pages/experience.css',
                 'resources/css/pages/index.css',

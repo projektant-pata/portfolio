@@ -3,6 +3,7 @@
 use App\Http\Controllers\AboutMeController;
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\BlogController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\ExperienceController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LanguageController;
@@ -15,6 +16,7 @@ Route::get('/experience', ExperienceController::class)->name('experience');
 Route::get('/projects', ProjectsController::class)->name('projects');
 Route::get('/blog', BlogController::class)->name('blog');
 Route::get('/blog/{article:slug}', ArticleController::class)->name('blog.show');
+Route::get('/contact', ContactController::class)->name('contact');
 
 Route::post('/language/toggle', [LanguageController::class, 'toggle'])->name('language.toggle');
 
