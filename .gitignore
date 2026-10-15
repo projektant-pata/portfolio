@@ -51,3 +51,6 @@ yarn-error.log
 /.claude/skills/brandkit
 /.claude/skills/design-taste-frontend
 /.claude/skills/high-end-visual-design
+
+# Local database dumps
+*.sql
