@@ -11,6 +11,12 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // Production sits behind Cloudflare Tunnel -> cloudflared -> nginx, and
+        // nginx is reachable only over the internal Docker network, so trusting
+        // any proxy is safe. Without it Laravel sees http (mixed-content assets)
+        // and every visitor shares cloudflared's IP in the contact rate limit.
+        $middleware->trustProxies(at: '*');
+
         $middleware->web(append: [
             \App\Http\Middleware\SetLocale::class,
         ]);
