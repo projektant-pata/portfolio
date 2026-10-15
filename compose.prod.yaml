@@ -1,16 +1,17 @@
 # Production stack for the web-hosting VM (DMZ). Public traffic arrives through
-# Cloudflare Tunnel: cloudflared shares the external `web` network with nginx
-# and proxies to `portfolio:80`, so no port is published on the host.
+# Cloudflare Tunnel: cloudflared shares the external `web-hosting` network with
+# nginx and proxies to `portfolio-web:80`, so no port is published on the host.
 #
-# One-time setup on the VM: `docker network create web`. DB_PASSWORD (and the
-# rest of the production settings) come from `.env` next to this file.
+# One-time setup on the VM: `docker network create web-hosting`. DB_PASSWORD
+# (and the rest of the production settings) come from `.env` next to this file.
 #
-# Only nginx joins `web`; app and db stay on this project's private network.
-# Keep other projects from exposing a service called `app` on `web`, or
-# nginx's `fastcgi_pass app:9000` could resolve to it.
+# Only nginx joins `web-hosting`; app and db stay on this project's private
+# network. Keep other projects from exposing a service called `app` on
+# `web-hosting`, or nginx's `fastcgi_pass app:9000` could resolve to it.
 
 services:
   app:
+    container_name: portfolio-app
     build:
       context: .
       dockerfile: docker/php/Dockerfile
@@ -23,7 +24,7 @@ services:
 
   nginx:
     image: nginx:alpine
-    container_name: portfolio
+    container_name: portfolio-web
     restart: unless-stopped
     volumes:
       - .:/var/www
@@ -32,9 +33,10 @@ services:
       - app
     networks:
       - default
-      - web
+      - web-hosting
 
   db:
+    container_name: portfolio-db
     image: postgres:17
     restart: unless-stopped
     environment:
@@ -48,5 +50,5 @@ volumes:
   db_data:
 
 networks:
-  web:
+  web-hosting:
     external: true
